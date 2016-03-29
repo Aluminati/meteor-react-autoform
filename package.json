@@ -1,6 +1,6 @@
 {
   "name": "meteor-react-autoform",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Meteor autoform for React using aldeed/meteor-simple-schema",
   "main": "index.js",
   "scripts": {
@@ -13,10 +13,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/npm/npm.git"
+    "url": "https://github.com/MechJosh0/meteor-react-autoform.git"
   },
-  "url" : "https://github.com/owner/project/issues",
-  "email" : "project@hostname.com",
+  "url" : "https://github.com/MechJosh0/meteor-react-autoform/issues",
+  "email" : "josh@aluminati.net",
   "author": "MechJosh0",
   "license": "ISC"
 }
