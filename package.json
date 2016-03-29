@@ -1,0 +1,22 @@
+{
+  "name": "meteor-react-autoform",
+  "version": "0.0.1",
+  "description": "Meteor autoform for React using aldeed/meteor-simple-schema",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "react": "^0.14.6",
+    "material-ui": "^0.14.4",
+    "react-tap-event-plugin": "^0.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/npm/npm.git"
+  },
+  "url" : "https://github.com/owner/project/issues",
+  "email" : "project@hostname.com",
+  "author": "MechJosh0",
+  "license": "ISC"
+}
