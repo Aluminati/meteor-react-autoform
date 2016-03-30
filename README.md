@@ -1,4 +1,86 @@
-# Meteor-React-Autoform
+## Meteor-React-Autoform
+`meteor-react-autoform` will translate your Meteor [aldeed:SimpleSchema](https://github.com/aldeed/meteor-simple-schema) into a [React](https://github.com/facebook/react) form using [Material-UI](https://github.com/callemall/material-ui) components.
+
+## Installation
+1. Installed the NPM package: `$ npm i meteor-react-autoform`
+2. If you do not already, install the aldeed:collections2 Meteor package: `$ meteor add aldeed:collection2`
+
+## WARNING
+This is still in development. Basic elements are available, more to come soon.
+
+## TODO
+ - Manage form submitting
+ - Select and multiple select element
+ - Array of string elements
+ - Object fields
+ - Array of object fields
+ - Testing possibility
+
+## Usage
+### Example
+`/client/modules/contactUs/components/contactUsPage.jsx`
+```
+  import React from 'react';
+  import ReactAutoForm from 'meteor-react-autoform';
+  import HelpDesk from '/lib/collections/helpDesk';
+
+  const ContactUsPage = () => (
+    <div>
+      <h1>Contact Us</h1>
+      <ReactAutoForm collection={HelpDesk} />
+    </div>
+  );
+
+  export default ContactUsPage;
+```
+
+### ReactAutoForm parameters
+ - `collection={HelpDesk}` REQUIRED  You must provide the collection you wish to use for building your form.
+ - `useFields={['name', 'text']}` OPTIONAL  Only the fields `name` and `text` will be in the built form.
+
+## SimpleSchema object
+#### Example
+`/lib/collections/helpDesk.js`
+```
+  import {Mongo} from 'meteor/mongo';
+
+  const HelpDesk = new Meteor.Collection('helpDesk');
+
+  const schema = {
+    name: {
+     type: String,
+     materialForm: {
+       floatingLabelText: 'Name',
+       hintText: 'Josh...'
+     }
+    },
+    description: {
+     type: String,
+     min: 10,
+     max: 200,
+     materialForm: {
+       floatingLabelText: 'Describe your problem',
+       rows: 1,
+       rowsMax: 10,
+       multiLine: true,
+       hintText: 'I require a password reset...'
+     }
+    },
+    reoccurringProblem: {
+      type: Boolean,
+      defaultValue: false,
+      label: 'Have you had the problem before?',
+      materialForm: {
+        switcher: 'Checkbox'
+      }
+    }
+  };
+
+  HelpDesk.attachSchema(schema);
+
+  export default HelpDesk;
+```
+### Element Examples
 - [Text](#element-text)
 - [Textarea](#element-textarea)
 - [Number](#element-number)
@@ -7,34 +89,7 @@
 - [Select Dropdown](#element-selectdropdown)
 - [Radio Button](#element-radiobuton)
 
-## WARNING
-This is still in development. Basic elements are available, more to come soon.
-
-## Basic Usage
-
-
-### Example
-```
-  import React from 'react';
-  import ReactAutoForm from 'meteor-react-autoform';
-
-  const ContactUsPage = () => (
-    <div>
-      <h1>Contact Us</h1>
-      <ReactAutoForm schema={HelpDesk.simpleSchema} />
-    </div>
-  );
-
-  export default ContactUsPage;
-```
-
-### Parameters
-You may pass through the following parameters to control the form build:
- - `useFields={['name', 'text']}` Only the fields `name` and `text` will be in the built form.
-
-
-### Elements
-#### Global paramters
+#### Global parameters
  - `label` String | Input label
  - `max` Number | Set the max length of an input
 ```

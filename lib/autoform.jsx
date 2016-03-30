@@ -33,16 +33,19 @@ const Fields = class {
    * @returns {Array}
    */
   static processFields(props) {
+    // console.log(props.collection);
+    // console.log(props.collection.simpleSchema);
+    this.schema = props.collection._c2._simpleSchema._schema; // Using the provided Collection object, get the simpleSchema object
     const components = []; // Each schema field will have a component and will be stored here as an array
 
     if(props.useFields) // If we're selecting which fields to use
     {
-      props.schema = _.reject(props.schema, (field, key) => { // Reject (ie remove) this field from the schema by returning boolean
+      this.schema = _.reject(this.schema, (field, key) => { // Reject (ie remove) this field from the schema by returning boolean
         return !_.contains(props.useFields, key); // Check if this key is inside our useFields prop
       });
     }
 
-    _.each(props.schema, (field, key) => { // Loop through each field in the schema
+    _.each(this.schema, (field, key) => { // Loop through each field in the schema
       components.push(this.processField(field, key)); // Build and get the Material-UI component
     });
 
@@ -298,7 +301,7 @@ const Fields = class {
 
 class ReactAutoForm extends React.Component {
   render() {
-    if(!this.props.schema)
+    if(!this.props.collection)
     {
       console.log('You must provide a schema! See below for the component that you\'re calling which requires you to attach a schema.');
       console.trace();
@@ -306,7 +309,7 @@ class ReactAutoForm extends React.Component {
     }
 
     return (
-      <div>
+      <div key="test">
         {Fields.processFields(this.props)}
       </div>
     )
