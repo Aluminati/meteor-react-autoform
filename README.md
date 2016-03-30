@@ -6,7 +6,7 @@
 2. If you do not already, install the aldeed:collections2 Meteor package: `$ meteor add aldeed:collection2`
 
 ## WARNING
-This is still in development. Basic elements are available, more to come soon.
+This is still in development. Form handling is not available at the moment, this is top priority on the list and will be with the next version in a few days. Basic form elements are available, see below for todo list.
 
 ## TODO
  - Manage form submitting
