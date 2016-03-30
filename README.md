@@ -36,7 +36,7 @@ This is still in development. Basic elements are available, more to come soon.
 
 ### ReactAutoForm parameters
  - `collection={HelpDesk}` REQUIRED  You must provide the collection you wish to use for building your form.
- - `useFields={['name', 'text']}` OPTIONAL  Only the fields `name` and `text` will be in the built form.
+ - `useFields={['name', 'text']}` OPTIONAL  Only the fields `name` and `description` will be in the built form.
 
 ## SimpleSchema object
 #### Example
@@ -80,6 +80,7 @@ This is still in development. Basic elements are available, more to come soon.
 
   export default HelpDesk;
 ```
+![Image Preview](formPreview.png)
 ### Element Examples
 - [Text](#element-text)
 - [Textarea](#element-textarea)
