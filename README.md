@@ -37,6 +37,7 @@ This is still in development. Form handling is not available at the moment, this
 ### ReactAutoForm parameters
  - `collection={HelpDesk}` REQUIRED  You must provide the collection you wish to use for building your form.
  - `useFields={['name', 'text']}` OPTIONAL  Only the fields `name` and `description` will be in the built form.
+ - `formClass="myCustomFormClass"` OPTIONAL  You may provide a custom className for the form, otherwise it will use the default `autoform_{$collectionName}`
 
 ## SimpleSchema object
 #### Example
@@ -50,8 +51,8 @@ This is still in development. Form handling is not available at the moment, this
     name: {
      type: String,
      materialForm: {
-       floatingLabelText: 'Name',
-       hintText: 'Josh...'
+       floatingLabelText: 'Your name',
+       hintText: 'Josh'
      }
     },
     description: {

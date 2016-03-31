@@ -9,6 +9,8 @@ const Toggle = require('material-ui/lib/toggle');
 const Checkbox = require('material-ui/lib/checkbox');
 import SelectFieldInput from './selectField.jsx';
 import RadioFieldInput from './radioField.jsx';
+// import RaisedButton from 'material-ui/lib/raised-button';
+const RaisedButton = require('material-ui/lib/raised-button');
 //const SelectField = require('material-ui/lib/select-field');
 //const MenuItem = require('material-ui/lib/menus/menu-item');
 //const Fields = require('./fields.jsx');
@@ -20,34 +22,40 @@ SimpleSchema.extendOptions({
 
 /**
  * Class to translate SimpleSchema to Material-UI fields
+ * @type {{
+ *  typeCheckbox: (function(): XML),
+ *  typeString: (function(): XML),
+ *  typeNumber: (function(): XML),
+ *  createDefaultAttr: (function()),
+ *  componentToggle: (function(): XML),
+ *  typeDate: (function(): XML),
+ *  removeMaterialSchemaValue: (function(*)),
+ *  componentRadio: (function()),
+ *  componentTextField: (function(): XML),
+ *  typeDropdown: (function(): XML),
+ *  processFields: (function(*): Array),
+ *  moveMaterialSchemaValue: (function(*, *)),
+ *  getSchemaMaterialForm: (function()),
+ *  getSchemaValue: (function(*, *=)),
+ *  componentCheckbox: (function(): XML),
+ *  processField: (function(*, *): *)
+ * }}
  */
 const Fields = class {
 	/**
    * Start here by passing through the props from a React component
-   * Props must contain
-   * props = {
-   *   schema: __The schema we want to use in the form__
-   *   useFields: __If we want to only use a select amount of fields pass them through here as an array ['title, 'text']__
-   * }
-   * @param props
+   * @param schema
    * @returns {Array}
    */
-  static processFields(props) {
-    // console.log(props.collection);
-    // console.log(props.collection.simpleSchema);
-    this.schema = props.collection._c2._simpleSchema._schema; // Using the provided Collection object, get the simpleSchema object
+  static processFields(schema) {
+    this.schema = schema;
     const components = []; // Each schema field will have a component and will be stored here as an array
-
-    if(props.useFields) // If we're selecting which fields to use
-    {
-      this.schema = _.reject(this.schema, (field, key) => { // Reject (ie remove) this field from the schema by returning boolean
-        return !_.contains(props.useFields, key); // Check if this key is inside our useFields prop
-      });
-    }
 
     _.each(this.schema, (field, key) => { // Loop through each field in the schema
       components.push(this.processField(field, key)); // Build and get the Material-UI component
     });
+
+    components.push(this.submitButton());
 
     return components; // Return all the components we've created
   }
@@ -297,20 +305,55 @@ const Fields = class {
       <RadioFieldInput inputKey={this.key} floatingLabelText={this.attributes.floatingLabelText} options={options} groupOptions={this.attributes.groupOptions} />
     );
   }
+
+  static submitButton() {
+    return (
+      <RaisedButton type="submit" className="button-submit" label='Submit' primary={true} />
+    )
+  }
+
+  static getFields(props) {
+    this.schema = props.collection._c2._simpleSchema._schema; // Using the provided Collection object, get the simpleSchema object
+    const components = []; // Each schema field will have a component and will be stored here as an array
+
+    if(props.useFields) // If we're selecting which fields to use
+    {
+      this.schema = _.reject(this.schema, (field, key) => { // Reject (ie remove) this field from the schema by returning boolean
+        return !_.contains(props.useFields, key); // Check if this key is inside our useFields prop
+      });
+    }
+
+    return this.schema;
+  }
 };
 
 class ReactAutoForm extends React.Component {
+  handleSubmit(event) {
+    event.preventDefault();
+    
+    console.log(this.schema);
+  }
+
+  getFields() {
+    this.schema = Fields.getFields(this.props);
+  }
+
   render() {
     if(!this.props.collection)
     {
-      console.log('You must provide a schema! See below for the component that you\'re calling which requires you to attach a schema.');
+      console.log('You must provide a collection for the form to use! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform');
       console.trace();
       return (<div></div>);
     }
 
+    this.getFields();
+    console.log(this.schema);
+
     return (
-      <div key="test">
-        {Fields.processFields(this.props)}
+      <div>
+        <form className={this.props.formClass ? this.props.formClass : 'autoform_' + this.props.collection._name} onSubmit={this.handleSubmit.bind(this)}>
+          {Fields.processFields(this.schema)}
+        </form>
       </div>
     )
   };
