@@ -16,9 +16,9 @@ const RaisedButton = require('material-ui/lib/raised-button');
 //const Fields = require('./fields.jsx');
 
 // Extend the schema to allow our materfialForm object
-SimpleSchema.extendOptions({
-  materialForm: Match.Optional(Object)
-});
+// SimpleSchema.extendOptions({
+//   materialForm: Match.Optional(Object)
+// });
 
 /**
  * Class to translate SimpleSchema to Material-UI fields
@@ -41,67 +41,56 @@ SimpleSchema.extendOptions({
  *  processField: (function(*, *): *)
  * }}
  */
-const Fields = class {
-	/**
-   * Start here by passing through the props from a React component
-   * @param schema
-   * @returns {Array}
-   */
-  static processFields(schema) {
-    this.schema = schema;
-    const components = []; // Each schema field will have a component and will be stored here as an array
 
-    _.each(this.schema, (field, key) => { // Loop through each field in the schema
-      components.push(this.processField(field, key)); // Build and get the Material-UI component
-    });
-
-    components.push(this.submitButton());
-
-    return components; // Return all the components we've created
+class ReactAutoForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+    this.fields = {};
   }
 
 	/**
    * Process each field from the schema
    * @param field
-   * @param key
+   * @param fieldName
    * @returns {*}
    */
-  static processField(field, key) {
-    this.field = field;
-    this.key = key;
-    this.field.label = this.field.label ? this.field.label : key; // DEVELOPMENT ONLY
-    this.createDefaultAttr();
+  processField(field, fieldName) {
+    this.fields[fieldName] = field;
+    this.fields[fieldName].key = fieldName;
+    //this.fields[fieldName].label = field.label ? field.label : fieldName; // DEVELOPMENT ONLY
+    this.createDefaultAttr(fieldName);
 
-    if(this.field.allowedValues) // If we're restricting the values to a list it's a dropdown
+    if(this.fields[fieldName].allowedValues) // If we're restricting the values to a list it's a dropdown
     {
-      switch(this.field.materialForm.switcher)
+      switch(this.fields[fieldName].materialForm.switcher)
       {
         case 'Radio':
-          return this.componentRadio();
+          return this.componentRadio(fieldName);
           break;
 
         default:
-          return this.typeDropdown();
+          return this.typeDropdown(fieldName);
           break;
       }
     }
 
-    switch(this.field.type.name) // Switch between what type of field it is to use different types of Material -UI component
+    switch(this.fields[fieldName].type.name) // Switch between what type of field it is to use different types of Material -UI component
     {
       case 'Date':
-        return this.typeDate();
+        return this.typeDate(fieldName);
         break;
 
       case 'Number':
-        return this.typeNumber();
+        return this.typeNumber(fieldName);
         break;
 
       case 'Boolean':
-        return this.typeCheckbox();
+        return this.typeCheckbox(fieldName);
         break;
 
       case 'String':
-        return this.typeString();
+        return this.typeString(fieldName);
         break;
     }
   }
@@ -109,151 +98,172 @@ const Fields = class {
 	/**
    * Translate the SimpleSchema top-level attributes to Material-UI attributes
    * This is so the developer doesn't have to write the
+   * @param fieldName
    */
-  static createDefaultAttr() {
-    this.attributes = {}; // These will be overwritten if it's repeated in the materialForm object (ie `materialForm.floatingLabelText`)
-    this.attributes.name = this.key;
-    this.getSchemaValue('label', 'floatingLabelText');
-    this.getSchemaValue('max', 'maxLength');
-    //this.getSchemaValue('defaultValue', 'value');
-    this.getSchemaMaterialForm();
+  createDefaultAttr(fieldName) {
+    this.fields[fieldName].attributes = {}; // These will be overwritten if it's repeated in the materialForm object (ie `materialForm.floatingLabelText`)
+    this.fields[fieldName].attributes.name = fieldName;
+    this.getSchemaValue(fieldName, 'label', 'floatingLabelText');
+    this.getSchemaValue(fieldName, 'max', 'maxLength');
+    this.getSchemaMaterialForm(fieldName);
 
-    this.field.materialForm = this.field.materialForm ? this.field.materialForm : {};
+    this.fields[fieldName].materialForm = this.fields[fieldName].materialForm ? this.fields[fieldName].materialForm : {};
   }
 
   /**
    * Store all of the `materialForm` attributes
+   * @param fieldName
    */
-  static getSchemaMaterialForm() {
-    _.each(this.field.materialForm, (value, key) => { // For each `materialForm` field
-      this.attributes[key] = value; // Store it in our component attributes
+  getSchemaMaterialForm(fieldName) {
+    Object.keys(this.fields[fieldName].materialForm).map((key) => { // For each `materialForm` field
+      this.fields[fieldName].attributes[key] = this.fields[fieldName].materialForm[key]; // Store it in our component attributes
     });
   }
 
   /**
    *
+   * @param fieldName
    * @param fieldColumn
    * @param materialField
    */
-  static getSchemaValue(fieldColumn, materialField = fieldColumn) {
-    this.attributes[materialField] = this.field[fieldColumn] ? this.field[fieldColumn] : null; // If the `fieldColumn` exists, store it in our `materialField` attributes otherwise null
+  getSchemaValue(fieldName, fieldColumn, materialField = fieldColumn) {
+    this.fields[fieldName].attributes[materialField] = this.fields[fieldName][fieldColumn] ? this.fields[fieldName][fieldColumn] : null; // If the `fieldColumn` exists, store it in our `materialField` attributes otherwise null
   }
 
 	/**
    * Remove an attributes value by Nulling it
+   * @param fieldName
    * @param field
    */
-  static removeMaterialSchemaValue(field)  {
-    this.attributes[field] = null;
+  removeMaterialSchemaValue(fieldName, field)  {
+    this.fields[fieldName].attributes[field] = null;
   }
 
 	/**
    * Move a value to our new field and then remove the original field by Nulling it
+   * @param fieldName
    * @param newField
    * @param oldField
    */
-  static moveMaterialSchemaValue(newField, oldField) {
-    this.attributes[newField] = this.attributes[oldField]; // Copy the oldField value to the newField value
-    this.attributes[oldField] = null; // And now remove the oldField by Nulling
+  moveMaterialSchemaValue(fieldName, newField, oldField) {
+    this.fields[fieldName].attributes[newField] = this.fields[fieldName].attributes[oldField]; // Copy the oldField value to the newField value
+    this.fields[fieldName].attributes[oldField] = null; // And now remove the oldField by Nulling
   }
 
 	/**
    * A normal string field
+   * @param fieldName
    * @returns {XML}
    */
-  static typeString() {
-    if(this.field.materialForm.switcher)
+  typeString(fieldName) {
+    if(this.fields[fieldName].materialForm.switcher)
     {
-      return this.typeCheckbox();
+      return this.typeCheckbox(fieldName);
     }
 
     // We don't need to change anything here so go straight to the input text
-    return this.componentTextField();
+    return this.componentTextField(fieldName);
   }
 
 	/**
    * Date component
    * http://www.material-ui.com/#/components/date-picker
+   * @param fieldName
    * @returns {XML}
    */
-  static typeDate() {
+  typeDate(fieldName) {
     this.moveMaterialSchemaValue('hintText', 'floatingLabelText');
 
     return (
-      <div key={this.key}>
-        <DatePicker {...this.attributes} />
+      <div key={this.fields[fieldName].key}>
+        <DatePicker {...this.fields[fieldName].attributes} />
       </div>
     )
   }
 
 	/**
    * Input type number
+   * @param fieldName
    * @returns {XML}
    */
-  static typeNumber() {
-    this.attributes.type = 'number'; // Change the input type to number
-    this.getSchemaValue('max'); // Set the max [and min] of the number input
-    this.getSchemaValue('min');
+  typeNumber(fieldName) {
+    this.fields[fieldName].attributes.type = 'number'; // Change the input type to number
+    this.getSchemaValue(fieldName, 'max'); // Set the max [and min] of the number input
+    this.getSchemaValue(fieldName, 'min');
 
     return this.componentTextField();
   }
 
 	/**
    * Logic to get the correct checkbox type component
+   * @param fieldName
    * @returns {XML}
    */
-  static typeCheckbox() {
-    this.moveMaterialSchemaValue('label', 'floatingLabelText');
+  typeCheckbox(fieldName) {
+    this.moveMaterialSchemaValue(fieldName, 'label', 'floatingLabelText');
 
-    switch(this.field.materialForm.switcher)
+    switch(this.fields[fieldName].materialForm.switcher)
     {
       case 'Toggle':
-        this.removeMaterialSchemaValue('switcher');
-        return this.componentToggle();
+        this.removeMaterialSchemaValue(fieldName, 'switcher');
+        return this.componentToggle(fieldName);
         break;
 
       case 'Checkbox':
       default:
-        this.removeMaterialSchemaValue('switcher');
-        return this.componentCheckbox();
+        this.removeMaterialSchemaValue(fieldName, 'switcher');
+        return this.componentCheckbox(fieldName);
         break;
     }
   }
 
 	/**
    *
+   * @param fieldName
    * @returns {XML}
    */
-  static typeDropdown() {
-    this.attributes.selectOptions = this.attributes.selectOptions ? this.attributes.selectOptions : {};
-    this.attributes.selectOptions.floatingLabelText = this.attributes.floatingLabelText;
-
-    const options = _.map(this.attributes.options ? this.attributes.options : this.field.allowedValues, (item, key) => {
-      if(typeof item === 'object')
-      {
-        item.value = item.value.toString();
-        return item;
-      }
-      else
-      {
-        return {label: item, value: item.toString()};
-      }
-    });
+  typeDropdown(fieldName) {
+    this.fields[fieldName].attributes.selectOptions = this.fields[fieldName].attributes.selectOptions ? this.fields[fieldName].attributes.selectOptions : {};
+    this.fields[fieldName].attributes.selectOptions.floatingLabelText = this.fields[fieldName].attributes.floatingLabelText;
 
     return (
-      <SelectFieldInput inputKey={this.key} options={options} selectOptions={this.attributes.selectOptions} />
+      <SelectFieldInput
+        inputKey={this.fields[fieldName].key}
+        options={this.getSchemaAllowValues(fieldName)}
+        selectOptions={this.fields[fieldName].attributes.selectOptions}
+      />
     );
   }
 
 	/**
    * This will be used for either a text, password, number or textarea input field
    * http://www.material-ui.com/#/components/text-field
+   * @param fieldName
    * @returns {XML}
    */
-  static componentTextField() {
+  componentTextField(fieldName) {
+    this.fields[fieldName].attributes.errorText = this.state[`${fieldName}_fieldError`];
+    this.fields[fieldName].attributes.defaultValue = this.fields[fieldName].defaultValue;
+    this.fields[fieldName].attributes.value = this.getStateOrDefaultSchemaValue(fieldName, this.fields[fieldName].defaultValue, '');
+    this.fields[fieldName].attributes.onChange = (e) => {
+      if(e.target.value !== '')
+      {
+        this.setState({
+          [`${fieldName}_fieldValue`]: e.target.value
+        });
+      }
+      else
+      {
+        this.setState({
+          [`${fieldName}_fieldValue`]: this.fields[fieldName].defaultValue
+        });
+      }
+
+    };
+
     return (
-      <div key={this.key}>
-        <TextField {...this.attributes} />
+      <div key={this.fields[fieldName].key}>
+        <TextField {...this.fields[fieldName].attributes} />
         <br />
       </div>
     );
@@ -262,12 +272,13 @@ const Fields = class {
 	/**
    * Toggle component
    * http://www.material-ui.com/#/components/toggle
+   * @param fieldName
    * @returns {XML}
    */
-  static componentToggle() {
+  componentToggle(fieldName) {
     return (
-      <div key={this.key}>
-        <Toggle {...this.attributes} />
+      <div key={this.fields[fieldName].key}>
+        <Toggle {...this.fields[fieldName].attributes} />
       </div>
     );
   }
@@ -276,66 +287,152 @@ const Fields = class {
   /**
    * Checkbox component
    * http://www.material-ui.com/#/components/checkbox
+   * @param fieldName
    * @returns {XML}
    */
-  static componentCheckbox() {
+  componentCheckbox(fieldName) {
+    this.fields[fieldName].attributes.defaultChecked = this.fields[fieldName].defaultValue;
+    this.fields[fieldName].attributes.checked = this.getStateOrDefaultSchemaValue(fieldName, this.fields[fieldName].defaultValue, false);
+    this.fields[fieldName].attributes.onCheck = (e) => {
+      this.setState({
+        [`${fieldName}_fieldValue`]: e.target.checked
+      });
+    };
+
     return (
-      <div key={this.key}>
-        <Checkbox {...this.attributes} />
+      <div key={this.fields[fieldName].key}>
+        <Checkbox {...this.fields[fieldName].attributes} />
       </div>
     );
   }
 
-  static componentRadio() {
-    this.attributes.groupOptions = this.attributes.groupOptions ? this.attributes.groupOptions : {};
-
-    const options = _.map(this.attributes.options ? this.attributes.options : this.field.allowedValues, (item, key) => {
-      if(typeof item === 'object')
-      {
-        item.value = item.value.toString();
-        return item;
-      }
-      else
-      {
-        return {label: item, value: item.toString()};
-      }
-    });
+	/**
+   * Radio component
+   * http://www.material-ui.com/#/components/radio-button
+   * @param fieldName
+   * @returns {XML}
+   */
+  componentRadio(fieldName) {
+    this.fields[fieldName].attributes.groupOptions = this.fields[fieldName].attributes.groupOptions ? this.fields[fieldName].attributes.groupOptions : {};
 
     return (
-      <RadioFieldInput inputKey={this.key} floatingLabelText={this.attributes.floatingLabelText} options={options} groupOptions={this.attributes.groupOptions} />
+      <RadioFieldInput
+        inputKey={this.fields[fieldName].key}
+        floatingLabelText={this.fields[fieldName].attributes.floatingLabelText}
+        options={this.getSchemaAllowValues(fieldName)}
+        groupOptions={this.fields[fieldName].attributes.groupOptions}
+      />
     );
   }
 
-  static submitButton() {
-    return (
-      <RaisedButton type="submit" className="button-submit" label='Submit' primary={true} />
-    )
+  getSchemaAllowValues(fieldName) {
+    const allowedValues = this.fields[fieldName].attributes.options ? this.fields[fieldName].attributes.options : this.fields[fieldName].allowedValues;
+
+    return Object.keys(allowedValues).map((key) => {
+      if(typeof allowedValues[key] === 'object')
+      {
+        allowedValues[key].value = allowedValues[key].value.toString();
+        return allowedValues[key];
+      }
+      else
+      {
+        return {label: allowedValues[key], value: allowedValues[key].toString()};
+      }
+    });
   }
 
-  static getFields(props) {
-    this.schema = props.collection._c2._simpleSchema._schema; // Using the provided Collection object, get the simpleSchema object
-    const components = []; // Each schema field will have a component and will be stored here as an array
-
-    if(props.useFields) // If we're selecting which fields to use
-    {
-      this.schema = _.reject(this.schema, (field, key) => { // Reject (ie remove) this field from the schema by returning boolean
-        return !_.contains(props.useFields, key); // Check if this key is inside our useFields prop
-      });
-    }
-
-    return this.schema;
-  }
-};
-
-class ReactAutoForm extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
-    
-    console.log(this.schema);
+    const forumFields = {};
+
+    Object.keys(this.schema).map((fieldName) => {
+      if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined')
+      {
+        //forumFields[fieldName] = this.state[`${fieldName}_fieldValue`];
+        forumFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName);
+      }
+
+      this.setState({
+        [`${fieldName}_fieldError`]: null
+      });
+    });
+
+    if(this.props.type === 'update')
+    {
+      this.submitUpdateDocument(forumFields);
+    }
+    else
+    {
+      this.submitInsertDocument(forumFields);
+    }
+  }
+
+  submitUpdateDocument(forumFields) {
+    console.log('This feature has not been developed yet...');
+  }
+
+  submitInsertDocument(forumFields) {
+    const docId = this.props.collection.insert(forumFields, (err, res) => {
+      if(err)
+      {
+        console.log('Error forum', forumFields);
+        if(err.invalidKeys)
+        {
+          // console.log(err.invalidKeys); // All the errors found in the form
+          this.setState({
+            [`${err.invalidKeys[0].name}_fieldError`]: err.message
+          });
+        }
+        else
+        {
+          console.log(err);
+        }
+      }
+      else
+      {
+        console.log('Submitted forum', forumFields);
+        this.resetForm();
+      }
+
+      return res;
+    });
+  }
+
+  resetForm() {
+    Object.keys(this.schema).map((fieldName) => {
+      this.setState({
+        [`${fieldName}_fieldValue`]: null
+      });
+    });
+  }
+
+  getStateOrDefaultSchemaValue(fieldName, schemaDefaultValue, ourDefaultValue) {
+    if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined' && this.state[`${fieldName}_fieldValue`] !== null)
+    {
+      return this.state[`${fieldName}_fieldValue`];
+    }
+    else
+    {
+      return typeof schemaDefaultValue !== 'undefined' ? schemaDefaultValue : ourDefaultValue;
+    }
   }
 
   getFields() {
-    this.schema = Fields.getFields(this.props);
+    this.schema = this.props.collection._c2._simpleSchema._schema; // Using the provided Collection object, get the simpleSchema object
+
+    if(this.props.useFields) // If we're selecting which fields to use
+    {
+      Object.keys(this.schema).filter((fieldName) => { // Filter (ie remove) this field from the schema by returning boolean
+        if(this.props.useFields.indexOf(fieldName) === -1) // If this fieldName does not exist in the useFields array
+        {
+          delete this.schema[fieldName]; // We remove it from the forum schema
+        }
+      });
+    }
+  }
+
+  forumClass() {
+    return this.props.formClass ? this.props.formClass : 'autoform_' + this.props.collection._name;
   }
 
   render() {
@@ -345,18 +442,28 @@ class ReactAutoForm extends React.Component {
       console.trace();
       return (<div></div>);
     }
+    else if(this.props.type === 'update' && !this.props.docId)
+    {
+      console.log('If you wish to update a document you must provide the documents `_id` in the `docId` ReactAutoForm parameter)! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform');
+      console.trace();
+      return (<div></div>);
+    }
 
     this.getFields();
-    console.log(this.schema);
 
     return (
       <div>
-        <form className={this.props.formClass ? this.props.formClass : 'autoform_' + this.props.collection._name} onSubmit={this.handleSubmit.bind(this)}>
-          {Fields.processFields(this.schema)}
+        <form className={this.forumClass} onSubmit={this.handleSubmit.bind(this)}>
+          {
+            Object.keys(this.schema).map((fieldName) => { // Loop through each schema object
+              return this.processField(this.schema[fieldName], fieldName); // Return the form element
+            })
+          }
+          <RaisedButton type="submit" className="button-submit" label='Submit' primary={true} onClick={this.handleSubmit.bind(this)} />
         </form>
       </div>
     )
-  };
+  }
 }
 
 export default ReactAutoForm;

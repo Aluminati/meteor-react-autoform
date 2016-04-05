@@ -3,18 +3,27 @@
 
 ## Installation
 1. Installed the NPM package: `$ npm i meteor-react-autoform`
-2. If you do not already, install the aldeed:collections2 Meteor package: `$ meteor add aldeed:collection2`
+2. If you do not already, install the `aldeed:collections2` Meteor package: `$ meteor add aldeed:collection2`
+3. Extend SimpleSchema to allow our `materialForm` object. Recommended to put the code in file `/lib/meteorReactAutoform.js`:
+```
+  // Documentation -> https://github.com/MechJosh0/meteor-react-autoform
+  // Extend the schema to allow our materialForm object
+  SimpleSchema.extendOptions({
+    materialForm: Match.Optional(Object)
+  })
+```
+4. See the [element examples](#element-examples-list) list to see how to write the `materialForm` object in your schema.
 
 ## WARNING
-This is still in development. Form handling is not available at the moment, this is top priority on the list and will be with the next version in a few days. Basic form elements are available, see below for todo list.
+This is still in active development. Document updating is not available at the moment, this is top priority on the list and will be with the next version (hopefully before this weekend). Basic form elements are available, see below for todo list.
 
 ## TODO
- - Manage form submitting
- - Select and multiple select element
+ - Update existing documents
+ - Automated testing
+ - Multiple select element
  - Array of string elements
  - Object fields
  - Array of object fields
- - Testing possibility
 
 ## Usage
 ### Example
@@ -36,11 +45,21 @@ This is still in development. Form handling is not available at the moment, this
 
 ### ReactAutoForm parameters
  - `collection={HelpDesk}` REQUIRED  You must provide the collection you wish to use for building your form.
+ - `type="insert"` OPTIONAL  This is the default parameter when creating a forum, this tells the forum to insert into the Collection
+ - `type="update" docId="4vXgXqixhzjYZ48pE"` OPTIONAL  If you wish to update a document, ensure you set the `type="update"` and provide the document `_id` in the `docId` parameter
  - `useFields={['name', 'text']}` OPTIONAL  Only the fields `name` and `description` will be in the built form.
  - `formClass="myCustomFormClass"` OPTIONAL  You may provide a custom className for the form, otherwise it will use the default `autoform_{$collectionName}`
 
 ## SimpleSchema object
 #### Example
+`/lib/meteorReactAutoform.js`
+```
+  // Documentation -> https://github.com/MechJosh0/meteor-react-autoform
+  // Extend the schema to allow our materialForm object
+  SimpleSchema.extendOptions({
+    materialForm: Match.Optional(Object)
+  })
+```
 `/lib/collections/helpDesk.js`
 ```
   import {Mongo} from 'meteor/mongo';
@@ -52,7 +71,7 @@ This is still in development. Form handling is not available at the moment, this
      type: String,
      materialForm: {
        floatingLabelText: 'Your name',
-       hintText: 'Josh'
+       hintText: 'Sarah Smith...'
      }
     },
     description: {
@@ -69,7 +88,7 @@ This is still in development. Form handling is not available at the moment, this
     },
     reoccurringProblem: {
       type: Boolean,
-      defaultValue: false,
+      defaultValue: true,
       label: 'Have you had the problem before?',
       materialForm: {
         switcher: 'Checkbox'
@@ -82,7 +101,7 @@ This is still in development. Form handling is not available at the moment, this
   export default HelpDesk;
 ```
 ![Image Preview](formPreview.png)
-### Element Examples
+### Element Examples <a name="element-examples-list"></a>
 - [Text](#element-text)
 - [Textarea](#element-textarea)
 - [Number](#element-number)
