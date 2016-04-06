@@ -24,6 +24,7 @@ This is still in active development. Document updating is not available at the m
  - Array of string elements
  - Object fields
  - Array of object fields
+ - Perform custom onSubmit actions passed into <ReactAutoForm /> (ie to allow developer to redirect the page after form submit)
 
 ## Usage
 ### Example
@@ -47,6 +48,7 @@ This is still in active development. Document updating is not available at the m
  - `collection={HelpDesk}` REQUIRED  You must provide the collection you wish to use for building your form.
  - `type="insert"` OPTIONAL  This is the default parameter when creating a forum, this tells the forum to insert into the Collection.
  - `type="update"` OPTIONAL  To update a document you must set the `type="update"` and provide either `docId` or `doc` parameter.
+    - `type="update" docId={$document._id}` OPTIONAL  Provide the document `_id` in the `docId` parameter.
     - `type="update" doc={$document}` OPTIONAL  Provide the document object in the `doc` parameter.
  - `useFields={['name', 'text']}` OPTIONAL  Only produce the fields `name` and `description` from the Collection in the form.
  - `formClass="myCustomFormClass"` OPTIONAL  You may provide a custom className for the form, otherwise it will use the default `autoform_{$collectionName}`.
