@@ -47,7 +47,7 @@ This is still in active development. Document updating is not available at the m
  - `collection={HelpDesk}` REQUIRED  You must provide the collection you wish to use for building your form.
  - `type="insert"` OPTIONAL  This is the default parameter when creating a forum, this tells the forum to insert into the Collection
  - `type="update" docId="4vXgXqixhzjYZ48pE"` OPTIONAL  If you wish to update a document, ensure you set the `type="update"` and provide the document `_id` in the `docId` parameter
- - `useFields={['name', 'text']}` OPTIONAL  Only the fields `name` and `description` will be in the built form.
+ - `useFields={['name', 'text']}` OPTIONAL  Only produce the fields `name` and `description` from the Collection in the form.
  - `formClass="myCustomFormClass"` OPTIONAL  You may provide a custom className for the form, otherwise it will use the default `autoform_{$collectionName}`
 
 ## SimpleSchema object
@@ -97,6 +97,12 @@ This is still in active development. Document updating is not available at the m
   };
 
   HelpDesk.attachSchema(schema);
+
+  HelpDesk.allow({
+    insert: (userId, doc) => {
+      return true;
+    }
+  });
 
   export default HelpDesk;
 ```
@@ -174,10 +180,10 @@ Type `Date` will provide a date select. `min` and `max` values are taken into co
   birthday: {
     type: Date,
     label: 'Your birthday',
-    //min: new Date('2014-01-01T00:00:00.000Z'),
+    defaultValue: new Date('2014-10-18T00:00:00.000Z'),
     materialForm: {
-      value: new Date('2014-10-18T00:00:00.000Z'),
-      dateMode: 'landscape'
+      dateMode: 'landscape',
+      autoOk: true
     }
   }
 ```
@@ -188,6 +194,7 @@ Type `Boolean` will use `materialForm.switcher` to determine to display either a
   agree: {
     type: Boolean,
     label: 'Do you agree?',
+    defaultValue: false,
     materialForm: {
       switcher: 'Checkbox'
       // OR

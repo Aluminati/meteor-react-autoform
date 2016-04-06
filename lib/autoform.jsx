@@ -115,6 +115,8 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    */
   getSchemaMaterialForm(fieldName) {
+    this.fields[fieldName].materialForm = this.fields[fieldName].materialForm ? this.fields[fieldName].materialForm : {};
+
     Object.keys(this.fields[fieldName].materialForm).map((key) => { // For each `materialForm` field
       this.fields[fieldName].attributes[key] = this.fields[fieldName].materialForm[key]; // Store it in our component attributes
     });
@@ -127,7 +129,7 @@ class ReactAutoForm extends React.Component {
    * @param materialField
    */
   getSchemaValue(fieldName, fieldColumn, materialField = fieldColumn) {
-    this.fields[fieldName].attributes[materialField] = this.fields[fieldName][fieldColumn] ? this.fields[fieldName][fieldColumn] : null; // If the `fieldColumn` exists, store it in our `materialField` attributes otherwise null
+    this.fields[fieldName].attributes[materialField] = typeof this.fields[fieldName][fieldColumn] !== 'undefined' ? this.fields[fieldName][fieldColumn] : null; // If the `fieldColumn` exists, store it in our `materialField` attributes otherwise null
   }
 
 	/**
@@ -172,7 +174,15 @@ class ReactAutoForm extends React.Component {
    * @returns {XML}
    */
   typeDate(fieldName) {
-    this.moveMaterialSchemaValue('hintText', 'floatingLabelText');
+    this.moveMaterialSchemaValue(fieldName, 'hintText', 'floatingLabelText');
+
+    this.fields[fieldName].attributes.defaultDate = this.fields[fieldName].defaultValue;
+    this.fields[fieldName].attributes.value = this.getStateOrDefaultSchemaValue(fieldName, '');
+    this.fields[fieldName].attributes.onChange = (e, date) => {
+      this.setState({
+        [`${fieldName}_fieldValue`]: date
+      });
+    };
 
     return (
       <div key={this.fields[fieldName].key}>
@@ -191,7 +201,7 @@ class ReactAutoForm extends React.Component {
     this.getSchemaValue(fieldName, 'max'); // Set the max [and min] of the number input
     this.getSchemaValue(fieldName, 'min');
 
-    return this.componentTextField();
+    return this.componentTextField(fieldName);
   }
 
 	/**
@@ -226,6 +236,15 @@ class ReactAutoForm extends React.Component {
     this.fields[fieldName].attributes.selectOptions = this.fields[fieldName].attributes.selectOptions ? this.fields[fieldName].attributes.selectOptions : {};
     this.fields[fieldName].attributes.selectOptions.floatingLabelText = this.fields[fieldName].attributes.floatingLabelText;
 
+    this.fields[fieldName].attributes.selectOptions.errorText = this.state[`${fieldName}_fieldError`];
+    this.fields[fieldName].attributes.selectOptions.defaultValue = this.fields[fieldName].defaultValue;
+    this.fields[fieldName].attributes.selectOptions.value = this.getStateOrDefaultSchemaValue(fieldName, '');
+    this.fields[fieldName].attributes.selectOptions.onChange = (e, index, value) => {
+      this.setState({
+        [`${fieldName}_fieldValue`]: value
+      });
+    };
+
     return (
       <SelectFieldInput
         inputKey={this.fields[fieldName].key}
@@ -244,7 +263,7 @@ class ReactAutoForm extends React.Component {
   componentTextField(fieldName) {
     this.fields[fieldName].attributes.errorText = this.state[`${fieldName}_fieldError`];
     this.fields[fieldName].attributes.defaultValue = this.fields[fieldName].defaultValue;
-    this.fields[fieldName].attributes.value = this.getStateOrDefaultSchemaValue(fieldName, this.fields[fieldName].defaultValue, '');
+    this.fields[fieldName].attributes.value = this.getStateOrDefaultSchemaValue(fieldName, '');
     this.fields[fieldName].attributes.onChange = (e) => {
       if(e.target.value !== '')
       {
@@ -258,7 +277,6 @@ class ReactAutoForm extends React.Component {
           [`${fieldName}_fieldValue`]: this.fields[fieldName].defaultValue
         });
       }
-
     };
 
     return (
@@ -276,6 +294,14 @@ class ReactAutoForm extends React.Component {
    * @returns {XML}
    */
   componentToggle(fieldName) {
+    this.fields[fieldName].attributes.defaultToggled = this.fields[fieldName].defaultValue;
+    this.fields[fieldName].attributes.toggled = this.getStateOrDefaultSchemaValue(fieldName, false);
+    this.fields[fieldName].attributes.onToggle = (e) => {
+      this.setState({
+        [`${fieldName}_fieldValue`]: e.target.checked
+      });
+    };
+
     return (
       <div key={this.fields[fieldName].key}>
         <Toggle {...this.fields[fieldName].attributes} />
@@ -292,7 +318,7 @@ class ReactAutoForm extends React.Component {
    */
   componentCheckbox(fieldName) {
     this.fields[fieldName].attributes.defaultChecked = this.fields[fieldName].defaultValue;
-    this.fields[fieldName].attributes.checked = this.getStateOrDefaultSchemaValue(fieldName, this.fields[fieldName].defaultValue, false);
+    this.fields[fieldName].attributes.checked = this.getStateOrDefaultSchemaValue(fieldName, false);
     this.fields[fieldName].attributes.onCheck = (e) => {
       this.setState({
         [`${fieldName}_fieldValue`]: e.target.checked
@@ -314,6 +340,12 @@ class ReactAutoForm extends React.Component {
    */
   componentRadio(fieldName) {
     this.fields[fieldName].attributes.groupOptions = this.fields[fieldName].attributes.groupOptions ? this.fields[fieldName].attributes.groupOptions : {};
+    this.fields[fieldName].attributes.groupOptions.valueSelected = this.getStateOrDefaultSchemaValue(fieldName, '');
+    this.fields[fieldName].attributes.groupOptions.onChange = (e, value) => {
+        this.setState({
+          [`${fieldName}_fieldValue`]: value
+        });
+    };
 
     return (
       <RadioFieldInput
@@ -343,13 +375,18 @@ class ReactAutoForm extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+
+    this.setState({
+      processingForm: true
+    });
+
     const forumFields = {};
 
     Object.keys(this.schema).map((fieldName) => {
       if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined')
       {
         //forumFields[fieldName] = this.state[`${fieldName}_fieldValue`];
-        forumFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName);
+        forumFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName, null);
       }
 
       this.setState({
@@ -394,6 +431,10 @@ class ReactAutoForm extends React.Component {
         this.resetForm();
       }
 
+      this.setState({
+        processingForm: false
+      });
+
       return res;
     });
   }
@@ -406,14 +447,14 @@ class ReactAutoForm extends React.Component {
     });
   }
 
-  getStateOrDefaultSchemaValue(fieldName, schemaDefaultValue, ourDefaultValue) {
+  getStateOrDefaultSchemaValue(fieldName, ourDefaultValue) {
     if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined' && this.state[`${fieldName}_fieldValue`] !== null)
     {
       return this.state[`${fieldName}_fieldValue`];
     }
     else
     {
-      return typeof schemaDefaultValue !== 'undefined' ? schemaDefaultValue : ourDefaultValue;
+      return typeof this.fields[fieldName].defaultValue !== 'undefined' ? this.fields[fieldName].defaultValue : ourDefaultValue;
     }
   }
 
@@ -432,7 +473,7 @@ class ReactAutoForm extends React.Component {
   }
 
   forumClass() {
-    return this.props.formClass ? this.props.formClass : 'autoform_' + this.props.collection._name;
+    return this.props.formClass ? this.props.formClass : `autoform_${this.props.collection._name}`;
   }
 
   render() {
@@ -452,16 +493,14 @@ class ReactAutoForm extends React.Component {
     this.getFields();
 
     return (
-      <div>
-        <form className={this.forumClass} onSubmit={this.handleSubmit.bind(this)}>
-          {
-            Object.keys(this.schema).map((fieldName) => { // Loop through each schema object
-              return this.processField(this.schema[fieldName], fieldName); // Return the form element
-            })
-          }
-          <RaisedButton type="submit" className="button-submit" label='Submit' primary={true} onClick={this.handleSubmit.bind(this)} />
-        </form>
-      </div>
+      <form className={this.forumClass} onSubmit={this.handleSubmit.bind(this)}>
+        {
+          Object.keys(this.schema).map((fieldName) => { // Loop through each schema object
+            return this.processField(this.schema[fieldName], fieldName); // Return the form element
+          })
+        }
+        <RaisedButton type="submit" className="button-submit" label='Submit' primary={true} onClick={this.handleSubmit.bind(this)} disabled={this.state.processingForm} />
+      </form>
     )
   }
 }
