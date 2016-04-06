@@ -3,7 +3,7 @@
 
 ## Installation
 1. Installed the NPM package: `$ npm i meteor-react-autoform`
-2. If you do not already, install the `aldeed:collections2` Meteor package: `$ meteor add aldeed:collection2`
+2. Install the Meteor package: `$ meteor add aldeed:collection2`
 3. Extend SimpleSchema to allow our `materialForm` object. Recommended to put the code in file `/lib/meteorReactAutoform.js`:
 ```
   // Documentation -> https://github.com/MechJosh0/meteor-react-autoform
