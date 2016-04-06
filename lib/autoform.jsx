@@ -7,8 +7,9 @@ const DatePicker = require('material-ui/lib/date-picker/date-picker');
 const TextField = require('material-ui/lib/text-field');
 const Toggle = require('material-ui/lib/toggle');
 const Checkbox = require('material-ui/lib/checkbox');
-import SelectFieldInput from './selectField.jsx';
 import RadioFieldInput from './radioField.jsx';
+const SelectField = require('material-ui/lib/select-field');
+const MenuItem = require('material-ui/lib/menus/menu-item');
 // import RaisedButton from 'material-ui/lib/raised-button';
 const RaisedButton = require('material-ui/lib/raised-button');
 //const SelectField = require('material-ui/lib/select-field');
@@ -233,9 +234,9 @@ class ReactAutoForm extends React.Component {
    * @returns {XML}
    */
   typeDropdown(fieldName) {
+    const options = this.getSchemaAllowValues(fieldName);
     this.fields[fieldName].attributes.selectOptions = this.fields[fieldName].attributes.selectOptions ? this.fields[fieldName].attributes.selectOptions : {};
     this.fields[fieldName].attributes.selectOptions.floatingLabelText = this.fields[fieldName].attributes.floatingLabelText;
-
     this.fields[fieldName].attributes.selectOptions.errorText = this.state[`${fieldName}_fieldError`];
     this.fields[fieldName].attributes.selectOptions.defaultValue = this.fields[fieldName].defaultValue;
     this.fields[fieldName].attributes.selectOptions.value = this.getStateOrDefaultSchemaValue(fieldName, '');
@@ -246,11 +247,15 @@ class ReactAutoForm extends React.Component {
     };
 
     return (
-      <SelectFieldInput
-        inputKey={this.fields[fieldName].key}
-        options={this.getSchemaAllowValues(fieldName)}
-        selectOptions={this.fields[fieldName].attributes.selectOptions}
-      />
+      <SelectField {...this.fields[fieldName].attributes.selectOptions}>
+        {
+          Object.keys(options).map((i) => {
+            return (
+              <MenuItem key={options[i].value} value={options[i].value} label={options[i].label} primaryText={options[i].label}/>
+            );
+          })
+        }
+      </SelectField>
     );
   }
 
@@ -405,29 +410,31 @@ class ReactAutoForm extends React.Component {
   }
 
   submitUpdateDocument(forumFields) {
-    console.log('This feature has not been developed yet...');
-  }
 
-  submitInsertDocument(forumFields) {
-    const docId = this.props.collection.insert(forumFields, (err, res) => {
+    if(Object.keys(forumFields).length === 0)
+    {
+      this.log(`Attempting to update "${this.props.doc._id}" with a blank forum`);
+      return;
+    }
+    const docId = this.props.collection.update(this.props.doc._id, {$set: forumFields}, (err, res) => {
       if(err)
       {
-        console.log('Error forum', forumFields);
+        this.log(`Error updating "${this.props.doc._id}"`, forumFields);
         if(err.invalidKeys)
         {
-          // console.log(err.invalidKeys); // All the errors found in the form
+          // this.log(err.invalidKeys); // All the errors found in the form
           this.setState({
             [`${err.invalidKeys[0].name}_fieldError`]: err.message
           });
         }
         else
         {
-          console.log(err);
+          this.log(err);
         }
       }
       else
       {
-        console.log('Submitted forum', forumFields);
+        this.log(`Updated "${this.props.doc._id}"`, forumFields);
         this.resetForm();
       }
 
@@ -437,6 +444,44 @@ class ReactAutoForm extends React.Component {
 
       return res;
     });
+  }
+
+  submitInsertDocument(forumFields) {
+    const docId = this.props.collection.insert(forumFields, (err, res) => {
+      if(err)
+      {
+        this.log(`Error inserting forum`, forumFields);
+        if(err.invalidKeys)
+        {
+          // this.log(err.invalidKeys); // All the errors found in the form
+          this.setState({
+            [`${err.invalidKeys[0].name}_fieldError`]: err.message
+          });
+        }
+        else
+        {
+          this.log(err);
+        }
+      }
+      else
+      {
+        this.log(`Inserted forum`, forumFields);
+        this.resetForm();
+      }
+
+      this.setState({
+        processingForm: false
+      });
+
+      return res;
+    });
+  }
+
+  log(...msg) {
+    if(this.props.debug)
+    {
+      console.log(...msg);
+    }
   }
 
   resetForm() {
@@ -451,6 +496,17 @@ class ReactAutoForm extends React.Component {
     if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined' && this.state[`${fieldName}_fieldValue`] !== null)
     {
       return this.state[`${fieldName}_fieldValue`];
+    }
+    else if(this.props.type === 'update' && typeof this.props.doc[fieldName] !== 'undefined' && this.props.doc[fieldName] !== null)
+    {
+      if(!isNaN(parseFloat(this.props.doc[fieldName])) && isFinite(this.props.doc[fieldName]))
+      {
+        return this.props.doc[fieldName].toString();
+      }
+      else
+      {
+        return this.props.doc[fieldName];
+      }
     }
     else
     {
@@ -479,14 +535,12 @@ class ReactAutoForm extends React.Component {
   render() {
     if(!this.props.collection)
     {
-      console.log('You must provide a collection for the form to use! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform');
-      console.trace();
+      this.log(`You must provide a collection for the form to use! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
       return (<div></div>);
     }
-    else if(this.props.type === 'update' && !this.props.docId)
+    else if(this.props.type === 'update' && !this.props.doc)
     {
-      console.log('If you wish to update a document you must provide the documents `_id` in the `docId` ReactAutoForm parameter)! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform');
-      console.trace();
+      this.log(`If you wish to update a document you must provide the document in the \`doc\` ReactAutoForm parameter)! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
       return (<div></div>);
     }
 

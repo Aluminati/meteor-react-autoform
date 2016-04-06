@@ -45,10 +45,12 @@ This is still in active development. Document updating is not available at the m
 
 ### ReactAutoForm parameters
  - `collection={HelpDesk}` REQUIRED  You must provide the collection you wish to use for building your form.
- - `type="insert"` OPTIONAL  This is the default parameter when creating a forum, this tells the forum to insert into the Collection
- - `type="update" docId="4vXgXqixhzjYZ48pE"` OPTIONAL  If you wish to update a document, ensure you set the `type="update"` and provide the document `_id` in the `docId` parameter
+ - `type="insert"` OPTIONAL  This is the default parameter when creating a forum, this tells the forum to insert into the Collection.
+ - `type="update"` OPTIONAL  To update a document you must set the `type="update"` and provide either `docId` or `doc` parameter.
+    - `type="update" doc={$document}` OPTIONAL  Provide the document object in the `doc` parameter.
  - `useFields={['name', 'text']}` OPTIONAL  Only produce the fields `name` and `description` from the Collection in the form.
- - `formClass="myCustomFormClass"` OPTIONAL  You may provide a custom className for the form, otherwise it will use the default `autoform_{$collectionName}`
+ - `formClass="myCustomFormClass"` OPTIONAL  You may provide a custom className for the form, otherwise it will use the default `autoform_{$collectionName}`.
+ - `debug={true}` OPTIONAL  This will output the forum data into the console when the user attempts to submit.
 
 ## SimpleSchema object
 #### Example
