@@ -7,19 +7,11 @@ const DatePicker = require('material-ui/lib/date-picker/date-picker');
 const TextField = require('material-ui/lib/text-field');
 const Toggle = require('material-ui/lib/toggle');
 const Checkbox = require('material-ui/lib/checkbox');
-import RadioFieldInput from './radioField.jsx';
 const SelectField = require('material-ui/lib/select-field');
 const MenuItem = require('material-ui/lib/menus/menu-item');
-// import RaisedButton from 'material-ui/lib/raised-button';
 const RaisedButton = require('material-ui/lib/raised-button');
-//const SelectField = require('material-ui/lib/select-field');
-//const MenuItem = require('material-ui/lib/menus/menu-item');
-//const Fields = require('./fields.jsx');
-
-// Extend the schema to allow our materfialForm object
-// SimpleSchema.extendOptions({
-//   materialForm: Match.Optional(Object)
-// });
+const RadioButton = require('material-ui/lib/radio-button');
+const RadioButtonGroup = require('material-ui/lib/radio-button-group');
 
 /**
  * Class to translate SimpleSchema to Material-UI fields
@@ -371,7 +363,9 @@ class ReactAutoForm extends React.Component {
    * @returns {XML}
    */
   componentRadio(fieldName) {
+    const options = this.getSchemaAllowValues(fieldName);
     this.fields[fieldName].attributes.groupOptions = this.fields[fieldName].attributes.groupOptions ? this.fields[fieldName].attributes.groupOptions : {};
+    this.fields[fieldName].attributes.groupOptions.name = this.fields[fieldName].key;
     this.fields[fieldName].attributes.groupOptions.valueSelected = this.getStateOrDefaultSchemaValue(fieldName, '');
     this.fields[fieldName].attributes.groupOptions.onChange = (e, value) => {
         this.setState({
@@ -380,12 +374,18 @@ class ReactAutoForm extends React.Component {
     };
 
     return (
-      <RadioFieldInput
-        inputKey={this.fields[fieldName].key}
-        floatingLabelText={this.fields[fieldName].attributes.floatingLabelText}
-        options={this.getSchemaAllowValues(fieldName)}
-        groupOptions={this.fields[fieldName].attributes.groupOptions}
-      />
+      <div key={this.fields[fieldName].key}>
+        <label>{this.fields[fieldName].attributes.floatingLabelText}</label>
+        <RadioButtonGroup {...this.fields[fieldName].attributes.groupOptions}>
+          {
+            Object.keys(options).map((i) => {
+              return (
+                <RadioButton key={options[i].value} {...options[i]} />
+              );
+            })
+          }
+        </RadioButtonGroup>
+      </div>
     );
   }
 
