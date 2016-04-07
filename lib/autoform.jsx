@@ -49,6 +49,27 @@ class ReactAutoForm extends React.Component {
     this.state = {};
     this.fields = {};
     this.getFields();
+    this.checkPropsDefined();
+  }
+
+  checkPropsDefined() {
+    if(!this.props.collection)
+    {
+      this.log(`You must provide a collection for the form to use! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
+      this.failedRun = true;
+    }
+    else if(this.props.type === 'update' && !this.props.doc)
+    {
+      if(this.props.docId)
+      {
+        this.failedRun = true;
+      }
+      else
+      {
+        this.log(`If you wish to update a document you must provide the document in the \`doc\` ReactAutoForm parameter (or document._id in \`docId\`)! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
+        this.failedRun = true;
+      }
+    }
   }
 
 	/**
@@ -412,14 +433,14 @@ class ReactAutoForm extends React.Component {
   submitUpdateDocument(forumFields) {
     if(Object.keys(forumFields).length === 0)
     {
-      this.log(`Attempting to update "${this.props.doc._id}" with a blank forum`);
+      this.log(`Attempting to update \`${this.props.doc._id}\` with a blank forum`);
       return;
     }
 
     this.props.collection.update(this.props.doc._id, {$set: forumFields}, (err, res) => {
       if(err)
       {
-        this.log(`Error updating "${this.props.doc._id}"`, forumFields);
+        this.log(`Error updating \`${this.props.doc._id}\``, forumFields);
         if(err.invalidKeys)
         {
           // this.log(err.invalidKeys); // All the errors found in the form
@@ -434,7 +455,7 @@ class ReactAutoForm extends React.Component {
       }
       else
       {
-        this.log(`Updated "${this.props.doc._id}"`, forumFields);
+        this.log(`Updated \`${this.props.doc._id}\``, forumFields);
       }
 
       this.setState({
@@ -536,18 +557,10 @@ class ReactAutoForm extends React.Component {
   }
 
   render() {
-    if(!this.props.collection)
+    if(this.failedRun)
     {
-      this.log(`You must provide a collection for the form to use! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
       return (<div></div>);
     }
-    else if(this.props.type === 'update' && !this.props.doc)
-    {
-      this.log(`If you wish to update a document you must provide the document in the \`doc\` ReactAutoForm parameter)! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
-      return (<div></div>);
-    }
-
-    console.log('schema', this.schema);
 
     return (
       <form className={this.forumClass} onSubmit={this.handleSubmit.bind(this)}>
