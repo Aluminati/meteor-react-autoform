@@ -2,39 +2,20 @@
  * Created by josh.welham on 15/03/2016.
  */
 
-const React = require('react');
-const DatePicker = require('material-ui/lib/date-picker/date-picker');
-const TextField = require('material-ui/lib/text-field');
-const Toggle = require('material-ui/lib/toggle');
-const Checkbox = require('material-ui/lib/checkbox');
-const SelectField = require('material-ui/lib/select-field');
-const MenuItem = require('material-ui/lib/menus/menu-item');
-const RaisedButton = require('material-ui/lib/raised-button');
-const RadioButton = require('material-ui/lib/radio-button');
-const RadioButtonGroup = require('material-ui/lib/radio-button-group');
+import React from 'react';
+import DatePicker from 'material-ui/lib/date-picker/date-picker';
+import TextField from 'material-ui/lib/text-field';
+import Toggle from 'material-ui/lib/toggle';
+import Checkbox from 'material-ui/lib/checkbox';
+import SelectField from 'material-ui/lib/select-field';
+import MenuItem from 'material-ui/lib/menus/menu-item';
+import RaisedButton from 'material-ui/lib/raised-button';
+import RadioButton from 'material-ui/lib/radio-button';
+import RadioButtonGroup from 'material-ui/lib/radio-button-group';
 
 /**
  * Class to translate SimpleSchema to Material-UI fields
- * @type {{
- *  typeCheckbox: (function(): XML),
- *  typeString: (function(): XML),
- *  typeNumber: (function(): XML),
- *  createDefaultAttr: (function()),
- *  componentToggle: (function(): XML),
- *  typeDate: (function(): XML),
- *  removeMaterialSchemaValue: (function(*)),
- *  componentRadio: (function()),
- *  componentTextField: (function(): XML),
- *  typeDropdown: (function(): XML),
- *  processFields: (function(*): Array),
- *  moveMaterialSchemaValue: (function(*, *)),
- *  getSchemaMaterialForm: (function()),
- *  getSchemaValue: (function(*, *=)),
- *  componentCheckbox: (function(): XML),
- *  processField: (function(*, *): *)
- * }}
  */
-
 class ReactAutoForm extends React.Component {
   constructor(props) {
     super(props);
@@ -47,7 +28,7 @@ class ReactAutoForm extends React.Component {
   checkPropsDefined() {
     if(!this.props.collection)
     {
-      this.log(`You must provide a collection for the form to use! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
+      this.log(false, `You must provide a collection for the form to use! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
       this.failedRun = true;
     }
     else if(this.props.type === 'update' && !this.props.doc)
@@ -58,13 +39,13 @@ class ReactAutoForm extends React.Component {
       }
       else
       {
-        this.log(`If you wish to update a document you must provide the document in the \`doc\` prop! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
+        this.log(false, `If you wish to update a document you must provide the document in the \`doc\` prop! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
         this.failedRun = true;
       }
     }
     else if(['insert', 'update'].indexOf(this.props.type) === -1)
     {
-      this.log(`You must provide a type prop (either \`insert\` or \`update\`)! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
+      this.log(false, `You must provide a type prop (either \`insert\` or \`update\`)! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
       this.failedRun = true;
     }
   }
@@ -389,6 +370,11 @@ class ReactAutoForm extends React.Component {
     );
   }
 
+	/**
+   * Get the option values from the schema - Used for radio and select inputs
+   * @param fieldName
+   * @returns {Array}
+   */
   getSchemaAllowValues(fieldName) {
     const allowedValues = this.fields[fieldName].attributes.options ? this.fields[fieldName].attributes.options : this.fields[fieldName].allowedValues;
 
@@ -405,64 +391,72 @@ class ReactAutoForm extends React.Component {
     });
   }
 
+	/**
+   * Submit handler - Submit button was clicked or enter was pressed
+   * @param event
+   */
   handleSubmit(event) {
     event.preventDefault();
 
+    if(this.state.processingForm) // If we're already processing we don't need to submit again
+    {
+      return;
+    }
+
+    // This will disable duplicated submits
     this.setState({
       processingForm: true
     });
 
     const forumFields = {};
 
+    // Loop through each schema object to build the $forumFields which is then used to submit the form
     Object.keys(this.schema).map((fieldName) => {
       if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined')
       {
-        forumFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName);
+        forumFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName); // Gets the state value
       }
 
+      // Reset the error if there is one
       this.setState({
         [`${fieldName}_fieldError`]: null
       });
     });
 
-    if(this.props.type === 'update')
+    if(this.props.type === 'update') // If we're updating a document
     {
       this.submitUpdateDocument(forumFields);
     }
-    else
+    else // Or inserting a new document
     {
       this.submitInsertDocument(forumFields);
     }
   }
 
+	/**
+   * Update an existing document
+   * @param forumFields
+   */
   submitUpdateDocument(forumFields) {
-    if(Object.keys(forumFields).length === 0)
+    if(Object.keys(forumFields).length === 0) // If there is nothing to submit quit now
     {
-      this.log(`Attempting to update \`${this.props.doc._id}\` with a blank forum`);
+      this.log(false, `Attempting to update \`${this.props.doc._id}\` with a blank forum`);
       return;
     }
 
+    // Update the document with $forumFields
     this.props.collection.update(this.props.doc._id, {$set: forumFields}, (err, res) => {
-      if(err)
+      if(err) // If there was an error
       {
-        this.log(`Error updating \`${this.props.doc._id}\``, forumFields);
-        if(err.invalidKeys)
-        {
-          // this.log(err.invalidKeys); // All the errors found in the form
-          this.setState({
-            [`${err.invalidKeys[0].name}_fieldError`]: err.message
-          });
-        }
-        else
-        {
-          this.log(err);
-        }
+        this.log(false, `Error updating \`${this.props.doc._id}\``, forumFields);
+        this.handleSubmitError(err);
       }
       else
       {
-        this.log(`Updated \`${this.props.doc._id}\``, forumFields);
+        this.log(false, `Updated \`${this.props.doc._id}\``, forumFields);
       }
 
+      // Finished prcoessing so allow submitting again
       this.setState({
         processingForm: false
       });
@@ -471,22 +465,17 @@ class ReactAutoForm extends React.Component {
     });
   }
 
+	/**
+   * Insert a new document
+   * @param forumFields
+   */
   submitInsertDocument(forumFields) {
+    // Insert a new document
     this.props.collection.insert(forumFields, (err, res) => {
-      if(err)
+      if(err) // If there was an error
       {
-        this.log(`Error inserting forum`, forumFields);
-        if(err.invalidKeys)
-        {
-          // this.log(err.invalidKeys); // All the errors found in the form
-          this.setState({
-            [`${err.invalidKeys[0].name}_fieldError`]: err.message
-          });
-        }
-        else
-        {
-          this.log(err);
-        }
+        this.log(false, `Error inserting forum`, forumFields);
+        this.handleSubmitError(err);
 
         this.setState({
           processingForm: false
@@ -494,7 +483,7 @@ class ReactAutoForm extends React.Component {
       }
       else
       {
-        this.log(`Inserted forum`, forumFields);
+        this.log(false, `Inserted forum`, forumFields);
         this.resetForm();
       }
 
@@ -502,13 +491,41 @@ class ReactAutoForm extends React.Component {
     });
   }
 
-  log(...msg) {
-    if(this.props.debug)
+	/**
+   * There was an error in either submitting or inserting a document, handle it here
+   * @param err
+   */
+  handleSubmitError(err) {
+    if(err.invalidKeys)
+    {
+      // this.log(false, err.invalidKeys); // All the errors found in the form
+      // Update the input to slash the error
+      this.setState({
+        [`${err.invalidKeys[0].name}_fieldError`]: err.message
+      });
+    }
+    else
+    {
+      // Some error we don't know about!
+      this.log(true, err);
+    }
+  }
+
+	/**
+   * Console.log
+   * @param force
+   * @param msg
+   */
+  log(force, ...msg) {
+    if(force || this.props.debug)
     {
       console.log(...msg);
     }
   }
 
+	/**
+   * Reset the entire forum to default
+   */
   resetForm() {
     const changeStates = {
       processingForm: false
@@ -521,28 +538,48 @@ class ReactAutoForm extends React.Component {
     this.setState(changeStates);
   }
 
+	/**
+   * Used to get an inputs value, it will attempt to return a value that exists (in order):
+   *  1. The state value
+   *  2. Document value
+   *    1. If it's an int, return it as a String value
+   *    2. Return normal String value
+   *  3. Default value
+   * @param fieldName
+   * @param ourDefaultValue
+   * @returns {*}
+   */
   getStateOrDefaultSchemaValue(fieldName, ourDefaultValue) {
+    // If the state value exists
     if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined' && this.state[`${fieldName}_fieldValue`] !== null)
     {
+      // Return the state value
       return this.state[`${fieldName}_fieldValue`];
     }
+    // Else if we're updating an existing document and the value exists here
     else if(this.props.type === 'update' && typeof this.props.doc[fieldName] !== 'undefined' && this.props.doc[fieldName] !== null)
     {
+      // If it's a number
       if(!isNaN(parseFloat(this.props.doc[fieldName])) && isFinite(this.props.doc[fieldName]))
       {
+        // Return it as a String
         return this.props.doc[fieldName].toString();
       }
       else
       {
+        // Return normal document String
         return this.props.doc[fieldName];
       }
     }
-    else
+    else // Else just return the Schema default value OR my hard-coded default value
     {
       return typeof this.fields[fieldName].defaultValue !== 'undefined' ? this.fields[fieldName].defaultValue : ourDefaultValue;
     }
   }
 
+	/**
+   * Gets the Schema object and then removes anything that the `props.useFields` hasn't declared
+   */
   getFields() {
     this.schema = this.props.collection._c2._simpleSchema._schema; // Using the provided Collection object, get the simpleSchema object
 
@@ -557,14 +594,18 @@ class ReactAutoForm extends React.Component {
     }
   }
 
+	/**
+   * Get the forum class or use default class name
+   * @returns {string}
+   */
   forumClass() {
     return this.props.formClass ? this.props.formClass : `autoform_${this.props.collection._name}`;
   }
 
   render() {
-    if(this.failedRun)
+    if(this.failedRun) // If there was an error
     {
-      return (<div></div>);
+      return (<div></div>); // Return blank
     }
 
     return (
