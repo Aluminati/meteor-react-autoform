@@ -66,9 +66,14 @@ class ReactAutoForm extends React.Component {
       }
       else
       {
-        this.log(`If you wish to update a document you must provide the document in the \`doc\` ReactAutoForm parameter (or document._id in \`docId\`)! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
+        this.log(`If you wish to update a document you must provide the document in the \`doc\` prop! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
         this.failedRun = true;
       }
+    }
+    else if(['insert', 'update'].indexOf(this.props.type) === -1)
+    {
+      this.log(`You must provide a type prop (either \`insert\` or \`update\`)! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
+      this.failedRun = true;
     }
   }
 
