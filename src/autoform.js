@@ -485,13 +485,14 @@ class ReactAutoForm extends React.Component {
       {
         this.log(false, `Inserted forum`, forumFields);
         
-        if(this.props.onSubmit)
+        if(this.props.onSubmit) // If we have a onSubmit function from the props
         {
-          this.props.onSubmit(res);
+          this.props.onSubmit(res); // Run it - and pass the created docId to it
         }
-        
-        this.resetForm();
-        
+        else // Otherwise
+        {
+          this.resetForm(); // Reset the forum to blank
+        }
       }
 
       return res;
