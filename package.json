@@ -1,23 +1,36 @@
 {
   "name": "meteor-react-autoform",
-  "version": "0.0.8",
+  "version": "0.0.81",
   "description": "Meteor autoform for React using aldeed/meteor-simple-schema",
-  "keywords": ["meteor", "react", "autoform", "simpleschema"],
+  "keywords": [
+    "meteor",
+    "react",
+    "autoform",
+    "simpleschema"
+  ],
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "$(npm bin)/babel src --out-dir lib",
+    "prepublish": "npm run compile"
   },
   "dependencies": {
     "react": "^0.14.6",
     "material-ui": "^0.14.4",
-    "react-tap-event-plugin": "^0.2.2"
+    "react-tap-event-plugin": "^0.2.2",
+    "react-dom": "^0.14.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/MechJosh0/meteor-react-autoform.git"
   },
-  "url" : "https://github.com/MechJosh0/meteor-react-autoform/issues",
-  "email" : "josh@aluminati.net",
+  "url": "https://github.com/MechJosh0/meteor-react-autoform/issues",
+  "email": "josh@aluminati.net",
   "author": "MechJosh0",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.7.5",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-preset-react": "^6.5.0"
+  }
 }
