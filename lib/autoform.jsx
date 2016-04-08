@@ -484,7 +484,14 @@ class ReactAutoForm extends React.Component {
       else
       {
         this.log(false, `Inserted forum`, forumFields);
+        
+        if(this.props.onSubmit)
+        {
+          this.props.onSubmit(res);
+        }
+        
         this.resetForm();
+        
       }
 
       return res;

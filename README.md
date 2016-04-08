@@ -27,20 +27,25 @@ This is still in active development. Basic form elements are available, see belo
 
 ## Usage
 ### Example
-`/client/modules/contactUs/components/contactUsPage.jsx`
+`/client/modules/contact/components/contactPage.jsx`
 ```
   import React from 'react';
   import ReactAutoForm from 'meteor-react-autoform';
   import HelpDesk from '/lib/collections/helpDesk';
 
-  const ContactUsPage = () => (
+  const redirectPageToNewDocument = (docId) => {
+    // You can redirect the client URL to your new documentId. For example if you're using FlowRouter:
+    // FlowRouter.go(`/contact/${docId}`);
+  };
+
+  const ContactPage = () => (
     <div>
       <h1>Contact Us</h1>
-      <ReactAutoForm collection={HelpDesk} />
+      <ReactAutoForm collection={HelpDesk} type="insert" onSubmit={redirectPageToNewDocument} />
     </div>
   );
 
-  export default ContactUsPage;
+  export default ContactPage;
 ```
 
 ### ReactAutoForm props
@@ -50,6 +55,7 @@ This is still in active development. Basic form elements are available, see belo
  - `useFields={['name', 'text']}` OPTIONAL  Only produce the fields `name` and `description` from the Collection in the form.
  - `formClass="myCustomFormClass"` OPTIONAL  You may provide a custom className for the form, otherwise it will use the default `autoform_{$collectionName}`.
  - `debug={true}` OPTIONAL  This will output the forum data into the console when the user attempts to submit.
+ - `onSubmit={(docId) => { console.log("New document", docId); }}` OPTIONAL Function to run when an insert is successful, the new docId is passed through to your custom function.
 
 ## SimpleSchema object
 #### Example
