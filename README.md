@@ -18,7 +18,6 @@
 This is still in active development. Basic form elements are available, see below for todo list.
 
 ## TODO
- - Perform custom onSubmit actions passed into <ReactAutoForm /> (ie to allow developer to redirect the page after form submit)
  - Automated testing
  - Multiple select element
  - Array of string elements
