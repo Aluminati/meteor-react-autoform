@@ -238,7 +238,7 @@ class ReactAutoForm extends React.Component {
     this.fields[fieldName].attributes.selectOptions = this.fields[fieldName].attributes.selectOptions ? this.fields[fieldName].attributes.selectOptions : {};
     this.fields[fieldName].attributes.selectOptions.floatingLabelText = this.fields[fieldName].attributes.floatingLabelText;
     this.fields[fieldName].attributes.selectOptions.errorText = this.state[`${fieldName}_fieldError`];
-    this.fields[fieldName].attributes.selectOptions.defaultValue = this.fields[fieldName].defaultValue;
+    this.fields[fieldName].attributes.selectOptions.defaultValue = this.getSchemaDefaultValue(fieldName, '');
     this.fields[fieldName].attributes.selectOptions.value = this.getStateOrDefaultSchemaValue(fieldName, '');
     this.fields[fieldName].attributes.selectOptions.onChange = (e, index, value) => {
       this.setState({
@@ -267,7 +267,7 @@ class ReactAutoForm extends React.Component {
    */
   componentTextField(fieldName) {
     this.fields[fieldName].attributes.errorText = this.state[`${fieldName}_fieldError`];
-    this.fields[fieldName].attributes.defaultValue = this.fields[fieldName].defaultValue;
+    this.fields[fieldName].attributes.defaultValue = this.getSchemaDefaultValue(fieldName, '');
     this.fields[fieldName].attributes.value = this.getStateOrDefaultSchemaValue(fieldName, '');
     this.fields[fieldName].attributes.onChange = (e) => {
       if(e.target.value !== '')
@@ -279,7 +279,7 @@ class ReactAutoForm extends React.Component {
       else
       {
         this.setState({
-          [`${fieldName}_fieldValue`]: this.fields[fieldName].defaultValue
+          [`${fieldName}_fieldValue`]: this.fields[fieldName].attributes.defaultValue
         });
       }
     };
@@ -440,6 +440,9 @@ class ReactAutoForm extends React.Component {
   submitUpdateDocument(forumFields) {
     if(Object.keys(forumFields).length === 0) // If there is nothing to submit quit now
     {
+      this.setState({
+        processingForm: false
+      });
       this.log(false, `Attempting to update \`${this.props.doc._id}\` with a blank forum`);
       return;
     }
@@ -456,7 +459,7 @@ class ReactAutoForm extends React.Component {
         this.log(false, `Updated \`${this.props.doc._id}\``, forumFields);
       }
 
-      // Finished prcoessing so allow submitting again
+      // Finished processing so allow submitting again
       this.setState({
         processingForm: false
       });
@@ -583,6 +586,10 @@ class ReactAutoForm extends React.Component {
     {
       return typeof this.fields[fieldName].defaultValue !== 'undefined' ? this.fields[fieldName].defaultValue : ourDefaultValue;
     }
+  }
+
+  getSchemaDefaultValue(fieldName, ourDefaultValue) {
+    return typeof this.fields[fieldName].defaultValue !== 'undefined' ? this.fields[fieldName].defaultValue : ourDefaultValue;
   }
 
 	/**
