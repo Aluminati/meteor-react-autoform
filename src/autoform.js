@@ -484,7 +484,7 @@ class ReactAutoForm extends React.Component {
       else
       {
         this.log(false, `Inserted forum`, forumFields);
-        
+
         if(this.props.onSubmit) // If we have a onSubmit function from the props
         {
           this.props.onSubmit(res); // Run it - and pass the created docId to it
@@ -623,7 +623,7 @@ class ReactAutoForm extends React.Component {
             return this.processField(this.schema[fieldName], fieldName); // Return the form element
           })
         }
-        <RaisedButton type="submit" className="button-submit" label='Submit' primary={true} onClick={this.handleSubmit.bind(this)} disabled={this.state.processingForm} />
+        <RaisedButton type="submit" className="button-submit" label='Submit' primary={true} disabled={this.state.processingForm} />
       </form>
     )
   }

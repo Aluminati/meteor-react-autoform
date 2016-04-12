@@ -4,7 +4,7 @@
 ## Installation
 1. Installed the NPM package: `$ npm i meteor-react-autoform`
 2. Install the Meteor package: `$ meteor add aldeed:collection2`
-3. Extend SimpleSchema to allow our `materialForm` object. Recommended to put the code in file `/lib/meteorReactAutoform.js`:
+3. Extend your SimpleSchema to allow our `materialForm` object. Place the below code above your schema definitions ([see example](#example-schema)):
 ```
   // Documentation -> https://github.com/MechJosh0/meteor-react-autoform
   // Extend the schema to allow our materialForm object
@@ -30,21 +30,21 @@ This is still in active development. Basic form elements are available, see belo
 ```
   import React from 'react';
   import ReactAutoForm from 'meteor-react-autoform';
-  import HelpDesk from '/lib/collections/helpDesk';
+  import HelpDeskCollection from '/lib/collections/helpDesk';
 
   const redirectPageToNewDocument = (docId) => {
     // You can redirect the client URL to your new documentId. For example if you're using FlowRouter:
-    // FlowRouter.go(`/contact/${docId}`);
+    // FlowRouter.go(`${FlowRouter.path('helpDesk.update')}/${docId}`);
   };
 
-  const ContactPage = () => (
+  const HelpDesk = () => (
     <div>
       <h1>Contact Us</h1>
-      <ReactAutoForm collection={HelpDesk} type="insert" onSubmit={redirectPageToNewDocument} />
+      <ReactAutoForm collection={HelpDeskCollection} type="insert" onSubmit={redirectPageToNewDocument} />
     </div>
   );
 
-  export default ContactPage;
+  export default HelpDesk;
 ```
 
 ### ReactAutoForm props
@@ -57,20 +57,18 @@ This is still in active development. Basic form elements are available, see belo
  - `onSubmit={(docId) => { console.log("New document", docId); }}` OPTIONAL Function to run when an insert is successful, the new docId is passed through to your custom function.
 
 ## SimpleSchema object
-#### Example
-`/lib/meteorReactAutoform.js`
-```
-  // Documentation -> https://github.com/MechJosh0/meteor-react-autoform
-  // Extend the schema to allow our materialForm object
-  SimpleSchema.extendOptions({
-    materialForm: Match.Optional(Object)
-  })
-```
+#### Example <a name="example-schema"></a>
 `/lib/collections/helpDesk.js`
 ```
   import {Mongo} from 'meteor/mongo';
 
   const HelpDesk = new Meteor.Collection('helpDesk');
+
+  // Documentation -> https://github.com/MechJosh0/meteor-react-autoform
+  // Extend the schema to allow our materialForm object
+  SimpleSchema.extendOptions({
+    materialForm: Match.Optional(Object)
+  })
 
   const schema = {
     name: {
