@@ -3,15 +3,14 @@
  */
 
 import React from 'react';
-import DatePicker from 'material-ui/lib/date-picker/date-picker';
-import TextField from 'material-ui/lib/text-field';
-import Toggle from 'material-ui/lib/toggle';
-import Checkbox from 'material-ui/lib/checkbox';
-import SelectField from 'material-ui/lib/select-field';
-import MenuItem from 'material-ui/lib/menus/menu-item';
-import RaisedButton from 'material-ui/lib/raised-button';
-import RadioButton from 'material-ui/lib/radio-button';
-import RadioButtonGroup from 'material-ui/lib/radio-button-group';
+import DatePicker from 'material-ui/DatePicker';
+import TextField from 'material-ui/TextField';
+import Toggle from 'material-ui/Toggle';
+import Checkbox from 'material-ui/Checkbox';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import RaisedButton from 'material-ui/RaisedButton';
+import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 
 /**
  * Class to translate SimpleSchema to Material-UI fields
@@ -267,7 +266,6 @@ class ReactAutoForm extends React.Component {
    */
   componentTextField(fieldName) {
     this.fields[fieldName].attributes.errorText = this.state[`${fieldName}_fieldError`];
-    this.fields[fieldName].attributes.defaultValue = this.getSchemaDefaultValue(fieldName, '');
     this.fields[fieldName].attributes.value = this.getStateOrDefaultSchemaValue(fieldName, '');
     this.fields[fieldName].attributes.onChange = (e) => {
       if(e.target.value !== '')
@@ -279,7 +277,7 @@ class ReactAutoForm extends React.Component {
       else
       {
         this.setState({
-          [`${fieldName}_fieldValue`]: this.fields[fieldName].attributes.defaultValue
+          [`${fieldName}_fieldValue`]: this.getStateOrDefaultSchemaValue(fieldName, '', true)
         });
       }
     };
@@ -322,7 +320,7 @@ class ReactAutoForm extends React.Component {
    * @returns {XML}
    */
   componentCheckbox(fieldName) {
-    this.fields[fieldName].attributes.defaultChecked = this.fields[fieldName].defaultValue;
+    // this.fields[fieldName].attributes.defaultChecked = this.fields[fieldName].defaultValue;
     this.fields[fieldName].attributes.checked = this.getStateOrDefaultSchemaValue(fieldName, false);
     this.fields[fieldName].attributes.onCheck = (e) => {
       this.setState({
@@ -558,11 +556,12 @@ class ReactAutoForm extends React.Component {
    *  3. Default value
    * @param fieldName
    * @param ourDefaultValue
+   * @param ignoreState
    * @returns {*}
    */
-  getStateOrDefaultSchemaValue(fieldName, ourDefaultValue) {
+  getStateOrDefaultSchemaValue(fieldName, ourDefaultValue, ignoreState = false) {
     // If the state value exists
-    if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined' && this.state[`${fieldName}_fieldValue`] !== null)
+    if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined' && this.state[`${fieldName}_fieldValue`] !== null && !ignoreState)
     {
       // Return the state value
       return this.state[`${fieldName}_fieldValue`];

@@ -1,8 +1,12 @@
 ## Meteor-React-Autoform
 `meteor-react-autoform` will translate your Meteor [aldeed:SimpleSchema](https://github.com/aldeed/meteor-simple-schema) into a [React](https://github.com/facebook/react) form using [Material-UI](https://github.com/callemall/material-ui) components.
 
+## Requirements
+1. `React v15` and `Material-UI v0.15` (if you're using `React v0.14` please use `meteor-react-autoform v0.92`)
+2. `Meteor v1.3`
+
 ## Installation
-1. Installed the NPM package: `$ npm i meteor-react-autoform`
+1. Installed the NPM package: `$ npm i meteor-react-autoform --save`
 2. Install the Meteor package: `$ meteor add aldeed:collection2`
 3. Extend your SimpleSchema to allow our `materialForm` object. Place the below code above your schema definitions ([see example](#example-schema)):
 ```
