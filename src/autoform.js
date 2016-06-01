@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import Errors from './errors';
 import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
 import Toggle from 'material-ui/Toggle';
@@ -16,36 +17,34 @@ import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
  * Class to translate SimpleSchema to Material-UI fields
  */
 class ReactAutoForm extends React.Component {
+  static propTypes() {
+    return {
+      type: React.propTypes.oneOf(['update', 'insert']).isRequired,
+      doc: React.propTypes.object,
+      schema: React.propTypes.object.isRequired,
+      useFields: React.propTypes.array,
+      formClass: React.propTypes.string,
+      debug: React.propTypes.bool,
+      onSubmit: React.propTypes.func.isRequired,
+      errors: React.propTypes.array
+    };
+  }
+
   constructor(props) {
     super(props);
     this.state = {};
     this.fields = {};
-    this.getFields();
-    this.checkPropsDefined();
   }
 
-  checkPropsDefined() {
-    if(!this.props.collection)
+  processErrors() {
+    this.mappedErrors = {};
+    
+    if(this.props.errors)
     {
-      this.log(false, `You must provide a collection for the form to use! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
-      this.failedRun = true;
-    }
-    else if(this.props.type === 'update' && !this.props.doc)
-    {
-      if(this.props.docId)
+      this.props.errors.map((error) =>
       {
-        this.failedRun = true;
-      }
-      else
-      {
-        this.log(false, `If you wish to update a document you must provide the document in the \`doc\` prop! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
-        this.failedRun = true;
-      }
-    }
-    else if(['insert', 'update'].indexOf(this.props.type) === -1)
-    {
-      this.log(false, `You must provide a type prop (either \`insert\` or \`update\`)! Please read the documentation https://github.com/MechJosh0/meteor-react-autoform`);
-      this.failedRun = true;
+        this.mappedErrors[error.name] = error.message;
+      });
     }
   }
 
@@ -236,7 +235,7 @@ class ReactAutoForm extends React.Component {
     const options = this.getSchemaAllowValues(fieldName);
     this.fields[fieldName].attributes.selectOptions = this.fields[fieldName].attributes.selectOptions ? this.fields[fieldName].attributes.selectOptions : {};
     this.fields[fieldName].attributes.selectOptions.floatingLabelText = this.fields[fieldName].attributes.floatingLabelText;
-    this.fields[fieldName].attributes.selectOptions.errorText = this.state[`${fieldName}_fieldError`];
+    this.fields[fieldName].attributes.selectOptions.errorText = this.mappedErrors[fieldName];
     this.fields[fieldName].attributes.selectOptions.defaultValue = this.getSchemaDefaultValue(fieldName, '');
     this.fields[fieldName].attributes.selectOptions.value = this.getStateOrDefaultSchemaValue(fieldName, '');
     this.fields[fieldName].attributes.selectOptions.onChange = (e, index, value) => {
@@ -265,13 +264,13 @@ class ReactAutoForm extends React.Component {
    * @returns {XML}
    */
   componentTextField(fieldName) {
-    this.fields[fieldName].attributes.errorText = this.state[`${fieldName}_fieldError`];
+    this.fields[fieldName].attributes.errorText = this.mappedErrors[fieldName];
     this.fields[fieldName].attributes.value = this.getStateOrDefaultSchemaValue(fieldName, '');
     this.fields[fieldName].attributes.onChange = (e) => {
       if(e.target.value !== '')
       {
         this.setState({
-          [`${fieldName}_fieldValue`]: e.target.value
+          [`${fieldName}_fieldValue`]: this.fields[fieldName].attributes.type ? Number(e.target.value): e.target.value
         });
       }
       else
@@ -396,127 +395,25 @@ class ReactAutoForm extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    if(this.state.processingForm) // If we're already processing we don't need to submit again
-    {
-      return;
-    }
-
-    // This will disable duplicated submits
-    this.setState({
-      processingForm: true
-    });
-
     const forumFields = {};
 
     // Loop through each schema object to build the $forumFields which is then used to submit the form
-    Object.keys(this.schema).map((fieldName) => {
+    Object.keys(this.props.schema).map((fieldName) => {
       if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined')
       {
         forumFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName); // Gets the state value
       }
-
-      // Reset the error if there is one
-      this.setState({
-        [`${fieldName}_fieldError`]: null
-      });
     });
 
-    if(this.props.type === 'update') // If we're updating a document
+    if(this.props.doc)
     {
-      this.submitUpdateDocument(forumFields);
-    }
-    else // Or inserting a new document
-    {
-      this.submitInsertDocument(forumFields);
-    }
-  }
-
-	/**
-   * Update an existing document
-   * @param forumFields
-   */
-  submitUpdateDocument(forumFields) {
-    if(Object.keys(forumFields).length === 0) // If there is nothing to submit quit now
-    {
-      this.setState({
-        processingForm: false
-      });
-      this.log(false, `Attempting to update \`${this.props.doc._id}\` with a blank forum`);
-      return;
-    }
-
-    // Update the document with $forumFields
-    this.props.collection.update(this.props.doc._id, {$set: forumFields}, (err, res) => {
-      if(err) // If there was an error
-      {
-        this.log(false, `Error updating \`${this.props.doc._id}\``, forumFields);
-        this.handleSubmitError(err);
-      }
-      else
-      {
-        this.log(false, `Updated \`${this.props.doc._id}\``, forumFields);
-      }
-
-      // Finished processing so allow submitting again
-      this.setState({
-        processingForm: false
-      });
-
-      return res;
-    });
-  }
-
-	/**
-   * Insert a new document
-   * @param forumFields
-   */
-  submitInsertDocument(forumFields) {
-    // Insert a new document
-    this.props.collection.insert(forumFields, (err, res) => {
-      if(err) // If there was an error
-      {
-        this.log(false, `Error inserting forum`, forumFields);
-        this.handleSubmitError(err);
-
-        this.setState({
-          processingForm: false
-        });
-      }
-      else
-      {
-        this.log(false, `Inserted forum`, forumFields);
-
-        if(this.props.onSubmit) // If we have a onSubmit function from the props
-        {
-          this.props.onSubmit(res); // Run it - and pass the created docId to it
-        }
-        else // Otherwise
-        {
-          this.resetForm(); // Reset the forum to blank
-        }
-      }
-
-      return res;
-    });
-  }
-
-	/**
-   * There was an error in either submitting or inserting a document, handle it here
-   * @param err
-   */
-  handleSubmitError(err) {
-    if(err.invalidKeys)
-    {
-      // this.log(false, err.invalidKeys); // All the errors found in the form
-      // Update the input to slash the error
-      this.setState({
-        [`${err.invalidKeys[0].name}_fieldError`]: err.message
-      });
+      this.log(false, `Forum submitted \`${this.props.doc._id}\`:`, forumFields);
+      this.props.onSubmit(this.props.doc._id, forumFields);
     }
     else
     {
-      // Some error we don't know about!
-      this.log(true, err);
+      this.log(false, `Forum submitted:`, forumFields);
+      this.props.onSubmit(forumFields);
     }
   }
 
@@ -536,11 +433,11 @@ class ReactAutoForm extends React.Component {
    * Reset the entire forum to default
    */
   resetForm() {
-    const changeStates = {
-      processingForm: false
-    };
+    // const changeStates = {
+    //   processingForm: false
+    // };
 
-    Object.keys(this.schema).map((fieldName) => {
+    Object.keys(this.props.schema).map((fieldName) => {
       changeStates[`${fieldName}_fieldValue`] = null;
     });
 
@@ -559,7 +456,7 @@ class ReactAutoForm extends React.Component {
    * @param ignoreState
    * @returns {*}
    */
-  getStateOrDefaultSchemaValue(fieldName, ourDefaultValue, ignoreState = false) {
+  getStateOrDefaultSchemaValue(fieldName, ourDefaultValue = null, ignoreState = false) {
     // If the state value exists
     if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined' && this.state[`${fieldName}_fieldValue`] !== null && !ignoreState)
     {
@@ -592,23 +489,6 @@ class ReactAutoForm extends React.Component {
   }
 
 	/**
-   * Gets the Schema object and then removes anything that the `props.useFields` hasn't declared
-   */
-  getFields() {
-    this.schema = this.props.collection._c2._simpleSchema._schema; // Using the provided Collection object, get the simpleSchema object
-
-    if(this.props.useFields) // If we're selecting which fields to use
-    {
-      Object.keys(this.schema).filter((fieldName) => { // Filter (ie remove) this field from the schema by returning boolean
-        if(this.props.useFields.indexOf(fieldName) === -1) // If this fieldName does not exist in the useFields array
-        {
-          delete this.schema[fieldName]; // We remove it from the forum schema
-        }
-      });
-    }
-  }
-
-	/**
    * Get the forum class or use default class name
    * @returns {string}
    */
@@ -617,20 +497,23 @@ class ReactAutoForm extends React.Component {
   }
 
   render() {
-    if(this.failedRun) // If there was an error
-    {
-      return (<div></div>); // Return blank
-    }
+    this.processErrors();
 
     return (
-      <form className={this.forumClass} onSubmit={this.handleSubmit.bind(this)}>
+      <div>
         {
-          Object.keys(this.schema).map((fieldName) => { // Loop through each schema object
-            return this.processField(this.schema[fieldName], fieldName); // Return the form element
-          })
+          this.props.errors ? <Errors errors={this.mappedErrors} style={this.props.errorsStyle} /> : null
         }
-        <RaisedButton type="submit" className="button-submit" label='Submit' primary={true} disabled={this.state.processingForm} />
-      </form>
+
+        <form className={this.forumClass} onSubmit={this.handleSubmit.bind(this)}>
+          {
+            Object.keys(this.props.schema).map((fieldName) => { // Loop through each schema object
+              return this.processField(this.props.schema[fieldName], fieldName); // Return the form element
+            })
+          }
+          <RaisedButton type="submit" className="button-submit" label='Submit' primary={true} />
+        </form>
+      </div>
     )
   }
 }

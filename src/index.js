@@ -4,6 +4,6 @@
 
 'use strict';
 
-const ReactAutoform = require('./autoform.js');
+import ReactAutoform from './autoform';
 
-module.exports = ReactAutoform;
+export default ReactAutoform;
