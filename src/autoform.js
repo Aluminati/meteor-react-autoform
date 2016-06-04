@@ -623,7 +623,7 @@ class ReactAutoForm extends React.Component {
     }
 
     return (
-      <form className={this.forumClass} onSubmit={this.handleSubmit.bind(this)}>
+      <form className={this.forumClass()} onSubmit={this.handleSubmit.bind(this)}>
         {
           Object.keys(this.schema).map((fieldName) => { // Loop through each schema object
             return this.processField(this.schema[fieldName], fieldName); // Return the form element
