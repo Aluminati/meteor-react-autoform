@@ -11,7 +11,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "$(npm bin)/babel src --out-dir lib",
+    "compile": "$(npm bin)/babel src --out-dir ../../node_modules/meteor-react-autoform/lib",
     "prepublish": "npm run compile"
   },
   "dependencies": {
