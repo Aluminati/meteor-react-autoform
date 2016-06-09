@@ -33,6 +33,15 @@ describe('meteor-react-autoform.errors', () =>
     expect(el.find('ul li').at(1).key()).to.equal('description');
     expect(el.find('ul li').at(1).text()).to.equal('Description is required');
   });
+
+  it('Should display a custom error h3 title', () =>
+  {
+    const el = mount(
+      <Errors errors={errors} title="My custom error title" />
+    );
+
+    expect(el.find('h3').text()).to.equal('My custom error title');
+  });
 });
 
 const errors = [
