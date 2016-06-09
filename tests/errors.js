@@ -17,4 +17,28 @@ describe('meteor-react-autoform.errors', () =>
   {
     expect(1).to.equal(1);
   });
+
+  it('Should display the h3 title', () =>
+  {
+    const errors = [
+      {
+        name: 'name',
+        type: 'required',
+        value: null,
+        message: 'Name is required'
+      },
+      {
+        name: 'description',
+        type: 'required',
+        value: null,
+        message: 'Description is required'
+      }
+    ];
+
+    const el = mount(
+      <Errors errors={errors} />
+    );
+
+    expect(el.find('h3').text()).to.equal('There was an error submitting the forum:');
+  });
 });
