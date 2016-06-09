@@ -404,7 +404,7 @@ class ReactAutoForm extends React.Component {
   getSchemaAllowValues(fieldName)
   {
     const options = this.fields[fieldName].attributes.options;
-    const allowedValues = options ? options.options : this.fields[fieldName].allowedValues;
+    const allowedValues = options ? options : this.fields[fieldName].allowedValues;
 
     return Object.keys(allowedValues).map((key) =>
     {
@@ -543,15 +543,16 @@ class ReactAutoForm extends React.Component {
 }
 
 ReactAutoForm.propTypes = {
-  debug: React.propTypes.bool,
-  doc: React.propTypes.object,
-  errors: React.PropTypes.oneOfType([React.propTypes.bool, React.propTypes.array]),
-  errorsStyle: React.propTypes.array,
-  formClass: React.propTypes.string,
-  onSubmit: React.propTypes.func.isRequired,
-  schema: React.propTypes.object.isRequired,
-  type: React.propTypes.oneOf(['update', 'insert']).isRequired,
-  useFields: React.propTypes.array
+  debug: React.PropTypes.bool,
+  doc: React.PropTypes.object,
+  errors: React.PropTypes.oneOfType([React.PropTypes.bool, React.PropTypes.array]),
+  errorsStyle: React.PropTypes.object,
+  formClass: React.PropTypes.string,
+  formStyle: React.PropTypes.object,
+  onSubmit: React.PropTypes.func.isRequired,
+  schema: React.PropTypes.object.isRequired,
+  type: React.PropTypes.oneOf(['update', 'insert']).isRequired,
+  useFields: React.PropTypes.array
 };
 
 ReactAutoForm.defaultProps = {
@@ -560,7 +561,8 @@ ReactAutoForm.defaultProps = {
   errorsStyle: {
     // TO DO - I don't know colours
   },
-  formClass: 'autoform'
+  formClass: 'autoform',
+  formStyle: {}
 };
 
 export default ReactAutoForm;
