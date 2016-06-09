@@ -63,6 +63,8 @@ class ReactAutoForm extends React.Component {
           component = this.typeDropdown(fieldName);
           break;
       }
+
+      return component;
     }
 
     switch(this.fields[fieldName].type.name) // Switch between what type of field it is to use different types of Material -UI component
@@ -129,6 +131,7 @@ class ReactAutoForm extends React.Component {
     if(typeof this.fields[fieldName][fieldColumn] !== 'undefined')
     {
       this.fields[fieldName].attributes[materialField] = this.fields[fieldName][fieldColumn];
+      return;
     }
 
     this.fields[fieldName].attributes[materialField] = null;
