@@ -243,7 +243,7 @@ class ReactAutoForm extends React.Component {
         [`${fieldName}_fieldValue`]: value
       });
     };
-
+console.log(this.fields[fieldName].attributes.selectOptions);
     return (
       <SelectField {...this.fields[fieldName].attributes.selectOptions}>
         {
@@ -493,7 +493,7 @@ class ReactAutoForm extends React.Component {
    * @returns {string}
    */
   forumClass() {
-    return this.props.formClass ? this.props.formClass : `autoform_${this.props.collection._name}`;
+    return this.props.formClass ? this.props.formClass : `autoform`;
   }
 
   render() {
