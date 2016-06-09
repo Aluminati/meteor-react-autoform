@@ -99,7 +99,7 @@
     "no-catch-shadow": ["off"],
     "no-class-assign": ["error"],
     "no-cond-assign": ["error"],
-    "no-console": ["warn"],
+    "no-console": ["warn", {"allow": ["warn", "error"]}],
     "no-const-assign": ["error"],
     "no-constant-condition": ["error"],
     "no-continue": ["off"],

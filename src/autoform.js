@@ -461,7 +461,7 @@ class ReactAutoForm extends React.Component {
   {
     if(force || this.props.debug)
     {
-      console.log(...msg);
+      console.warn(...msg);
     }
   }
 
