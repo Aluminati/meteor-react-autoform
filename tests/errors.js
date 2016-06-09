@@ -13,11 +13,6 @@ import Errors from '../src/errors';
 
 describe('meteor-react-autoform.errors', () =>
 {
-  it('Testing the test - Should win', () =>
-  {
-    expect(1).to.equal(1);
-  });
-
   it('Should display the h3 title', () =>
   {
     const errors = [
