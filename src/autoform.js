@@ -504,8 +504,7 @@ class ReactAutoForm extends React.Component {
         {
           this.props.errors ? <Errors errors={this.mappedErrors} style={this.props.errorsStyle} /> : null
         }
-
-        <form className={this.forumClass} onSubmit={this.handleSubmit.bind(this)}>
+        <form className={this.forumClass()} onSubmit={this.handleSubmit.bind(this)}>
           {
             Object.keys(this.props.schema).map((fieldName) => { // Loop through each schema object
               return this.processField(this.props.schema[fieldName], fieldName); // Return the form element
@@ -514,7 +513,7 @@ class ReactAutoForm extends React.Component {
           <RaisedButton type="submit" className="button-submit" label='Submit' primary={true} />
         </form>
       </div>
-    )
+    );
   }
 }
 
