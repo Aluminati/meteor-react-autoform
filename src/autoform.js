@@ -233,6 +233,7 @@ class ReactAutoForm extends React.Component {
    */
   typeDropdown(fieldName) {
     const options = this.getSchemaAllowValues(fieldName);
+    this.fields[fieldName].attributes.selectOptions.key = this.fields[fieldName].attributes.name;
     this.fields[fieldName].attributes.selectOptions = this.fields[fieldName].attributes.selectOptions ? this.fields[fieldName].attributes.selectOptions : {};
     this.fields[fieldName].attributes.selectOptions.floatingLabelText = this.fields[fieldName].attributes.floatingLabelText;
     this.fields[fieldName].attributes.selectOptions.errorText = this.mappedErrors[fieldName];
@@ -243,9 +244,9 @@ class ReactAutoForm extends React.Component {
         [`${fieldName}_fieldValue`]: value
       });
     };
-console.log(this.fields[fieldName].attributes.selectOptions);
+
     return (
-      <SelectField {...this.fields[fieldName].attributes.selectOptions} key={this.fields[fieldName].attributes.selectOptions.id}>
+      <SelectField {...this.fields[fieldName].attributes.selectOptions}>
         {
           Object.keys(options).map((i) => {
             return (
