@@ -56,5 +56,23 @@ const errors = [
     type: 'required',
     value: null,
     message: 'Description is required'
+  },
+  {
+    name: 'address',
+    type: 'unknown',
+    value: null,
+    message: 'There seems to be an error in your address'
+  },
+  {
+    name: 'colour',
+    type: 'incorrect',
+    value: null,
+    message: 'You must select red'
+  },
+  {
+    name: 'dogOrCat',
+    type: 'required',
+    value: null,
+    message: 'Dogs are the best'
   }
 ];
