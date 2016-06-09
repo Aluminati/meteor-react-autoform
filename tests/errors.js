@@ -15,12 +15,23 @@ describe('meteor-react-autoform.errors', () =>
 {
   it('Should display the h3 title', () =>
   {
-
     const el = mount(
       <Errors errors={errors} />
     );
 
     expect(el.find('h3').text()).to.equal('There was an error submitting the form:');
+  });
+
+  it('Should display name and description error', () =>
+  {
+    const el = mount(
+      <Errors errors={errors} />
+    );
+
+    expect(el.find('ul li').at(0).key()).to.equal('name');
+    expect(el.find('ul li').at(0).text()).to.equal('Name is required');
+    expect(el.find('ul li').at(1).key()).to.equal('description');
+    expect(el.find('ul li').at(1).text()).to.equal('Description is required');
   });
 });
 
