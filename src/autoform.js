@@ -519,15 +519,6 @@ class ReactAutoForm extends React.Component {
     return typeof this.fields[fieldName].defaultValue !== 'undefined' ? this.fields[fieldName].defaultValue : ourDefaultValue;
   }
 
-	/**
-   * Get the forum class or use default class name
-   * @returns {string}
-   */
-  forumClass()
-  {
-    return this.props.formClass ? this.props.formClass : `autoform`;
-  }
-
   render()
   {
     this.processErrors();
@@ -537,7 +528,7 @@ class ReactAutoForm extends React.Component {
         {
           this.props.errors ? <Errors errors={this.mappedErrors} style={this.props.errorsStyle} /> : null
         }
-        <form className={this.forumClass()} onSubmit={this.handleSubmit}>
+        <form className={this.props.formClass} onSubmit={this.handleSubmit}>
           {
             Object.keys(this.props.schema).map((fieldName) =>
             { // Loop through each schema object
@@ -554,7 +545,7 @@ class ReactAutoForm extends React.Component {
 ReactAutoForm.propTypes = {
   debug: React.propTypes.bool,
   doc: React.propTypes.object,
-  errors: React.propTypes.array,
+  errors: React.PropTypes.oneOfType([React.propTypes.bool, React.propTypes.array]),
   errorsStyle: React.propTypes.array,
   formClass: React.propTypes.string,
   onSubmit: React.propTypes.func.isRequired,
@@ -563,5 +554,13 @@ ReactAutoForm.propTypes = {
   useFields: React.propTypes.array
 };
 
+ReactAutoForm.defaultProps = {
+  debug: false,
+  errors: false,
+  errorsStyle: {
+    // TO DO - I don't know colours
+  },
+  formClass: 'autoform'
+};
 
 export default ReactAutoForm;
