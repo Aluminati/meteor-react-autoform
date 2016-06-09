@@ -12,8 +12,8 @@
   "scripts": {
     "compile": "$(npm bin)/babel src --out-dir ../../node_modules/meteor-react-autoform/lib",
     "prepublish": "npm run compile",
-    "git-pre-commit": "echo \"Error: no test specified\"",
-    "lint": "eslint ./lib ./client ./server --ext .js",
+    "git-pre-commit": "npm run test",
+    "lint": "eslint ./src --ext .js",
     "lintfix": "npm run lint -- --fix",
     "testonly": "mocha .scripts/mocha_boot.js tests/*.js --compilers js:babel-core/register",
     "test": "npm run lint"

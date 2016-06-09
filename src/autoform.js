@@ -17,28 +17,18 @@ import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
  * Class to translate SimpleSchema to Material-UI fields
  */
 class ReactAutoForm extends React.Component {
-  static propTypes() {
-    return {
-      type: React.propTypes.oneOf(['update', 'insert']).isRequired,
-      doc: React.propTypes.object,
-      schema: React.propTypes.object.isRequired,
-      useFields: React.propTypes.array,
-      formClass: React.propTypes.string,
-      debug: React.propTypes.bool,
-      onSubmit: React.propTypes.func.isRequired,
-      errors: React.propTypes.array
-    };
-  }
-
-  constructor(props) {
+  constructor(props)
+  {
     super(props);
     this.state = {};
     this.fields = {};
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  processErrors() {
+  processErrors()
+  {
     this.mappedErrors = {};
-    
+
     if(this.props.errors)
     {
       this.props.errors.map((error) =>
@@ -54,22 +44,23 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @returns {*}
    */
-  processField(field, fieldName) {
+  processField(field, fieldName)
+  {
     this.fields[fieldName] = field;
     this.fields[fieldName].key = fieldName;
-    //this.fields[fieldName].label = field.label ? field.label : fieldName; // DEVELOPMENT ONLY
     this.createDefaultAttr(fieldName);
+    let component;
 
     if(this.fields[fieldName].allowedValues) // If we're restricting the values to a list it's a dropdown
     {
       switch(this.fields[fieldName].materialForm.switcher)
       {
         case 'Radio':
-          return this.componentRadio(fieldName);
+          component = this.componentRadio(fieldName);
           break;
 
         default:
-          return this.typeDropdown(fieldName);
+          component = this.typeDropdown(fieldName);
           break;
       }
     }
@@ -77,21 +68,23 @@ class ReactAutoForm extends React.Component {
     switch(this.fields[fieldName].type.name) // Switch between what type of field it is to use different types of Material -UI component
     {
       case 'Date':
-        return this.typeDate(fieldName);
+        component = this.typeDate(fieldName);
         break;
 
       case 'Number':
-        return this.typeNumber(fieldName);
+        component = this.typeNumber(fieldName);
         break;
 
       case 'Boolean':
-        return this.typeCheckbox(fieldName);
+        component = this.typeCheckbox(fieldName);
         break;
 
       case 'String':
-        return this.typeString(fieldName);
+        component = this.typeString(fieldName);
         break;
     }
+
+    return component;
   }
 
 	/**
@@ -99,7 +92,8 @@ class ReactAutoForm extends React.Component {
    * This is so the developer doesn't have to write the
    * @param fieldName
    */
-  createDefaultAttr(fieldName) {
+  createDefaultAttr(fieldName)
+  {
     this.fields[fieldName].attributes = {}; // These will be overwritten if it's repeated in the materialForm object (ie `materialForm.floatingLabelText`)
     this.fields[fieldName].attributes.name = fieldName;
     this.getSchemaValue(fieldName, 'label', 'floatingLabelText');
@@ -113,10 +107,12 @@ class ReactAutoForm extends React.Component {
    * Store all of the `materialForm` attributes
    * @param fieldName
    */
-  getSchemaMaterialForm(fieldName) {
+  getSchemaMaterialForm(fieldName)
+  {
     this.fields[fieldName].materialForm = this.fields[fieldName].materialForm ? this.fields[fieldName].materialForm : {};
 
-    Object.keys(this.fields[fieldName].materialForm).map((key) => { // For each `materialForm` field
+    Object.keys(this.fields[fieldName].materialForm).map((key) => // For each `materialForm` field
+    {
       this.fields[fieldName].attributes[key] = this.fields[fieldName].materialForm[key]; // Store it in our component attributes
     });
   }
@@ -127,8 +123,15 @@ class ReactAutoForm extends React.Component {
    * @param fieldColumn
    * @param materialField
    */
-  getSchemaValue(fieldName, fieldColumn, materialField = fieldColumn) {
-    this.fields[fieldName].attributes[materialField] = typeof this.fields[fieldName][fieldColumn] !== 'undefined' ? this.fields[fieldName][fieldColumn] : null; // If the `fieldColumn` exists, store it in our `materialField` attributes otherwise null
+  getSchemaValue(fieldName, fieldColumn, materialField = fieldColumn)
+  {
+    // If the `fieldColumn` exists, store it in our `materialField` attributes otherwise null
+    if(typeof this.fields[fieldName][fieldColumn] !== 'undefined')
+    {
+      this.fields[fieldName].attributes[materialField] = this.fields[fieldName][fieldColumn];
+    }
+
+    this.fields[fieldName].attributes[materialField] = null;
   }
 
 	/**
@@ -136,7 +139,8 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @param field
    */
-  removeMaterialSchemaValue(fieldName, field)  {
+  removeMaterialSchemaValue(fieldName, field)
+  {
     this.fields[fieldName].attributes[field] = null;
   }
 
@@ -146,7 +150,8 @@ class ReactAutoForm extends React.Component {
    * @param newField
    * @param oldField
    */
-  moveMaterialSchemaValue(fieldName, newField, oldField) {
+  moveMaterialSchemaValue(fieldName, newField, oldField)
+  {
     this.fields[fieldName].attributes[newField] = this.fields[fieldName].attributes[oldField]; // Copy the oldField value to the newField value
     this.fields[fieldName].attributes[oldField] = null; // And now remove the oldField by Nulling
   }
@@ -156,7 +161,8 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @returns {XML}
    */
-  typeString(fieldName) {
+  typeString(fieldName)
+  {
     if(this.fields[fieldName].materialForm.switcher)
     {
       return this.typeCheckbox(fieldName);
@@ -172,12 +178,14 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @returns {XML}
    */
-  typeDate(fieldName) {
+  typeDate(fieldName)
+  {
     this.moveMaterialSchemaValue(fieldName, 'hintText', 'floatingLabelText');
 
     this.fields[fieldName].attributes.defaultDate = this.fields[fieldName].defaultValue;
     this.fields[fieldName].attributes.value = this.getStateOrDefaultSchemaValue(fieldName, '');
-    this.fields[fieldName].attributes.onChange = (e, date) => {
+    this.fields[fieldName].attributes.onChange = (e, date) =>
+    {
       this.setState({
         [`${fieldName}_fieldValue`]: date
       });
@@ -187,7 +195,7 @@ class ReactAutoForm extends React.Component {
       <div key={this.fields[fieldName].key}>
         <DatePicker {...this.fields[fieldName].attributes} />
       </div>
-    )
+    );
   }
 
 	/**
@@ -195,7 +203,8 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @returns {XML}
    */
-  typeNumber(fieldName) {
+  typeNumber(fieldName)
+  {
     this.fields[fieldName].attributes.type = 'number'; // Change the input type to number
     this.getSchemaValue(fieldName, 'max'); // Set the max [and min] of the number input
     this.getSchemaValue(fieldName, 'min');
@@ -208,22 +217,26 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @returns {XML}
    */
-  typeCheckbox(fieldName) {
+  typeCheckbox(fieldName)
+  {
     this.moveMaterialSchemaValue(fieldName, 'label', 'floatingLabelText');
+    let component;
 
     switch(this.fields[fieldName].materialForm.switcher)
     {
       case 'Toggle':
         this.removeMaterialSchemaValue(fieldName, 'switcher');
-        return this.componentToggle(fieldName);
+        component = this.componentToggle(fieldName);
         break;
 
       case 'Checkbox':
       default:
         this.removeMaterialSchemaValue(fieldName, 'switcher');
-        return this.componentCheckbox(fieldName);
+        component = this.componentCheckbox(fieldName);
         break;
     }
+
+    return component;
   }
 
 	/**
@@ -231,26 +244,31 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @returns {XML}
    */
-  typeDropdown(fieldName) {
+  typeDropdown(fieldName)
+  {
     const options = this.getSchemaAllowValues(fieldName);
-    this.fields[fieldName].attributes.selectOptions.key = this.fields[fieldName].attributes.name;
-    this.fields[fieldName].attributes.selectOptions = this.fields[fieldName].attributes.selectOptions ? this.fields[fieldName].attributes.selectOptions : {};
-    this.fields[fieldName].attributes.selectOptions.floatingLabelText = this.fields[fieldName].attributes.floatingLabelText;
-    this.fields[fieldName].attributes.selectOptions.errorText = this.mappedErrors[fieldName];
-    this.fields[fieldName].attributes.selectOptions.defaultValue = this.getSchemaDefaultValue(fieldName, '');
-    this.fields[fieldName].attributes.selectOptions.value = this.getStateOrDefaultSchemaValue(fieldName, '');
-    this.fields[fieldName].attributes.selectOptions.onChange = (e, index, value) => {
+    let selectOptions = this.fields[fieldName].attributes.selectOptions;
+
+    selectOptions = selectOptions ? selectOptions : {};
+    selectOptions.key = this.fields[fieldName].attributes.name;
+    selectOptions.floatingLabelText = this.fields[fieldName].attributes.floatingLabelText;
+    selectOptions.errorText = this.mappedErrors[fieldName];
+    selectOptions.defaultValue = this.getSchemaDefaultValue(fieldName, '');
+    selectOptions.value = this.getStateOrDefaultSchemaValue(fieldName, '');
+    selectOptions.onChange = (e, index, value) =>
+    {
       this.setState({
         [`${fieldName}_fieldValue`]: value
       });
     };
 
     return (
-      <SelectField {...this.fields[fieldName].attributes.selectOptions}>
+      <SelectField {...selectOptions}>
         {
-          Object.keys(options).map((i) => {
+          Object.keys(options).map((i) =>
+          {
             return (
-              <MenuItem key={options[i].value} value={options[i].value} label={options[i].label} primaryText={options[i].label}/>
+              <MenuItem key={options[i].value} label={options[i].label} primaryText={options[i].label} value={options[i].value} />
             );
           })
         }
@@ -264,14 +282,16 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @returns {XML}
    */
-  componentTextField(fieldName) {
+  componentTextField(fieldName)
+  {
     this.fields[fieldName].attributes.errorText = this.mappedErrors[fieldName];
     this.fields[fieldName].attributes.value = this.getStateOrDefaultSchemaValue(fieldName, '');
-    this.fields[fieldName].attributes.onChange = (e) => {
+    this.fields[fieldName].attributes.onChange = (e) =>
+    {
       if(e.target.value !== '')
       {
         this.setState({
-          [`${fieldName}_fieldValue`]: this.fields[fieldName].attributes.type ? Number(e.target.value): e.target.value
+          [`${fieldName}_fieldValue`]: this.fields[fieldName].attributes.type ? Number(e.target.value) : e.target.value
         });
       }
       else
@@ -296,10 +316,12 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @returns {XML}
    */
-  componentToggle(fieldName) {
+  componentToggle(fieldName)
+  {
     this.fields[fieldName].attributes.defaultToggled = this.fields[fieldName].defaultValue;
     this.fields[fieldName].attributes.toggled = this.getStateOrDefaultSchemaValue(fieldName, false);
-    this.fields[fieldName].attributes.onToggle = (e) => {
+    this.fields[fieldName].attributes.onToggle = (e) =>
+    {
       this.setState({
         [`${fieldName}_fieldValue`]: e.target.checked
       });
@@ -319,10 +341,11 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @returns {XML}
    */
-  componentCheckbox(fieldName) {
-    // this.fields[fieldName].attributes.defaultChecked = this.fields[fieldName].defaultValue;
+  componentCheckbox(fieldName)
+  {
     this.fields[fieldName].attributes.checked = this.getStateOrDefaultSchemaValue(fieldName, false);
-    this.fields[fieldName].attributes.onCheck = (e) => {
+    this.fields[fieldName].attributes.onCheck = (e) =>
+    {
       this.setState({
         [`${fieldName}_fieldValue`]: e.target.checked
       });
@@ -341,23 +364,28 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @returns {XML}
    */
-  componentRadio(fieldName) {
+  componentRadio(fieldName)
+  {
     const options = this.getSchemaAllowValues(fieldName);
-    this.fields[fieldName].attributes.groupOptions = this.fields[fieldName].attributes.groupOptions ? this.fields[fieldName].attributes.groupOptions : {};
-    this.fields[fieldName].attributes.groupOptions.name = this.fields[fieldName].key;
-    this.fields[fieldName].attributes.groupOptions.valueSelected = this.getStateOrDefaultSchemaValue(fieldName, '');
-    this.fields[fieldName].attributes.groupOptions.onChange = (e, value) => {
-        this.setState({
-          [`${fieldName}_fieldValue`]: value
-        });
+    let groupOptions = this.fields[fieldName].attributes.groupOptions;
+
+    groupOptions = groupOptions ? groupOptions : {};
+    groupOptions.name = this.fields[fieldName].key;
+    groupOptions.valueSelected = this.getStateOrDefaultSchemaValue(fieldName, '');
+    groupOptions.onChange = (e, value) =>
+    {
+      this.setState({
+        [`${fieldName}_fieldValue`]: value
+      });
     };
 
     return (
       <div key={this.fields[fieldName].key}>
         <label>{this.fields[fieldName].attributes.floatingLabelText}</label>
-        <RadioButtonGroup {...this.fields[fieldName].attributes.groupOptions}>
+        <RadioButtonGroup {...groupOptions}>
           {
-            Object.keys(options).map((i) => {
+            Object.keys(options).map((i) =>
+            {
               return (
                 <RadioButton key={options[i].value} {...options[i]} />
               );
@@ -373,19 +401,20 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @returns {Array}
    */
-  getSchemaAllowValues(fieldName) {
-    const allowedValues = this.fields[fieldName].attributes.options ? this.fields[fieldName].attributes.options : this.fields[fieldName].allowedValues;
+  getSchemaAllowValues(fieldName)
+  {
+    const options = this.fields[fieldName].attributes.options;
+    const allowedValues = options ? options.options : this.fields[fieldName].allowedValues;
 
-    return Object.keys(allowedValues).map((key) => {
+    return Object.keys(allowedValues).map((key) =>
+    {
       if(typeof allowedValues[key] === 'object')
       {
         allowedValues[key].value = allowedValues[key].value.toString();
         return allowedValues[key];
       }
-      else
-      {
-        return {label: allowedValues[key], value: allowedValues[key].toString()};
-      }
+
+      return {label: allowedValues[key], value: allowedValues[key].toString()};
     });
   }
 
@@ -393,13 +422,15 @@ class ReactAutoForm extends React.Component {
    * Submit handler - Submit button was clicked or enter was pressed
    * @param event
    */
-  handleSubmit(event) {
+  handleSubmit(event)
+  {
     event.preventDefault();
 
     const forumFields = {};
 
     // Loop through each schema object to build the $forumFields which is then used to submit the form
-    Object.keys(this.props.schema).map((fieldName) => {
+    Object.keys(this.props.schema).map((fieldName) =>
+    {
       if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined')
       {
         forumFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName); // Gets the state value
@@ -423,7 +454,8 @@ class ReactAutoForm extends React.Component {
    * @param force
    * @param msg
    */
-  log(force, ...msg) {
+  log(force, ...msg)
+  {
     if(force || this.props.debug)
     {
       console.log(...msg);
@@ -433,12 +465,12 @@ class ReactAutoForm extends React.Component {
 	/**
    * Reset the entire forum to default
    */
-  resetForm() {
-    // const changeStates = {
-    //   processingForm: false
-    // };
+  resetForm()
+  {
+    const changeStates = {};
 
-    Object.keys(this.props.schema).map((fieldName) => {
+    Object.keys(this.props.schema).map((fieldName) =>
+    {
       changeStates[`${fieldName}_fieldValue`] = null;
     });
 
@@ -457,7 +489,8 @@ class ReactAutoForm extends React.Component {
    * @param ignoreState
    * @returns {*}
    */
-  getStateOrDefaultSchemaValue(fieldName, ourDefaultValue = null, ignoreState = false) {
+  getStateOrDefaultSchemaValue(fieldName, ourDefaultValue = null, ignoreState = false)
+  {
     // If the state value exists
     if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined' && this.state[`${fieldName}_fieldValue`] !== null && !ignoreState)
     {
@@ -473,19 +506,16 @@ class ReactAutoForm extends React.Component {
         // Return it as a String
         return this.props.doc[fieldName].toString();
       }
-      else
-      {
-        // Return normal document String
-        return this.props.doc[fieldName];
-      }
+
+      return this.props.doc[fieldName];
     }
-    else // Else just return the Schema default value OR my hard-coded default value
-    {
-      return typeof this.fields[fieldName].defaultValue !== 'undefined' ? this.fields[fieldName].defaultValue : ourDefaultValue;
-    }
+
+    // Else just return the Schema default value OR my hard-coded default value
+    return typeof this.fields[fieldName].defaultValue !== 'undefined' ? this.fields[fieldName].defaultValue : ourDefaultValue;
   }
 
-  getSchemaDefaultValue(fieldName, ourDefaultValue) {
+  getSchemaDefaultValue(fieldName, ourDefaultValue)
+  {
     return typeof this.fields[fieldName].defaultValue !== 'undefined' ? this.fields[fieldName].defaultValue : ourDefaultValue;
   }
 
@@ -493,11 +523,13 @@ class ReactAutoForm extends React.Component {
    * Get the forum class or use default class name
    * @returns {string}
    */
-  forumClass() {
+  forumClass()
+  {
     return this.props.formClass ? this.props.formClass : `autoform`;
   }
 
-  render() {
+  render()
+  {
     this.processErrors();
 
     return (
@@ -505,17 +537,31 @@ class ReactAutoForm extends React.Component {
         {
           this.props.errors ? <Errors errors={this.mappedErrors} style={this.props.errorsStyle} /> : null
         }
-        <form className={this.forumClass()} onSubmit={this.handleSubmit.bind(this)}>
+        <form className={this.forumClass()} onSubmit={this.handleSubmit}>
           {
-            Object.keys(this.props.schema).map((fieldName) => { // Loop through each schema object
+            Object.keys(this.props.schema).map((fieldName) =>
+            { // Loop through each schema object
               return this.processField(this.props.schema[fieldName], fieldName); // Return the form element
             })
           }
-          <RaisedButton type="submit" className="button-submit" label='Submit' primary={true} />
+          <RaisedButton className="button-submit" label="Submit" primary={true} type="submit" />
         </form>
       </div>
     );
   }
 }
+
+ReactAutoForm.propTypes = {
+  debug: React.propTypes.bool,
+  doc: React.propTypes.object,
+  errors: React.propTypes.array,
+  errorsStyle: React.propTypes.array,
+  formClass: React.propTypes.string,
+  onSubmit: React.propTypes.func.isRequired,
+  schema: React.propTypes.object.isRequired,
+  type: React.propTypes.oneOf(['update', 'insert']).isRequired,
+  useFields: React.propTypes.array
+};
+
 
 export default ReactAutoForm;

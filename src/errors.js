@@ -19,11 +19,13 @@ const defaultStyle = {
   }
 };
 
-const getStyle = (style, className) => {
-  return style[className] ? style[className] : defaultStyle[className]
+const getStyle = (style, className) =>
+{
+  return style[className] ? style[className] : defaultStyle[className];
 };
 
-const Errors = ({errors, style = {}}) => (
+const Errors = ({errors, style = {}}) =>
+  (
   <div style={getStyle(style, 'container')}>
     <h3 style={getStyle(style, 'h3')}>There was an error submitting the forum:</h3>
     <ul style={getStyle(style, 'ul')}>
@@ -38,7 +40,8 @@ const Errors = ({errors, style = {}}) => (
 );
 
 Errors.propTypes = {
-  errors: React.PropTypes.object.isRequired
+  errors: React.PropTypes.object.isRequired,
+  style: React.PropTypes.array
 };
 
 export default Errors;
