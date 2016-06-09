@@ -421,26 +421,26 @@ class ReactAutoForm extends React.Component {
   {
     event.preventDefault();
 
-    const forumFields = {};
+    const formFields = {};
 
-    // Loop through each schema object to build the $forumFields which is then used to submit the form
+    // Loop through each schema object to build the $formFields which is then used to submit the form
     Object.keys(this.props.schema).map((fieldName) =>
     {
       if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined')
       {
-        forumFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName); // Gets the state value
+        formFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName); // Gets the state value
       }
     });
 
     if(this.props.doc)
     {
-      this.log(false, `Forum submitted \`${this.props.doc._id}\`:`, forumFields);
-      this.props.onSubmit(this.props.doc._id, forumFields);
+      this.log(false, `Form submitted \`${this.props.doc._id}\`:`, formFields);
+      this.props.onSubmit(this.props.doc._id, formFields);
     }
     else
     {
-      this.log(false, `Forum submitted:`, forumFields);
-      this.props.onSubmit(forumFields);
+      this.log(false, `Form submitted:`, formFields);
+      this.props.onSubmit(formFields);
     }
   }
 
@@ -458,7 +458,7 @@ class ReactAutoForm extends React.Component {
   }
 
 	/**
-   * Reset the entire forum to default
+   * Reset the entire form to default
    */
   resetForm()
   {

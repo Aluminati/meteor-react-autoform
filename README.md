@@ -57,7 +57,7 @@ This is still in active development. Basic form elements are available, see belo
     - `type="update" doc={$document}` OPTIONAL  To update a document you must set the `type="update"` and provide the document you wish to update in the `doc` prop.
  - `useFields={['name', 'text']}` OPTIONAL  Only produce the fields `name` and `description` from the Collection in the form.
  - `formClass="myCustomFormClass"` OPTIONAL  You may provide a custom className for the form, otherwise it will use the default `autoform_{$collectionName}`.
- - `debug={true}` OPTIONAL  This will output the forum data into the console when the user attempts to submit.
+ - `debug={true}` OPTIONAL  This will output the form data into the console when the user attempts to submit.
  - `onSubmit={(docId) => { console.log("New document", docId); }}` OPTIONAL Function to run when an insert is successful, the new docId is passed through to your custom function.
 
 ## SimpleSchema object

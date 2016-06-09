@@ -22,7 +22,7 @@ const listItems = (errors, style) =>
 const Errors = ({errors, style = {}}) =>
   (
   <div style={style.container}>
-    <h3 style={style.h3}>There was an error submitting the forum:</h3>
+    <h3 style={style.h3}>There was an error submitting the form:</h3>
     <ul style={style.ul}>
       {listItems(errors, style)}
     </ul>

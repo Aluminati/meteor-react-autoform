@@ -39,6 +39,6 @@ describe('meteor-react-autoform.errors', () =>
       <Errors errors={errors} />
     );
 
-    expect(el.find('h3').text()).to.equal('There was an error submitting the forum:');
+    expect(el.find('h3').text()).to.equal('There was an error submitting the form:');
   });
 });
