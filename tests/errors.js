@@ -28,10 +28,13 @@ describe('meteor-react-autoform.errors', () =>
       <Errors errors={errors} />
     );
 
+    expect(el.find('ul li').length).to.equal(5);
     expect(el.find('ul li').at(0).key()).to.equal('name');
     expect(el.find('ul li').at(0).text()).to.equal('Name is required');
     expect(el.find('ul li').at(1).key()).to.equal('description');
     expect(el.find('ul li').at(1).text()).to.equal('Description is required');
+    expect(el.find('ul li').at(4).key()).to.equal('dogOrCat');
+    expect(el.find('ul li').at(4).text()).to.equal('Dogs are the best');
   });
 
   it('Should display a custom error h3 title', () =>
