@@ -31,7 +31,8 @@ const Errors = ({errors, style = {}}) =>
 
 Errors.propTypes = {
   errors: React.PropTypes.array.isRequired,
-  style: React.PropTypes.object
+  style: React.PropTypes.object,
+  title: React.PropTypes.string
 };
 
 Errors.defaultProps = {
@@ -48,7 +49,8 @@ Errors.defaultProps = {
     li: {
       background: 'yellow'
     }
-  }
+  },
+  title: 'There was an error submitting the form:'
 };
 
 export default Errors;
