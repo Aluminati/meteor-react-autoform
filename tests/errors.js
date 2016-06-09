@@ -15,20 +15,6 @@ describe('meteor-react-autoform.errors', () =>
 {
   it('Should display the h3 title', () =>
   {
-    const errors = [
-      {
-        name: 'name',
-        type: 'required',
-        value: null,
-        message: 'Name is required'
-      },
-      {
-        name: 'description',
-        type: 'required',
-        value: null,
-        message: 'Description is required'
-      }
-    ];
 
     const el = mount(
       <Errors errors={errors} />
@@ -37,3 +23,18 @@ describe('meteor-react-autoform.errors', () =>
     expect(el.find('h3').text()).to.equal('There was an error submitting the form:');
   });
 });
+
+const errors = [
+  {
+    name: 'name',
+    type: 'required',
+    value: null,
+    message: 'Name is required'
+  },
+  {
+    name: 'description',
+    type: 'required',
+    value: null,
+    message: 'Description is required'
+  }
+];
