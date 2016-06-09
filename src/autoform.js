@@ -521,7 +521,7 @@ class ReactAutoForm extends React.Component {
     return (
       <div>
         {
-          this.props.errors ? <Errors errors={this.props.errors} style={this.props.errorsStyle} /> : null
+          this.props.errors ? <Errors errors={this.props.errors} style={this.props.errorsStyle} title={this.props.errorsTitle} /> : null
         }
         <form className={this.props.formClass} onSubmit={this.handleSubmit}>
           {
@@ -542,6 +542,7 @@ ReactAutoForm.propTypes = {
   doc: React.PropTypes.object,
   errors: React.PropTypes.oneOfType([React.PropTypes.bool, React.PropTypes.array]),
   errorsStyle: React.PropTypes.object,
+  errorsTitle: React.PropTypes.string,
   formClass: React.PropTypes.string,
   formStyle: React.PropTypes.object,
   onSubmit: React.PropTypes.func.isRequired,
