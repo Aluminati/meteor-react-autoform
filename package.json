@@ -12,7 +12,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "$(npm bin)/babel src --out-dir ../../node_modules/meteor-react-autoform/lib",
-    "prepublish": "npm run compile"
+    "prepublish": "npm run compile",
+    "git-pre-commit": "npm run test"
   },
   "dependencies": {
     "react": "^15.1.0",
