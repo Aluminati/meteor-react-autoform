@@ -245,7 +245,7 @@ class ReactAutoForm extends React.Component {
     };
 console.log(this.fields[fieldName].attributes.selectOptions);
     return (
-      <SelectField {...this.fields[fieldName].attributes.selectOptions}>
+      <SelectField {...this.fields[fieldName].attributes.selectOptions} key={this.fields[fieldName].attributes.selectOptions.id}>
         {
           Object.keys(options).map((i) => {
             return (
