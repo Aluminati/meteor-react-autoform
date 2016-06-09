@@ -28,14 +28,6 @@ class ReactAutoForm extends React.Component {
   processErrors()
   {
     this.mappedErrors = {};
-
-    if(this.props.errors)
-    {
-      this.props.errors.map((error) =>
-      {
-        this.mappedErrors[error.name] = error.message;
-      });
-    }
   }
 
 	/**
@@ -529,7 +521,7 @@ class ReactAutoForm extends React.Component {
     return (
       <div>
         {
-          this.props.errors ? <Errors errors={this.mappedErrors} style={this.props.errorsStyle} /> : null
+          this.props.errors ? <Errors errors={this.props.errors} style={this.props.errorsStyle} /> : null
         }
         <form className={this.props.formClass} onSubmit={this.handleSubmit}>
           {
@@ -561,9 +553,6 @@ ReactAutoForm.propTypes = {
 ReactAutoForm.defaultProps = {
   debug: false,
   errors: false,
-  errorsStyle: {
-    // TO DO - I don't know colours
-  },
   formClass: 'autoform',
   formStyle: {}
 };

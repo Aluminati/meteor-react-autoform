@@ -4,44 +4,51 @@
 
 import React from 'react';
 
-const defaultStyle = {
-  container: {
-    background: 'green'
-  },
-  h3: {
-    background: 'red'
-  },
-  ul: {
-    background: 'purple'
-  },
-  li: {
-    background: 'yellow'
-  }
-};
-
-const getStyle = (style, className) =>
+const listItems = (errors, style) =>
 {
-  return style[className] ? style[className] : defaultStyle[className];
+  const mappedErrors = [];
+
+  errors.map((error) =>
+  {
+    mappedErrors[error.name] = error.message;
+  });
+
+  return Object.keys(mappedErrors).map((key) =>
+  {
+    return (<li key={key} style={style.li}>{mappedErrors[key]}</li>);
+  });
 };
 
 const Errors = ({errors, style = {}}) =>
   (
-  <div style={getStyle(style, 'container')}>
-    <h3 style={getStyle(style, 'h3')}>There was an error submitting the forum:</h3>
-    <ul style={getStyle(style, 'ul')}>
-      {
-        Object.keys(errors).map((key) =>
-        {
-          return (<li key={key} style={getStyle(style, 'li')}>{errors[key]}</li>);
-        })
-      }
+  <div style={style.container}>
+    <h3 style={style.h3}>There was an error submitting the forum:</h3>
+    <ul style={style.ul}>
+      {listItems(errors, style)}
     </ul>
   </div>
 );
 
 Errors.propTypes = {
-  errors: React.PropTypes.object.isRequired,
-  style: React.PropTypes.array
+  errors: React.PropTypes.array.isRequired,
+  style: React.PropTypes.object
+};
+
+Errors.defaultProps = {
+  style: {
+    container: {
+      background: 'green'
+    },
+    h3: {
+      background: 'red'
+    },
+    ul: {
+      background: 'purple'
+    },
+    li: {
+      background: 'yellow'
+    }
+  }
 };
 
 export default Errors;
