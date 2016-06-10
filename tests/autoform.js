@@ -15,19 +15,8 @@ import ReactAutoForm from './../src/autoform';
 
 describe('meteor-react-autoform.autoform', () =>
 {
-  it('Testing a test', () =>
+  it('Quick test on all fields exist with basic features like label and floating text', () =>
   {
-    const onSubmit = sinon.spy();
-
-    const el = mount(
-      <ReactAutoForm
-        muiTheme={true}
-        onSubmit={onSubmit}
-        schema={HelpDeskSchema}
-        type="insert"
-      />
-    );
-
     expect(el.find('input[name="name"]').props().id).to.contain('name-Yourname-Name-');
     expect(el.find('input[name="nameWithNoFormData"]').props().id).to.contain('nameWithNoFormData-undefined-null-');
     expect(el.find('textarea[name="description"]').props().id).to.contain('description-Irequireapasswordreset-Describeyourproblem-');
@@ -38,6 +27,16 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('Toggle').props().toggled).to.equal(false);
     // expect(el.find('#selectChooseNumber div').nodes[2].parentNode.textContent).to.equal('Two');
     // expect(el.find('input[name="skyColour"][value="red"]').props().checked).to.be.true;
+  });
+
+  it('Should test the toggle radio input', () =>
+  {
+    expect(el.find('Toggle')).length(1);
+    expect(el.find('Toggle').props().name).to.equal('agree');
+    expect(el.find('Toggle').props().label).to.equal('Do you agree Toggle?');
+    expect(el.find('Toggle').props().toggled).to.equal(false);
+    el.setState({agree_fieldValue: true});
+    expect(el.find('Toggle').props().toggled).to.equal(true);
   });
 });
 
@@ -158,3 +157,14 @@ const HelpDeskSchema = {
     }
   }
 };
+
+const onSubmit = sinon.spy();
+
+const el = mount(
+  <ReactAutoForm
+    muiTheme={true}
+    onSubmit={onSubmit}
+    schema={HelpDeskSchema}
+    type="insert"
+  />
+);
