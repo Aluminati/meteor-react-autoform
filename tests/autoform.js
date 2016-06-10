@@ -233,6 +233,49 @@ describe('meteor-react-autoform.autoform', () =>
     el.setState({favoritePositiveInteger_fieldValue: 10});
     expect(el.find('TextField').props().value).to.equal(10);
   });
+
+  it('Should test the date input: birthday', () =>
+  {
+    const schema = {
+      birthday: {
+        type: Date,
+        optional: true,
+        label: 'Your birthday',
+        materialForm: {
+          mode: 'landscape',
+          autoOk: true
+        }
+      }
+    };
+
+    const el = mount(
+      <ReactAutoForm
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={schema}
+        type="insert"
+      />
+    );
+
+    expect(el.find('DatePicker')).length(1);
+    expect(el.find('DatePicker').props().name).to.equal('birthday');
+    expect(el.find('DatePicker').props().container).to.equal('dialog');
+    expect(el.find('DatePicker').props().hintText).to.equal('Your birthday');
+    expect(el.find('DatePicker').props().mode).to.equal('landscape');
+    expect(el.find('DatePicker').props().autoOk).to.equal(true);
+    expect(el.find('DatePicker').props().value).to.equal('');
+
+    schema.birthday.defaultValue = new Date('2014-10-18T00:00:00.000Z');
+    el.setProps({schema});
+    expect(el.find('DatePicker').props().value).to.deep.equal(new Date('Sat, 18 Oct 2014 00:00:00 GMT'));
+
+    el.setState({birthday_fieldValue: new Date('Fri Jun 10 2016 16:43:04 GMT+0100 (BST)')});
+    expect(el.find('DatePicker').props().value).to.deep.equal(new Date('Fri, 10 Jun 2016 15:43:04 GMT'));
+
+    schema.birthday.materialForm.mode = 'portrait';
+    el.setProps({schema});
+    expect(el.find('DatePicker').props().mode).to.equal('portrait');
+  });
 });
 
 const onSubmit = sinon.spy();
