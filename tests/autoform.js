@@ -4,14 +4,13 @@
 
 /* eslint no-unused-expressions: ["off"] */
 /* eslint no-shadow: ["error", {"allow": ["doc"]}] */
+/* eslint camelcase: ["off"] */
 
 const {describe, it} = global;
 import React from 'react';
 import {expect} from 'chai';
 import {mount} from 'enzyme';
 import sinon from 'sinon';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import muiTheme from './../src/muiTheme';
 import ReactAutoForm from './../src/autoform';
 
 describe('meteor-react-autoform.autoform', () =>
@@ -21,19 +20,24 @@ describe('meteor-react-autoform.autoform', () =>
     const onSubmit = sinon.spy();
 
     const el = mount(
-      <MaterialUI>
-        <div>
-          <h1>Hello World</h1>
-          <ReactAutoForm
-            onSubmit={onSubmit}
-            schema={HelpDeskSchema}
-            type="insert"
-          />
-        </div>
-      </MaterialUI>
+      <ReactAutoForm
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={HelpDeskSchema}
+        type="insert"
+      />
     );
 
-    expect(el.find('h1').text()).to.equal('Hello World');
+    expect(el.find('input[name="name"]').props().id).to.contain('name-Yourname-Name-');
+    expect(el.find('input[name="nameWithNoFormData"]').props().id).to.contain('nameWithNoFormData-undefined-null-');
+    expect(el.find('textarea[name="description"]').props().id).to.contain('description-Irequireapasswordreset-Describeyourproblem-');
+    expect(el.find('input[name="reoccurringProblem"]').props().type).to.equal('checkbox');
+    expect(el.find('input[name="reoccurringProblem"]').props().checked).to.equal(true);
+    expect(el.find('input[name="favoritePositiveInteger"]').props().id).to.contain('favoritePositiveInteger-undefined-Favoritepositiveinteger');
+    expect(el.find('input[name="birthday"]').props().id).to.contain('birthday-Yourbirthday-null-');
+    expect(el.find('Toggle').props().toggled).to.equal(false);
+    // expect(el.find('#selectChooseNumber div').nodes[2].parentNode.textContent).to.equal('Two');
+    // expect(el.find('input[name="skyColour"][value="red"]').props().checked).to.be.true;
   });
 });
 
