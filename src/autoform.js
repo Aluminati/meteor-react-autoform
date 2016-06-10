@@ -300,7 +300,7 @@ class ReactAutoForm extends React.Component {
       if(e.target.value !== '')
       {
         this.setState({
-          [`${fieldName}_fieldValue`]: this.fields[fieldName].attributes.type ? Number(e.target.value) : e.target.value
+          [`${fieldName}_fieldValue`]: this.fields[fieldName].attributes.type === 'number' ? Number(e.target.value) : e.target.value
         });
       }
       else

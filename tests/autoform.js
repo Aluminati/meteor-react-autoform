@@ -66,12 +66,25 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('TextField').props().type).to.equal('text');
     expect(TextField.props().value).to.equal('');
 
+    TextField.props().onChange({target: {value: ''}});
+    expect(el.state().name_fieldValue).to.equal('');
+    expect(TextField.props().value).to.equal('');
+
     schema.name.defaultValue = 'My default name';
     el.setProps({schema});
+    TextField.props().onChange({target: {value: ''}});
     expect(TextField.props().value).to.equal('My default name');
 
     el.setState({name_fieldValue: 'Josh'});
     expect(TextField.props().value).to.equal('Josh');
+
+    TextField.props().onChange({target: {value: ''}});
+    expect(el.state().name_fieldValue).to.equal('My default name');
+    expect(TextField.props().value).to.equal('My default name');
+
+    TextField.props().onChange({target: {value: 'Hello World'}});
+    expect(el.state().name_fieldValue).to.equal('Hello World');
+    expect(TextField.props().value).to.equal('Hello World');
   });
 
   it('Should test the textarea input: description', () =>
@@ -156,6 +169,14 @@ describe('meteor-react-autoform.autoform', () =>
 
     el.setState({reoccurringProblem_fieldValue: true});
     expect(el.find('Checkbox').props().checked).to.equal(true);
+
+    el.find('Checkbox').props().onCheck({target: {checked: false}});
+    expect(el.find('Checkbox').props().checked).to.equal(false);
+    expect(el.state().reoccurringProblem_fieldValue).to.equal(false);
+
+    el.find('Checkbox').props().onCheck({target: {checked: true}});
+    expect(el.find('Checkbox').props().checked).to.equal(true);
+    expect(el.state().reoccurringProblem_fieldValue).to.equal(true);
   });
 
   it('Should test the toggle checkbox input: agree', () =>
@@ -195,6 +216,10 @@ describe('meteor-react-autoform.autoform', () =>
 
     el.setState({agree_fieldValue: true});
     expect(el.find('Toggle').props().toggled).to.equal(true);
+
+    el.find('Toggle').props().onToggle({target: {checked: false}});
+    expect(el.state().agree_fieldValue).to.equal(false);
+    expect(el.find('Toggle').props().toggled).to.equal(false);
   });
 
   it('Should test the number input: favoritePositiveInteger', () =>
@@ -232,6 +257,18 @@ describe('meteor-react-autoform.autoform', () =>
 
     el.setState({favoritePositiveInteger_fieldValue: 10});
     expect(el.find('TextField').props().value).to.equal(10);
+
+    el.find('TextField').props().onChange({target: {value: 'text'}});
+    expect(el.state().favoritePositiveInteger_fieldValue).to.deep.equal(NaN);
+    expect(el.find('TextField').props().value).to.deep.equal(NaN);
+
+    el.find('TextField').props().onChange({target: {value: '1'}});
+    expect(el.state().favoritePositiveInteger_fieldValue).to.equal(1);
+    expect(el.find('TextField').props().value).to.equal(1);
+
+    el.find('TextField').props().onChange({target: {value: 2}});
+    expect(el.state().favoritePositiveInteger_fieldValue).to.equal(2);
+    expect(el.find('TextField').props().value).to.equal(2);
   });
 
   it('Should test the date input: birthday', () =>
@@ -290,9 +327,6 @@ describe('meteor-react-autoform.autoform', () =>
         label: 'What colour is the sky?',
         materialForm: {
           switcher: 'Radio',
-          groupOptions: {
-            className: 'radioExample'
-          },
           options: [
             {
               label: 'Red',
@@ -319,7 +353,7 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('RadioButtonGroup')).length(1);
     expect(el.find('RadioButton')).length(2);
     expect(el.find('RadioButtonGroup').props().name).to.equal('skyColour');
-    expect(el.find('RadioButtonGroup').props().className).to.equal('radioExample');
+    expect(el.find('RadioButtonGroup').props().className).to.equal(undefined);
     expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('');
 
     const RedButton = el.find('RadioButton').filterWhere(n => n.props().label === 'Red');
@@ -346,6 +380,10 @@ describe('meteor-react-autoform.autoform', () =>
     expect(GreenButtonEnhancedSwitch.props().switched).to.equal(false);
     expect(GreenButtonEnhancedSwitch.props().checked).to.equal(false);
 
+    schema.skyColour.materialForm.groupOptions = {className: 'radioExample'};
+    el.setProps({schema});
+    expect(el.find('RadioButtonGroup').props().className).to.equal('radioExample');
+
     schema.skyColour.defaultValue = 'red';
     el.setProps({schema});
     expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('red');
@@ -356,6 +394,10 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('green');
     expect(el.find('RadioButton').filterWhere(n => n.props().label === 'Red').props().checked).to.equal(false);
     expect(el.find('RadioButton').filterWhere(n => n.props().label === 'Green').props().checked).to.equal(true);
+
+    el.find('RadioButtonGroup').props().onChange(null, 'red');
+    expect(el.state().skyColour_fieldValue).to.equal('red');
+    expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('red');
   });
 
   it('Should test the radio input: skyColour', () =>
@@ -432,6 +474,18 @@ describe('meteor-react-autoform.autoform', () =>
 });
 
 const onSubmit = sinon.spy();
+
+const doc = {
+  _id: 'document_ID_10',
+  agree: true,
+  birthday: new Date('Mon Oct 13 2014 00:00:00 GMT+0100 (BST)'),
+  choose3: 2,
+  description: 'My long description',
+  favoritePositiveInteger: 1,
+  name: 'My Name',
+  reoccurringProblem: false,
+  skyColour: 'red'
+};
 
 const HelpDeskSchema = {
   name: {
