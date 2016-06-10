@@ -21,7 +21,6 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('input[name="nameWithNoFormData"]').props().id).to.contain('nameWithNoFormData-undefined-null-');
     expect(el.find('textarea[name="description"]').props().id).to.contain('description-Irequireapasswordreset-Describeyourproblem-');
     expect(el.find('input[name="reoccurringProblem"]').props().type).to.equal('checkbox');
-    expect(el.find('input[name="reoccurringProblem"]').props().checked).to.equal(true);
     expect(el.find('input[name="favoritePositiveInteger"]').props().id).to.contain('favoritePositiveInteger-undefined-Favoritepositiveinteger');
     expect(el.find('input[name="birthday"]').props().id).to.contain('birthday-Yourbirthday-null-');
     expect(el.find('Toggle').props().toggled).to.equal(false);
@@ -29,13 +28,45 @@ describe('meteor-react-autoform.autoform', () =>
     // expect(el.find('input[name="skyColour"][value="red"]').props().checked).to.be.true;
   });
 
-  it('Should test the toggle radio input', () =>
+  it('Should test the checkbox radio input: reoccurringProblem', () =>
   {
+    const schema = HelpDeskSchema;
+
+    expect(el.find('Checkbox')).length(1);
+    expect(el.find('Checkbox').props().name).to.equal('reoccurringProblem');
+    expect(el.find('Checkbox').props().label).to.equal('Have you had the problem before?');
+    expect(el.find('Checkbox').props().checked).to.equal(false);
+
+    el.setState({reoccurringProblem_fieldValue: true});
+    expect(el.find('Checkbox').props().checked).to.equal(true);
+
+    schema.reoccurringProblem.defaultValue = true;
+    el.setProps({schema});
+    expect(el.find('Checkbox').props().checked).to.equal(true);
+
+    schema.reoccurringProblem.defaultValue = false;
+    el.setProps({schema});
+    expect(el.find('Checkbox').props().checked).to.equal(true);
+  });
+
+  it('Should test the toggle radio input: agree', () =>
+  {
+    const schema = HelpDeskSchema;
+
     expect(el.find('Toggle')).length(1);
     expect(el.find('Toggle').props().name).to.equal('agree');
     expect(el.find('Toggle').props().label).to.equal('Do you agree Toggle?');
     expect(el.find('Toggle').props().toggled).to.equal(false);
+
     el.setState({agree_fieldValue: true});
+    expect(el.find('Toggle').props().toggled).to.equal(true);
+
+    schema.agree.defaultValue = true;
+    el.setProps({schema});
+    expect(el.find('Toggle').props().toggled).to.equal(true);
+
+    schema.agree.defaultValue = false;
+    el.setProps({schema});
     expect(el.find('Toggle').props().toggled).to.equal(true);
   });
 });
@@ -66,7 +97,6 @@ const HelpDeskSchema = {
   },
   reoccurringProblem: {
     type: Boolean,
-    defaultValue: true,
     optional: true,
     label: 'Have you had the problem before?',
     materialForm: {
@@ -96,7 +126,6 @@ const HelpDeskSchema = {
     type: Boolean,
     optional: true,
     label: 'Do you agree Toggle?',
-    defaultValue: false,
     materialForm: {
       switcher: 'Toggle'
     }
