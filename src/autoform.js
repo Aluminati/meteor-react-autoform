@@ -13,6 +13,10 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
 
+
+import baseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+
 /**
  * Class to translate SimpleSchema to Material-UI fields
  */
@@ -23,6 +27,16 @@ class ReactAutoForm extends React.Component {
     this.state = {};
     this.fields = {};
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  getChildContext()
+  {
+    if(this.props.muiTheme)
+    {
+      return {
+        muiTheme: getMuiTheme(baseTheme)
+      };
+    }
   }
 
   processErrors()
@@ -545,6 +559,7 @@ ReactAutoForm.propTypes = {
   errorsTitle: React.PropTypes.string,
   formClass: React.PropTypes.string,
   formStyle: React.PropTypes.object,
+  muiTheme: React.PropTypes.bool,
   onSubmit: React.PropTypes.func.isRequired,
   schema: React.PropTypes.object.isRequired,
   type: React.PropTypes.oneOf(['update', 'insert']).isRequired,
@@ -555,7 +570,12 @@ ReactAutoForm.defaultProps = {
   debug: false,
   errors: false,
   formClass: 'autoform',
-  formStyle: {}
+  formStyle: {},
+  muiTheme: false
+};
+
+ReactAutoForm.childContextTypes = {
+  muiTheme: React.PropTypes.object
 };
 
 export default ReactAutoForm;

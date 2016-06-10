@@ -154,9 +154,3 @@ const HelpDeskSchema = {
     }
   }
 };
-
-const MaterialUI = ({children}) => (
-  <MuiThemeProvider muiTheme={muiTheme}>
-    {children}
-  </MuiThemeProvider>
-);
