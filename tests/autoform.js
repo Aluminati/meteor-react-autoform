@@ -73,6 +73,50 @@ describe('meteor-react-autoform.autoform', () =>
     expect(TextField.props().value).to.equal('Josh');
   });
 
+  it('Should test the textarea input: description', () =>
+  {
+    const schema = {
+      description: {
+        type: String,
+        min: 10,
+        max: 200,
+        materialForm: {
+          floatingLabelText: 'Describe your problem',
+          rows: 1,
+          rowsMax: 10,
+          multiLine: true,
+          hintText: 'I require a password reset...'
+        }
+      }
+    };
+
+    const el = mount(
+      <ReactAutoForm
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={schema}
+        type="insert"
+      />
+    );
+
+    expect(el.find('TextField')).length(1);
+    expect(el.find('TextField').props().name).to.equal('description');
+    expect(el.find('TextField').props().floatingLabelText).to.equal('Describe your problem');
+    expect(el.find('TextField').props().hintText).to.equal('I require a password reset...');
+    expect(el.find('TextField').props().value).to.equal('');
+    expect(el.find('TextField').props().maxLength).to.equal(200);
+    expect(el.find('TextField').props().rows).to.equal(1);
+    expect(el.find('TextField').props().rowsMax).to.equal(10);
+    expect(el.find('TextField').props().multiLine).to.equal(true);
+
+    schema.description.defaultValue = 'My default';
+    el.setProps({schema});
+    expect(el.find('TextField').props().value).to.equal('My default');
+
+    el.setState({description_fieldValue: 'Hello world textarea'});
+    expect(el.find('TextField').props().value).to.equal('Hello world textarea');
+  });
+
   it('Should test the checkbox radio input: reoccurringProblem', () =>
   {
     const schema = {
