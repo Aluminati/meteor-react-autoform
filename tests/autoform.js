@@ -63,6 +63,7 @@ describe('meteor-react-autoform.autoform', () =>
     expect(TextField.props().name).to.equal('name');
     expect(TextField.props().floatingLabelText).to.equal('Name');
     expect(TextField.props().hintText).to.equal('Your name...');
+    expect(el.find('TextField').props().type).to.equal('text');
     expect(TextField.props().value).to.equal('');
 
     schema.name.defaultValue = 'My default name';
@@ -103,6 +104,7 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('TextField').props().name).to.equal('description');
     expect(el.find('TextField').props().floatingLabelText).to.equal('Describe your problem');
     expect(el.find('TextField').props().hintText).to.equal('I require a password reset...');
+    expect(el.find('TextField').props().type).to.equal('text');
     expect(el.find('TextField').props().value).to.equal('');
     expect(el.find('TextField').props().maxLength).to.equal(200);
     expect(el.find('TextField').props().rows).to.equal(1);
@@ -193,6 +195,43 @@ describe('meteor-react-autoform.autoform', () =>
 
     el.setState({agree_fieldValue: true});
     expect(el.find('Toggle').props().toggled).to.equal(true);
+  });
+
+  it('Should test the number input: favoritePositiveInteger', () =>
+  {
+    const schema = {
+      favoritePositiveInteger: {
+        type: Number,
+        min: 0,
+        optional: true,
+        label: 'Favorite positive integer',
+        materialForm: {
+          step: 0.5
+        }
+      }
+    };
+
+    const el = mount(
+      <ReactAutoForm
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={schema}
+        type="insert"
+      />
+    );
+
+    expect(el.find('TextField')).length(1);
+    expect(el.find('TextField').props().name).to.equal('favoritePositiveInteger');
+    expect(el.find('TextField').props().floatingLabelText).to.equal('Favorite positive integer');
+    expect(el.find('TextField').props().step).to.equal(0.5);
+    expect(el.find('TextField').props().type).to.equal('number');
+
+    schema.favoritePositiveInteger.defaultValue = 1;
+    el.setProps({schema});
+    expect(el.find('TextField').props().value).to.equal(1);
+
+    el.setState({favoritePositiveInteger_fieldValue: 10});
+    expect(el.find('TextField').props().value).to.equal(10);
   });
 });
 
