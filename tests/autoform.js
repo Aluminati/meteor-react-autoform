@@ -356,7 +356,78 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('green');
     expect(el.find('RadioButton').filterWhere(n => n.props().label === 'Red').props().checked).to.equal(false);
     expect(el.find('RadioButton').filterWhere(n => n.props().label === 'Green').props().checked).to.equal(true);
+  });
 
+  it('Should test the radio input: skyColour', () =>
+  {
+    const schema = {
+      choose3: {
+        type: Number,
+        allowedValues: [
+          1,
+          2,
+          3
+        ],
+        optional: true,
+        label: 'Choose a number',
+        materialForm: {
+          selectOptions: {
+            id: 'myIdValue',
+            className: 'theClassValue'
+          },
+          options: [
+            {
+              label: 'One',
+              value: 1
+            },
+            {
+              label: 'Two',
+              value: 2
+            },
+            {
+              label: 'Three',
+              value: 3
+            }
+          ]
+        }
+      }
+    };
+
+    const el = mount(
+      <ReactAutoForm
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={schema}
+        type="insert"
+      />
+    );
+
+    expect(el.find('DropDownMenu')).length(1);
+    expect(el.find('SelectField')).length(1);
+    expect(el.find('SelectField').props().className).to.equal('theClassValue');
+    expect(el.find('SelectField').props().id).to.equal('myIdValue');
+    expect(el.find('SelectField').props().floatingLabelText).to.equal('Choose a number');
+    expect(el.find('SelectField').props().defaultValue).to.equal('');
+    expect(el.find('SelectField').props().value).to.equal('');
+
+    expect(el.find('SelectField').props().children).length(3);
+    expect(el.find('SelectField').props().children[0].props.value).to.equal('1');
+    expect(el.find('SelectField').props().children[0].props.label).to.equal('One');
+    expect(el.find('SelectField').props().children[0].props.primaryText).to.equal('One');
+    expect(el.find('SelectField').props().children[1].props.value).to.equal('2');
+    expect(el.find('SelectField').props().children[1].props.label).to.equal('Two');
+    expect(el.find('SelectField').props().children[2].props.value).to.equal('3');
+    expect(el.find('SelectField').props().children[2].props.label).to.equal('Three');
+
+
+
+    schema.choose3.defaultValue = '2';
+    el.setProps({schema});
+    expect(el.find('SelectField').props().defaultValue).to.equal('2');
+    expect(el.find('SelectField').props().value).to.equal('2');
+
+    el.setState({choose3_fieldValue: '3'});
+    expect(el.find('SelectField').props().value).to.equal('3');
   });
 });
 
