@@ -355,6 +355,10 @@ describe('meteor-react-autoform.autoform', () =>
     el.setState({birthday_fieldValue: new Date('Fri Jun 10 2016 16:43:04 GMT+0100 (BST)')});
     expect(el.find('DatePicker').props().value).to.deep.equal(new Date('Fri, 10 Jun 2016 15:43:04 GMT'));
 
+    el.find('DatePicker').props().onChange(null, new Date('Mon Jun 13 2016 08:53:13 GMT+0100 (BST)'));
+    expect(el.state().birthday_fieldValue).to.deep.equal(new Date('Mon Jun 13 2016 08:53:13 GMT+0100 (BST)'));
+    expect(el.find('DatePicker').props().value).to.deep.equal(new Date('Mon, 13 Jun 2016 07:53:13 GMT'));
+
     schema.birthday.materialForm.mode = 'portrait';
     el.setProps({schema});
     expect(el.find('DatePicker').props().mode).to.equal('portrait');
