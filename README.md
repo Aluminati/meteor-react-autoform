@@ -1,12 +1,9 @@
 ## Meteor-React-Autoform
-`meteor-react-autoform` will translate your Meteor [aldeed:SimpleSchema](https://github.com/aldeed/meteor-simple-schema) into a [React](https://github.com/facebook/react) form using [Material-UI](https://github.com/callemall/material-ui) components.
+`meteor-react-autoform` will translate your Meteor [aldeed:SimpleSchema](https://github.com/aldeed/meteor-simple-schema) into a [React](https://github.com/facebook/react) form using [Material-UI](https://github.com/callemall/material-ui) components. You can wrap tests around your component and/or the Autoform component, this will also work with [Storybook](https://github.com/kadirahq/react-storybook). This is still in active development but is very possible to use today. Basic form elements are already available, see below for [todo list](#todo-list) and see [Changelog](CHANGELOG.MD).
 
 ## Requirements
 1. `React v15` and `Material-UI v0.15`
 2. `Meteor v1.3`
-
-## What does Meteor-React-Autoform do?
-This package will take your `aldeed:simple-schema` and translate it into a Material-UI form. You can wrap tests around your parent component and/or this component, and even display it in [Storybook](https://github.com/kadirahq/react-storybook). This is still in active development but is very possible to use today. Basic form elements are already available, see below for todo list.
 
 ## Installation
 1. Installed the NPM package: `$ npm i meteor-react-autoform --save`
@@ -21,7 +18,7 @@ This package will take your `aldeed:simple-schema` and translate it into a Mater
 ```
 4. See the [element examples](#element-examples-list) list to see how to write the `materialForm` object in your schema.
 
-## TODO
+## TODO <a name="todo-list"></a>
  - Automated testing on updating a document
  - Array of elements
  - Object fields
