@@ -102,13 +102,13 @@ class ReactAutoForm extends React.Component {
    */
   createDefaultAttr(fieldName)
   {
+    this.fields[fieldName].materialForm = this.fields[fieldName].materialForm ? this.fields[fieldName].materialForm : {};
     this.fields[fieldName].attributes = {}; // These will be overwritten if it's repeated in the materialForm object (ie `materialForm.floatingLabelText`)
     this.fields[fieldName].attributes.name = fieldName;
     this.getSchemaValue(fieldName, 'label', 'floatingLabelText');
     this.getSchemaValue(fieldName, 'max', 'maxLength');
     this.getSchemaMaterialForm(fieldName);
 
-    this.fields[fieldName].materialForm = this.fields[fieldName].materialForm ? this.fields[fieldName].materialForm : {};
   }
 
   /**
@@ -117,8 +117,6 @@ class ReactAutoForm extends React.Component {
    */
   getSchemaMaterialForm(fieldName)
   {
-    this.fields[fieldName].materialForm = this.fields[fieldName].materialForm ? this.fields[fieldName].materialForm : {};
-
     Object.keys(this.fields[fieldName].materialForm).map((key) => // For each `materialForm` field
     {
       this.fields[fieldName].attributes[key] = this.fields[fieldName].materialForm[key]; // Store it in our component attributes

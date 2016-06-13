@@ -41,6 +41,52 @@ describe('meteor-react-autoform.autoform', () =>
   {
     const schema = {
       name: {
+        type: String
+      }
+    };
+
+    const el = mount(
+      <ReactAutoForm
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={schema}
+        type="insert"
+      />
+    );
+
+    const TextField = el.find('TextField').filterWhere(n => n.props().name === 'name');
+    expect(TextField).length(1);
+    expect(TextField.props().name).to.equal('name');
+    expect(TextField.props().floatingLabelText).to.equal(null);
+    expect(TextField.props().hintText).to.equal(undefined);
+    expect(el.find('TextField').props().type).to.equal('text');
+    expect(TextField.props().value).to.equal('');
+
+    TextField.props().onChange({target: {value: ''}});
+    expect(el.state().name_fieldValue).to.equal('');
+    expect(TextField.props().value).to.equal('');
+
+    schema.name.defaultValue = 'My default name';
+    el.setProps({schema});
+    TextField.props().onChange({target: {value: ''}});
+    expect(TextField.props().value).to.equal('My default name');
+
+    el.setState({name_fieldValue: 'Josh'});
+    expect(TextField.props().value).to.equal('Josh');
+
+    TextField.props().onChange({target: {value: ''}});
+    expect(el.state().name_fieldValue).to.equal('My default name');
+    expect(TextField.props().value).to.equal('My default name');
+
+    TextField.props().onChange({target: {value: 'Hello World'}});
+    expect(el.state().name_fieldValue).to.equal('Hello World');
+    expect(TextField.props().value).to.equal('Hello World');
+  });
+
+  it('Should test the text input: name', () =>
+  {
+    const schema = {
+      name: {
         type: String,
         materialForm: {
           floatingLabelText: 'Name',
