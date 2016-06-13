@@ -413,10 +413,6 @@ describe('meteor-react-autoform.autoform', () =>
         optional: true,
         label: 'Choose a number',
         materialForm: {
-          selectOptions: {
-            id: 'myIdValue',
-            className: 'theClassValue'
-          },
           options: [
             {
               label: 'One',
@@ -446,8 +442,8 @@ describe('meteor-react-autoform.autoform', () =>
 
     expect(el.find('DropDownMenu')).length(1);
     expect(el.find('SelectField')).length(1);
-    expect(el.find('SelectField').props().className).to.equal('theClassValue');
-    expect(el.find('SelectField').props().id).to.equal('myIdValue');
+    expect(el.find('SelectField').props().className).to.equal(undefined);
+    expect(el.find('SelectField').props().id).to.equal(undefined);
     expect(el.find('SelectField').props().floatingLabelText).to.equal('Choose a number');
     expect(el.find('SelectField').props().defaultValue).to.equal('');
     expect(el.find('SelectField').props().value).to.equal('');
@@ -461,7 +457,10 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('SelectField').props().children[2].props.value).to.equal('3');
     expect(el.find('SelectField').props().children[2].props.label).to.equal('Three');
 
-
+    schema.choose3.materialForm.selectOptions = {id: 'myIdValue', className: 'theClassValue'};
+    el.setProps({schema});
+    expect(el.find('SelectField').props().className).to.equal('theClassValue');
+    expect(el.find('SelectField').props().id).to.equal('myIdValue');
 
     schema.choose3.defaultValue = '2';
     el.setProps({schema});
@@ -470,6 +469,10 @@ describe('meteor-react-autoform.autoform', () =>
 
     el.setState({choose3_fieldValue: '3'});
     expect(el.find('SelectField').props().value).to.equal('3');
+
+    el.find('SelectField').props().onChange(null, null, '1');
+    expect(el.state().choose3_fieldValue).to.equal('1');
+    expect(el.find('SelectField').props().value).to.equal('1');
   });
 });
 
