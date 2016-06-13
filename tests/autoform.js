@@ -37,7 +37,7 @@ describe('meteor-react-autoform.autoform', () =>
     // expect(el.find('input[name="skyColour"][value="red"]').props().checked).to.be.true;
   });
 
-  it('Should test the text input: name', () =>
+  it('Should test the text input without any materialForm object: name', () =>
   {
     const schema = {
       name: {
@@ -373,6 +373,88 @@ describe('meteor-react-autoform.autoform', () =>
           'red',
           'green'
         ],
+        optional: true,
+        label: 'What colour is the sky?',
+        materialForm: {
+          switcher: 'Radio',
+          options: [
+            {
+              label: 'Red',
+              value: 'red'
+            },
+            {
+              label: 'Green',
+              value: 'green'
+            }
+          ]
+        }
+      }
+    };
+
+    const el = mount(
+      <ReactAutoForm
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={schema}
+        type="insert"
+      />
+    );
+
+    expect(el.find('RadioButtonGroup')).length(1);
+    expect(el.find('RadioButton')).length(2);
+    expect(el.find('RadioButtonGroup').props().name).to.equal('skyColour');
+    expect(el.find('RadioButtonGroup').props().className).to.equal(undefined);
+    expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('');
+
+    const RedButton = el.find('RadioButton').filterWhere(n => n.props().label === 'Red');
+    expect(RedButton).length(1);
+    expect(RedButton.props().name).to.equal('skyColour');
+    expect(RedButton.props().value).to.equal('red');
+    expect(RedButton.props().label).to.equal('Red');
+    expect(RedButton.props().checked).to.equal(false);
+
+    const GreenButton = el.find('RadioButton').filterWhere(n => n.props().label === 'Green');
+    expect(GreenButton).length(1);
+    expect(GreenButton.props().name).to.equal('skyColour');
+    expect(GreenButton.props().value).to.equal('green');
+    expect(GreenButton.props().label).to.equal('Green');
+    expect(GreenButton.props().checked).to.equal(false);
+
+    const GreenButtonEnhancedSwitch = el.find('EnhancedSwitch').filterWhere(n => n.props().label === 'Green');
+    expect(GreenButtonEnhancedSwitch).length(1);
+    expect(GreenButtonEnhancedSwitch.props().name).to.equal('skyColour');
+    expect(GreenButtonEnhancedSwitch.props().value).to.equal('green');
+    expect(GreenButtonEnhancedSwitch.props().label).to.equal('Green');
+    expect(GreenButtonEnhancedSwitch.props().value).to.equal('green');
+    expect(GreenButtonEnhancedSwitch.props().inputType).to.equal('radio');
+    expect(GreenButtonEnhancedSwitch.props().switched).to.equal(false);
+    expect(GreenButtonEnhancedSwitch.props().checked).to.equal(false);
+
+    schema.skyColour.materialForm.groupOptions = {className: 'radioExample'};
+    el.setProps({schema});
+    expect(el.find('RadioButtonGroup').props().className).to.equal('radioExample');
+
+    schema.skyColour.defaultValue = 'red';
+    el.setProps({schema});
+    expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('red');
+    expect(el.find('RadioButton').filterWhere(n => n.props().label === 'Red').props().checked).to.equal(true);
+    expect(el.find('RadioButton').filterWhere(n => n.props().label === 'Green').props().checked).to.equal(false);
+
+    el.setState({skyColour_fieldValue: 'green'});
+    expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('green');
+    expect(el.find('RadioButton').filterWhere(n => n.props().label === 'Red').props().checked).to.equal(false);
+    expect(el.find('RadioButton').filterWhere(n => n.props().label === 'Green').props().checked).to.equal(true);
+
+    el.find('RadioButtonGroup').props().onChange(null, 'red');
+    expect(el.state().skyColour_fieldValue).to.equal('red');
+    expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('red');
+  });
+
+  it('Should test the radio input without allowValues in the schema: skyColour', () =>
+  {
+    const schema = {
+      skyColour: {
+        type: String,
         optional: true,
         label: 'What colour is the sky?',
         materialForm: {
