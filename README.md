@@ -69,18 +69,8 @@ You will need to provide your [Action](https://kadirahq.github.io/mantra/#sec-Ac
 
 ## SimpleSchema object
 #### Example <a name="example-schema"></a>
-`/lib/collections/helpDesk.js`
+`/lib/schema/helpDesk.js`
 ```
-  import {Mongo} from 'meteor/mongo';
-
-  const HelpDesk = new Meteor.Collection('helpDesk');
-
-  // Documentation -> https://github.com/MechJosh0/meteor-react-autoform
-  // Extend the schema to allow our materialForm object
-  SimpleSchema.extendOptions({
-    materialForm: Match.Optional(Object)
-  })
-
   const schema = {
     name: {
      type: String,
@@ -111,16 +101,26 @@ You will need to provide your [Action](https://kadirahq.github.io/mantra/#sec-Ac
     }
   };
 
-  HelpDesk.attachSchema(schema);
-
-  HelpDesk.allow({
-    insert: (userId, doc) => {
-      return true;
-    }
-  });
-
   export default HelpDesk;
 ```
+
+`/lib/collections/helpDesk.js`
+```
+  import {Mongo} from 'meteor/mongo';
+  import Schema from './../schema/help_desk';
+  const HelpDesk = new Mongo.Collection('helpDesk');
+
+  SimpleSchema.extendOptions({
+    materialForm: Match.Optional(Object)
+  });
+
+  const HelpDeskSchema = new SimpleSchema(Schema);
+
+  HelpDesk.attachSchema(HelpDeskSchema);
+
+  export {HelpDesk, HelpDeskSchema};
+```
+
 ![Image Preview](formPreview.png)
 ### Element Examples <a name="element-examples-list"></a>
 - [Text](#element-text)
