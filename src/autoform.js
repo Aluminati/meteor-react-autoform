@@ -59,18 +59,7 @@ class ReactAutoForm extends React.Component {
 
     if(this.fields[fieldName].allowedValues) // If we're restricting the values to a list it's a dropdown
     {
-      switch(this.fields[fieldName].materialForm.switcher)
-      {
-        case 'Radio':
-          component = this.componentRadio(fieldName);
-          break;
-
-        default:
-          component = this.typeDropdown(fieldName);
-          break;
-      }
-
-      return component;
+      return this.switchComponent(fieldName);
     }
 
     switch(this.fields[fieldName].type.name) // Switch between what type of field it is to use different types of Material -UI component
@@ -89,6 +78,24 @@ class ReactAutoForm extends React.Component {
 
       case 'String':
         component = this.typeString(fieldName);
+        break;
+    }
+
+    return component;
+  }
+
+  switchComponent(fieldName)
+  {
+    let component;
+
+    switch(this.fields[fieldName].materialForm.switcher)
+    {
+      case 'Radio':
+        component = this.componentRadio(fieldName);
+        break;
+
+      default:
+        component = this.typeDropdown(fieldName);
         break;
     }
 
@@ -172,7 +179,7 @@ class ReactAutoForm extends React.Component {
   {
     if(this.fields[fieldName].materialForm.switcher)
     {
-      return this.typeCheckbox(fieldName);
+      return this.switchComponent(fieldName);
     }
 
     // We don't need to change anything here so go straight to the input text
