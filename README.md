@@ -2,12 +2,15 @@
 `meteor-react-autoform` will translate your Meteor [aldeed:SimpleSchema](https://github.com/aldeed/meteor-simple-schema) into a [React](https://github.com/facebook/react) form using [Material-UI](https://github.com/callemall/material-ui) components.
 
 ## Requirements
-1. `React v15` and `Material-UI v0.15` (if you're using `React v0.14` please use `meteor-react-autoform v0.92`)
+1. `React v15` and `Material-UI v0.15`
 2. `Meteor v1.3`
+
+## What does Meteor-React-Autoform do?
+This package will take your `aldeed:simple-schema` and translate it into a Material-UI form. You can wrap tests around your parent component and/or this component, and even display it in [Storybook](https://github.com/kadirahq/react-storybook). This is still in active development but is very possible to use today. Basic form elements are already available, see below for todo list.
 
 ## Installation
 1. Installed the NPM package: `$ npm i meteor-react-autoform --save`
-2. Install the Meteor package: `$ meteor add aldeed:collection2`
+2. Install the Meteor package: `$ meteor add aldeed:collection2 aldeed:simple-schema`
 3. Extend your SimpleSchema to allow our `materialForm` object. Place the below code above your schema definitions ([see example](#example-schema)):
 ```
   // Documentation -> https://github.com/MechJosh0/meteor-react-autoform
@@ -18,13 +21,9 @@
 ```
 4. See the [element examples](#element-examples-list) list to see how to write the `materialForm` object in your schema.
 
-## WARNING
-This is still in active development. Basic form elements are available, see below for todo list.
-
 ## TODO
- - Automated testing
- - Multiple select element
- - Array of string elements
+ - Automated testing on updating a document
+ - Array of elements
  - Object fields
  - Array of object fields
 
@@ -32,33 +31,44 @@ This is still in active development. Basic form elements are available, see belo
 ### Example
 `/client/modules/contact/components/contactPage.jsx`
 ```
-  import React from 'react';
-  import ReactAutoForm from 'meteor-react-autoform';
-  import HelpDeskCollection from '/lib/collections/helpDesk';
-
-  const redirectPageToNewDocument = (docId) => {
-    // You can redirect the client URL to your new documentId. For example if you're using FlowRouter:
-    // FlowRouter.go(`${FlowRouter.path('helpDesk.update')}/${docId}`);
-  };
-
-  const HelpDesk = () => (
-    <div>
-      <h1>Contact Us</h1>
-      <ReactAutoForm collection={HelpDeskCollection} type="insert" onSubmit={redirectPageToNewDocument} />
-    </div>
-  );
-
-  export default HelpDesk;
+    import React from 'react';
+    import ReactAutoForm from 'meteor-react-autoform';
+    import HelpDeskSchema from '/lib/schema/help_desk';
+    
+    const HelpDesk = () => (
+        <div>
+        <h1>Contact Us</h1>
+        <ReactAutoForm
+            errors={this.props.errors}
+            onSubmit={this.props.handleInsert}
+            schema={HelpDeskSchema}
+            type="insert"
+        />
+        </div>
+    );
+    
+    HelpDesk.propTypes = {
+        errors: React.PropTypes.array,
+        handleInsert: React.PropTypes.func.isRequired
+    };
+    
+    export default HelpDesk;
 ```
 
 ### ReactAutoForm props
- - `collection={HelpDesk}` REQUIRED  You must provide the collection you wish to use for building your form.
+ - `schema={HelpDeskSchema}` REQUIRED  You must provide the collection you wish to use for building your form.
  - `type=["insert", "update"]` REQUIRED  You must set the `type` prop which must equal either `"insert"` or `"update"`.
-    - `type="update" doc={$document}` OPTIONAL  To update a document you must set the `type="update"` and provide the document you wish to update in the `doc` prop.
+    - `type="update" doc={$document}` To update a document you must set the `type="update"` and provide the document you wish to update in the `doc` prop.
  - `useFields={['name', 'text']}` OPTIONAL  Only produce the fields `name` and `description` from the Collection in the form.
  - `formClass="myCustomFormClass"` OPTIONAL  You may provide a custom className for the form, otherwise it will use the default `autoform_{$collectionName}`.
  - `debug={true}` OPTIONAL  This will output the form data into the console when the user attempts to submit.
- - `onSubmit={(docId) => { console.log("New document", docId); }}` OPTIONAL Function to run when an insert is successful, the new docId is passed through to your custom function.
+ - `onSubmit` REQUIRED Function to run when the user attempts to submit the forum, this will need to be your Action. See [onSubmit](#onSubmit) for for formation.
+ 
+## onSubmit <a name="onSubmit"></a>
+updateTicket(_id, forumFields)
+You will need to provide your [Action](https://kadirahq.github.io/mantra/#sec-Actions) (Meteor/Tracker, Redux, Rx.js, etc) as a prop to the React component. When Autoform is submitted
+  it will call your `onSubmit` Action function. For an `type={'insert'}` form the Action will be called with just the `forumFields` parameter, for example `yourInsertAction(forumFields)`, whereas a
+  form with `type={'update'}` the Action will be called with `docId, formFields` parameters, for example `yourUpdateAction(_id, forumFields)`.
 
 ## SimpleSchema object
 #### Example <a name="example-schema"></a>
