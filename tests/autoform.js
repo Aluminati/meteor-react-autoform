@@ -732,6 +732,22 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.state().choose3_fieldValue).to.equal('1');
     expect(el.find('SelectField').props().value).to.equal('1');
   });
+
+  it('It should display the errors component', () =>
+  {
+    const el = mount(
+      <ReactAutoForm
+        errors={errors}
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={HelpDeskSchema}
+        type="insert"
+      />
+    );
+
+    expect(el.find('Errors')).length('1');
+    expect(el.find('h3').text()).to.equal('There was an error submitting the form:');
+  });
 });
 
 const onSubmit = sinon.spy();
@@ -863,3 +879,12 @@ const HelpDeskSchema = {
     }
   }
 };
+
+const errors = [
+  {
+    name: 'name',
+    type: 'required',
+    value: null,
+    message: 'Name is required'
+  }
+];
