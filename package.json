@@ -1,6 +1,6 @@
 {
   "name": "meteor-react-autoform",
-  "version": "0.2.0",
+  "version": "0.2.01",
   "description": "Meteor autoform for React using aldeed/meteor-simple-schema",
   "keywords": [
     "meteor",
@@ -10,7 +10,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "compile": "$(npm bin)/babel src --out-dir ../../node_modules/meteor-react-autoform/lib",
+    "compile": "$(npm bin)/babel src --out-dir ../../node_modules/meteor-react-autoform/lib && $(npm bin)/babel src --out-dir lib",
     "prepublish": "npm run compile",
     "git-pre-commit": "npm run test",
     "lint": "eslint ./src --ext .js",
