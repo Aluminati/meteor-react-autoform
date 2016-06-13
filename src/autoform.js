@@ -88,15 +88,24 @@ class ReactAutoForm extends React.Component {
   {
     let component;
 
-    switch(this.fields[fieldName].materialForm.switcher)
+    if(this.fields[fieldName].attributes && this.fields[fieldName].attributes.options || this.fields[fieldName].allowedValues)
     {
-      case 'Radio':
-        component = this.componentRadio(fieldName);
-        break;
+      switch(this.fields[fieldName].materialForm.switcher)
+      {
+        case 'Radio':
+          component = this.componentRadio(fieldName);
+          break;
 
-      default:
-        component = this.typeDropdown(fieldName);
-        break;
+        default:
+          component = this.typeDropdown(fieldName);
+          break;
+      }
+    }
+    else
+    {
+      console.error('Autoform Error:',
+        `You must provide either '${fieldName}.allowedValues' or '${fieldName}.materialForm.options' to have a Radio or Dropdown component.`);
+      component = this.componentTextField(fieldName);
     }
 
     return component;

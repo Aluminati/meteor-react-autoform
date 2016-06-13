@@ -532,7 +532,57 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('red');
   });
 
-  it('Should test the radio input: skyColour', () =>
+  it('Should test the radio input without allowValues or materialForm.options in the schema: skyColour', () =>
+  {
+    const schema = {
+      skyColour: {
+        type: String,
+        optional: true,
+        label: 'What colour is the sky?',
+        materialForm: {
+          switcher: 'Radio'
+        }
+      }
+    };
+
+    const el = mount(
+      <ReactAutoForm
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={schema}
+        type="insert"
+      />
+    );
+
+    expect(el.find('TextField')).length(1);
+    expect(el.find('TextField').props().name).to.equal('skyColour');
+    expect(el.find('TextField').props().floatingLabelText).to.equal('What colour is the sky?');
+    expect(el.find('TextField').props().hintText).to.equal(undefined);
+    expect(el.find('TextField').props().type).to.equal('text');
+    expect(el.find('TextField').props().value).to.equal('');
+
+    el.find('TextField').props().onChange({target: {value: ''}});
+    expect(el.state().skyColour_fieldValue).to.equal('');
+    expect(el.find('TextField').props().value).to.equal('');
+
+    schema.skyColour.defaultValue = 'My default name';
+    el.setProps({schema});
+    el.find('TextField').props().onChange({target: {value: ''}});
+    expect(el.find('TextField').props().value).to.equal('My default name');
+
+    el.setState({skyColour_fieldValue: 'Josh'});
+    expect(el.find('TextField').props().value).to.equal('Josh');
+
+    el.find('TextField').props().onChange({target: {value: ''}});
+    expect(el.state().skyColour_fieldValue).to.equal('My default name');
+    expect(el.find('TextField').props().value).to.equal('My default name');
+
+    el.find('TextField').props().onChange({target: {value: 'Hello World'}});
+    expect(el.state().skyColour_fieldValue).to.equal('Hello World');
+    expect(el.find('TextField').props().value).to.equal('Hello World');
+  });
+
+  it('Should test the dropdown input: choose3', () =>
   {
     const schema = {
       choose3: {
