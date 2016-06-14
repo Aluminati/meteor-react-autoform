@@ -24,9 +24,23 @@
  - Object fields
  - Array of object fields
 
+### ReactAutoForm props
+ - `debug={false}` OPTIONAL | `Bool` | This will output the form data into the console when the user attempts to submit.
+ - `doc={$document}` OPTIONAL | `Object` | To update a document you must set the `type="update"` and provide the document you wish to update in the `doc` prop.
+ - `errors={errors}` OPTIONAL | `Array` | When your submit Action is ran and there is an error, it should update the prop here which will in turn update the form to display errors.
+ - `errorsStyle={style.errors}` | OPTIONAL | `Object` | You may provide the style for the errors above the form. [See example](#styleExample).
+ - `errorsTitle="There was an error:"` | OPTIONAL | `String` | The error header above the form.
+ - `formClass="contactForm"` | OPTIONAL | `String` | By default the form className is `autoform` however you can choose your own.
+ - `formStyle={style.form}` | OPTIONAL | `Object` | Provide your own form style, [see example](#styleExample). 
+ - `muiTheme={false}` OPTIONAL | `Bool` | Default set to false to allow you to choose your own Material-UI theme, however if you do not have one set up set this to `true` to use the default.
+ - `onSubmit` REQUIRED | `Function` | This will run when the user attempts to submit the forum, this will need to be your Action. See [onSubmit](#onSubmit) for more formation.
+ - `schema={HelpDeskSchema}` REQUIRED | `Object` | You must provide the collection you wish to use for building your form.
+ - `type=["insert", "update"]` REQUIRED | `OneOf['update', 'insert']` | You must set the `type` prop which must equal either `"insert"` or `"update"`.
+ - `useFields={['name', 'text']}` OPTIONAL | `Array` | Only produce the fields `name` and `description` from the Collection in the form.
+
 ## Usage
-### Example
-`/client/modules/contact/components/contactPage.jsx`
+### React Component Example
+`/client/modules/contact/components/contact_page.js`
 ```
     import React from 'react';
     import ReactAutoForm from 'meteor-react-autoform';
@@ -37,6 +51,7 @@
         <h1>Contact Us</h1>
         <ReactAutoForm
             errors={this.props.errors}
+            muiTheme={true}
             onSubmit={this.props.handleInsert}
             schema={HelpDeskSchema}
             type="insert"
@@ -51,21 +66,55 @@
     
     export default HelpDesk;
 ```
-
-### ReactAutoForm props
- - `schema={HelpDeskSchema}` REQUIRED  You must provide the collection you wish to use for building your form.
- - `type=["insert", "update"]` REQUIRED  You must set the `type` prop which must equal either `"insert"` or `"update"`.
-    - `type="update" doc={$document}` To update a document you must set the `type="update"` and provide the document you wish to update in the `doc` prop.
- - `useFields={['name', 'text']}` OPTIONAL  Only produce the fields `name` and `description` from the Collection in the form.
- - `formClass="myCustomFormClass"` OPTIONAL  You may provide a custom className for the form, otherwise it will use the default `autoform_{$collectionName}`.
- - `debug={true}` OPTIONAL  This will output the form data into the console when the user attempts to submit.
- - `onSubmit` REQUIRED Function to run when the user attempts to submit the forum, this will need to be your Action. See [onSubmit](#onSubmit) for for formation.
  
 ## onSubmit <a name="onSubmit"></a>
-updateTicket(_id, forumFields)
-You will need to provide your [Action](https://kadirahq.github.io/mantra/#sec-Actions) (Meteor/Tracker, Redux, Rx.js, etc) as a prop to the React component. When Autoform is submitted
-  it will call your `onSubmit` Action function. For an `type={'insert'}` form the Action will be called with just the `forumFields` parameter, for example `yourInsertAction(forumFields)`, whereas a
-  form with `type={'update'}` the Action will be called with `docId, formFields` parameters, for example `yourUpdateAction(_id, forumFields)`.
+You will need to provide your [Action](https://kadirahq.github.io/mantra/#sec-Actions) (Meteor/Tracker, Redux, Rx.js, etc) as a prop to the React component. When Autoform is submitted it will call your `onSubmit` Action function. For an `type={'insert'}` form the Action will be called with just the `forumFields` parameter, for example `yourInsertAction(forumFields)`, whereas a form with `type={'update'}` the Action will be called with `docId, formFields` parameters, for example `yourUpdateAction(_id, forumFields)`.
+#### Redux Action Example
+`/client/modules/contact/actions/contact_page.js`
+```
+import {HelpDeskSchema} from './../../../../lib/collections/help_desk';
+import * as actions from './../action_types';
+
+export default {
+  insertTicket(forumFields) // This is the function that is passed to our `handleInsert` prop in the component via our container
+  {
+    const _id = Meteor.uuid(); // Generates a random _id to be used in MongoDB
+    const context = HelpDeskSchema.newContext(); // Gets the schema context
+    context.resetValidation(); // Reset any previous data
+
+    const isValid = context.validate(forumFields); // Check is the form from Autoform is valid against our Schema
+
+    if(isValid) // If everything went well
+    {
+      // Call the Meteor Method to handle inserting into MongoDB
+      Meteor.call('helpDesk.insert', _id, forumFields, (err) =>
+      {
+        if(err)
+        {
+          return {type: actions.INSERT_TICKET_ERROR, errors: 'Something went wrong'};
+        }
+      });
+
+      // We've used a Method stub to insert into the clients mini Mongo already so we can go to the new ticket url path before the server handles the request itself 
+      FlowRouter.go(`${FlowRouter.path('helpDesk.update')}/${_id}`);
+
+      return {type: actions.INSERT_TICKET_SUCCESS, value: true};
+    }
+
+    // There was an error in the form against our schema
+    const invalidKeys = context.invalidKeys(); // Get the errors
+
+    Object.keys(invalidKeys).map((field) => // Loop through the errors
+    {
+      invalidKeys[field].message = context.keyErrorMessage(invalidKeys[field].name); // Translate each error into a readable format
+    });
+
+    return {type: actions.INSERT_TICKET_ERROR, errors: invalidKeys}; // Update Redux error array
+  }
+};
+```
+
+My examples follow the Meteor [Mantra specification](https://github.com/kadirahq/mantra) which I recommend following.
 
 ## SimpleSchema object
 #### Example <a name="example-schema"></a>
@@ -119,6 +168,25 @@ You will need to provide your [Action](https://kadirahq.github.io/mantra/#sec-Ac
   HelpDesk.attachSchema(HelpDeskSchema);
 
   export {HelpDesk, HelpDeskSchema};
+```
+
+#### Style Example <a name="styleExample"></a>
+You may provide styling to the form and error components by following the example:
+```
+    const HelpDesk = () => (
+           <div>
+           <h1>Contact Us</h1>
+           <ReactAutoForm
+               errors={this.props.errors}
+               errorsStyle
+               muiTheme={true}
+               onSubmit={this.props.handleInsert}
+               schema={HelpDeskSchema}
+               type="insert"
+               formStyle
+           />
+           </div>
+       );
 ```
 
 ![Image Preview](formPreview.png)

@@ -38,16 +38,16 @@ Errors.propTypes = {
 Errors.defaultProps = {
   style: {
     container: {
-      background: 'green'
+      // background: 'green'
     },
     h3: {
-      background: 'red'
+      // background: 'red'
     },
     ul: {
-      background: 'purple'
+      // background: 'purple'
     },
     li: {
-      background: 'yellow'
+      // background: 'yellow'
     }
   },
   title: 'There was an error submitting the form:'

@@ -551,7 +551,7 @@ class ReactAutoForm extends React.Component {
         {
           this.props.errors ? <Errors errors={this.props.errors} style={this.props.errorsStyle} title={this.props.errorsTitle} /> : null
         }
-        <form className={this.props.formClass} onSubmit={this.handleSubmit}>
+        <form className={this.props.formClass} onSubmit={this.handleSubmit} style={this.props.formStyle}>
           {
             Object.keys(this.props.schema).map((fieldName) =>
             { // Loop through each schema object
