@@ -16,7 +16,7 @@
     "lint": "eslint ./src --ext .js",
     "lintfix": "npm run lint -- --fix",
     "testonly": "mocha .scripts/mocha_boot.js tests/*.js --compilers js:babel-core/register",
-    "test": "npm run lint"
+    "test": "npm run lint && npm run testonly"
   },
   "dependencies": {
     "react": "^15.1.0",
