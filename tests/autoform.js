@@ -773,6 +773,25 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('SelectField').props().value).to.equal('2');
     expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('red');
   });
+
+  it('Should be able to clear the text input in an update form: name', () =>
+  {
+    const el = mount(
+      <ReactAutoForm
+        doc={doc}
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={HelpDeskSchema}
+        type="update"
+      />
+    );
+
+    const TextField = el.find('input[name="name"]');
+    expect(TextField.props().value).to.equal('My Name');
+    TextField.props().onChange({target: {value: ''}});
+    expect(el.state().name_fieldValue).to.equal('');
+    expect(TextField.props().value).to.equal('');
+  });
 });
 
 const onSubmit = sinon.spy();
