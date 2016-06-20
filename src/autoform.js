@@ -329,8 +329,6 @@ class ReactAutoForm extends React.Component {
         });
       }
     };
-    console.log(fieldName);
-    console.log(this.fields[fieldName].attributes);
 
     return (
       <div key={this.fields[fieldName].key}>

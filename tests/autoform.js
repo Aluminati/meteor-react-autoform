@@ -33,8 +33,8 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('input[name="favoritePositiveInteger"]').props().id).to.contain('favoritePositiveInteger-undefined-Favoritepositiveinteger');
     expect(el.find('input[name="birthday"]').props().id).to.contain('birthday-Yourbirthday-null-');
     expect(el.find('Toggle').props().toggled).to.equal(false);
-    // expect(el.find('#selectChooseNumber div').nodes[2].parentNode.textContent).to.equal('Two');
-    // expect(el.find('input[name="skyColour"][value="red"]').props().checked).to.be.true;
+    expect(el.find('SelectField').props().children).length(3);
+    expect(el.find('RadioButtonGroup').props().name).to.equal('skyColour');
   });
 
   it('Should test the text input without any materialForm object: name', () =>
@@ -699,6 +699,7 @@ describe('meteor-react-autoform.autoform', () =>
     );
 
     expect(el.find('DropDownMenu')).length(1);
+    expect(el.find('DropDownMenu').props().id).to.contain('undefined-undefined-Chooseanumber-');
     expect(el.find('SelectField')).length(1);
     expect(el.find('SelectField').props().className).to.equal(undefined);
     expect(el.find('SelectField').props().id).to.equal(undefined);
@@ -733,7 +734,7 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('SelectField').props().value).to.equal('1');
   });
 
-  it('It should display the errors component', () =>
+  it('Should display the errors component', () =>
   {
     const el = mount(
       <ReactAutoForm
@@ -748,6 +749,30 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('Errors')).length('1');
     expect(el.find('h3').text()).to.equal('There was an error submitting the form:');
   });
+
+  it('Display a form with values filled it from the schema', () =>
+  {
+    const el = mount(
+      <ReactAutoForm
+        doc={doc}
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={HelpDeskSchema}
+        type="update"
+      />
+    );
+
+    expect(el.find('input[name="name"]').props().value).to.equal('My Name');
+    expect(el.find('input[name="nameWithNoFormData"]').props().value).to.equal('no data value');
+    expect(el.find('textarea[name="description"]').props().value).to.equal('My long description');
+    expect(el.find('input[name="reoccurringProblem"]').props().checked).to.equal(false);
+    expect(el.find('input[name="favoritePositiveInteger"]').props().value).to.equal('1');
+    expect(el.find('input[name="birthday"]').props().value).to.equal('2014-10-13');
+    expect(el.find('Toggle').props().name).to.equal('agree');
+    expect(el.find('Toggle').props().toggled).to.equal(true);
+    expect(el.find('SelectField').props().value).to.equal('2');
+    expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('red');
+  });
 });
 
 const onSubmit = sinon.spy();
@@ -760,6 +785,7 @@ const doc = {
   description: 'My long description',
   favoritePositiveInteger: 1,
   name: 'My Name',
+  nameWithNoFormData: 'no data value',
   reoccurringProblem: false,
   skyColour: 'red'
 };
