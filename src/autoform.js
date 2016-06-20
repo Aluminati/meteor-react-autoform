@@ -528,7 +528,7 @@ class ReactAutoForm extends React.Component {
       return this.state[`${fieldName}_fieldValue`];
     }
     // Else if we're updating an existing document and the value exists here
-    else if(this.props.type === 'update' && typeof this.props.doc[fieldName] !== 'undefined' && this.props.doc[fieldName] !== null)
+    else if(this.props.type === 'update' && typeof this.props.doc[fieldName] !== 'undefined' && this.props.doc[fieldName] !== null && !ignoreState)
     {
       // If it's a number
       if(!isNaN(parseFloat(this.props.doc[fieldName])) && isFinite(this.props.doc[fieldName]))
