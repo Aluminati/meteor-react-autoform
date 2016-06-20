@@ -19,7 +19,7 @@ const listItems = (errors, style) =>
   });
 };
 
-const Errors = ({errors, style = {}, title}) =>
+const Errors = ({errors, style, title}) =>
   (
   <div style={style.container}>
     <h3 style={style.h3}>{title}</h3>

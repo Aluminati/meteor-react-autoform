@@ -178,12 +178,27 @@ You may provide styling to the form and error components by following the exampl
            <h1>Contact Us</h1>
            <ReactAutoForm
                errors={this.props.errors}
-               errorsStyle
+               errorsStyle={{
+                  container: {
+                      background: 'green'
+                  },
+                  h3: {
+                      background: 'red'
+                  },
+                  ul: {
+                      background: 'purple'
+                  },
+                  li: {
+                      background: 'yellow'
+                  }
+               }}
                muiTheme={true}
                onSubmit={this.props.handleInsert}
                schema={HelpDeskSchema}
                type="insert"
-               formStyle
+               formStyle={{
+                   background: 'blue'
+               }}
            />
            </div>
        );
