@@ -52,6 +52,11 @@ class ReactAutoForm extends React.Component {
    */
   processField(field, fieldName)
   {
+    if(this.props.useFields && this.props.useFields.indexOf(fieldName) === -1)
+    {
+      return null;
+    }
+
     this.fields[fieldName] = field;
     this.fields[fieldName].key = fieldName;
     this.createDefaultAttr(fieldName);
@@ -324,6 +329,8 @@ class ReactAutoForm extends React.Component {
         });
       }
     };
+    console.log(fieldName);
+    console.log(this.fields[fieldName].attributes);
 
     return (
       <div key={this.fields[fieldName].key}>
