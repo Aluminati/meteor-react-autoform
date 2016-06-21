@@ -1,0 +1,138 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@3.8.5
+3 info using node@v4.2.6
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/home/josh.welham/localhost/nodeServers/aluminate3/node_modules_local/meteor-react-autoform',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /home/josh.welham/.npm/meteor-react-autoform/0.2.2/package.tgz not in flight; packing
+9 verbose correctMkdir /home/josh.welham/.npm correctMkdir not in flight; initializing
+10 info lifecycle meteor-react-autoform@0.2.2~prepublish: meteor-react-autoform@0.2.2
+11 verbose lifecycle meteor-react-autoform@0.2.2~prepublish: unsafe-perm in lifecycle true
+12 verbose lifecycle meteor-react-autoform@0.2.2~prepublish: PATH: /usr/local/lib/node_modules/npm/bin/node-gyp-bin:/home/josh.welham/localhost/nodeServers/aluminate3/node_modules/_local/meteor-react-autoform/node_modules/.bin:/home/josh.welham/localhost/nodeServers/aluminate3/node_modules/.bin:/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin
+13 verbose lifecycle meteor-react-autoform@0.2.2~prepublish: CWD: /home/josh.welham/localhost/nodeServers/aluminate3/node_modules_local/meteor-react-autoform
+14 silly lifecycle meteor-react-autoform@0.2.2~prepublish: Args: [ '-c', 'npm run compile' ]
+15 silly lifecycle meteor-react-autoform@0.2.2~prepublish: Returned: code: 0  signal: null
+16 verbose tar pack [ '/home/josh.welham/.npm/meteor-react-autoform/0.2.2/package.tgz',
+16 verbose tar pack   '/home/josh.welham/localhost/nodeServers/aluminate3/node_modules_local/meteor-react-autoform' ]
+17 verbose tarball /home/josh.welham/.npm/meteor-react-autoform/0.2.2/package.tgz
+18 verbose folder /home/josh.welham/localhost/nodeServers/aluminate3/node_modules_local/meteor-react-autoform
+19 verbose addLocalTarball adding from inside cache /home/josh.welham/.npm/meteor-react-autoform/0.2.2/package.tgz
+20 verbose correctMkdir /home/josh.welham/.npm correctMkdir not in flight; initializing
+21 silly cache afterAdd meteor-react-autoform@0.2.2
+22 verbose afterAdd /home/josh.welham/.npm/meteor-react-autoform/0.2.2/package/package.json not in flight; writing
+23 verbose correctMkdir /home/josh.welham/.npm correctMkdir not in flight; initializing
+24 verbose afterAdd /home/josh.welham/.npm/meteor-react-autoform/0.2.2/package/package.json written
+25 silly publish { name: 'meteor-react-autoform',
+25 silly publish   version: '0.2.2',
+25 silly publish   description: 'Meteor autoform for React using aldeed/meteor-simple-schema',
+25 silly publish   keywords: [ 'meteor', 'react', 'autoform', 'simpleschema' ],
+25 silly publish   main: 'index.js',
+25 silly publish   scripts:
+25 silly publish    { compile: '$(npm bin)/babel src --out-dir ../../node_modules/meteor-react-autoform/lib && $(npm bin)/babel src --out-dir lib',
+25 silly publish      prepublish: 'npm run compile',
+25 silly publish      'git-pre-commit': 'npm run test',
+25 silly publish      lint: 'eslint ./src --ext .js',
+25 silly publish      lintfix: 'npm run lint -- --fix',
+25 silly publish      testonly: 'mocha .scripts/mocha_boot.js tests/*.js --compilers js:babel-core/register',
+25 silly publish      test: 'npm run lint && npm run testonly' },
+25 silly publish   dependencies:
+25 silly publish    { 'material-ui': '^0.15.1',
+25 silly publish      react: '^15.1.0',
+25 silly publish      'react-dom': '^15.1.0',
+25 silly publish      'react-helmet': '^3.1.0',
+25 silly publish      'react-tap-event-plugin': '^1.0.0' },
+25 silly publish   repository:
+25 silly publish    { type: 'git',
+25 silly publish      url: 'git+https://github.com/MechJosh0/meteor-react-autoform.git' },
+25 silly publish   url: 'https://github.com/MechJosh0/meteor-react-autoform/issues',
+25 silly publish   email: 'josh@aluminati.net',
+25 silly publish   author: { name: 'MechJosh0' },
+25 silly publish   license: 'ISC',
+25 silly publish   devDependencies:
+25 silly publish    { 'babel-cli': '^6.10.1',
+25 silly publish      'babel-preset-es2015': '^6.6.0',
+25 silly publish      'babel-preset-react': '^6.5.0',
+25 silly publish      'babel-preset-stage-2': '6.x.x',
+25 silly publish      chai: '3.x.x',
+25 silly publish      enzyme: '^2.0.0',
+25 silly publish      eslint: '^2.13.1',
+25 silly publish      'eslint-plugin-react': '^5.2.2',
+25 silly publish      jsdom: '3.x.x',
+25 silly publish      mocha: '2.x.x',
+25 silly publish      sinon: '1.17.x',
+25 silly publish      'sinon-chai': '^2.8.0',
+25 silly publish      'react-addons-test-utils': '^15.0.2' },
+25 silly publish   readme: '## Meteor-React-Autoform\n`meteor-react-autoform` will translate your Meteor [aldeed:SimpleSchema](https://github.com/aldeed/meteor-simple-schema) into a [React](https://github.com/facebook/react) form using [Material-UI](https://github.com/callemall/material-ui) components. You can wrap tests around your component and/or the Autoform component, this will also work with [Storybook](https://github.com/kadirahq/react-storybook). This is still in active development but is very possible to use today. Basic form elements are already available, see below for [todo list](#todo-list) and see [Changelog](CHANGELOG.md).\n\n## Requirements\n1. `React v15` and `Material-UI v0.15`\n2. `Meteor v1.3`\n\n## Installation\n1. Installed the NPM package: `$ npm i meteor-react-autoform --save`\n2. Install the Meteor package: `$ meteor add aldeed:collection2 aldeed:simple-schema`\n3. Extend your SimpleSchema to allow our `materialForm` object. Place the below code above your schema definitions ([see example](#example-schema)):\n```\n  // Documentation -> https://github.com/MechJosh0/meteor-react-autoform\n  // Extend the schema to allow our materialForm object\n  SimpleSchema.extendOptions({\n    materialForm: Match.Optional(Object)\n  })\n```\n4. See the [element examples](#element-examples-list) list to see how to write the `materialForm` object in your schema.\n\n## TODO <a name="todo-list"></a>\n - Automated testing on updating a document\n - Array of elements\n - Object fields\n - Array of object fields\n\n### ReactAutoForm props\n - `buttonComponent={<button>Submit button</button>}` OPTIONAL | `Node` | Write and use your own custom button component. Using this will ignore all other `button*` props.\n - `buttonIcon="check"` OPTIONAL | `String` | Material-UI Icon name, view [available icons](https://design.google.com/icons/).\n - `buttonLabel="Submit form"` OPTIONAL | `String` | Custom button label.\n - `buttonProps={{secondary: true}}` OPTIONAL | `Object` | Write your own props for the [Material-UI button](http://www.material-ui.com/#/components/raised-button). This will overwrite existing props that Autoform creates.\n - `buttonType="RaisedButton"` OPTIONAL | `OneOf[\'FlatButton\', \'RaisedButton\']` | You can use either the Material-UI [FlatButton](http://www.material-ui.com/#/components/flat-button) or [RaisedButton](http://www.material-ui.com/#/components/raised-button), default is RaisedButton, or you may write your own button using the prop `buttonComponent`.\n - `debug={false}` OPTIONAL | `Bool` | This will output the form data into the console when the user attempts to submit.\n - `doc={$document}` OPTIONAL | `Object` | To update a document you must set the `type="update"` and provide the document you wish to update in the `doc` prop.\n - `errors={errors}` OPTIONAL | `Array` | When your submit Action is ran and there is an error, it should update the prop here which will in turn update the form to display errors.\n - `errorsStyle={style.errors}` | OPTIONAL | `Object` | You may provide the style for the errors above the form. [See example](#styleExample).\n - `errorsTitle="There was an error:"` | OPTIONAL | `String` | The error header above the form.\n - `formClass="contactForm"` | OPTIONAL | `String` | By default the form className is `autoform` however you can choose your own.\n - `formStyle={style.form}` | OPTIONAL | `Object` | Provide your own form style, [see example](#styleExample). \n - `muiTheme={false}` OPTIONAL | `Bool` | Default set to false to allow you to choose your own Material-UI theme, however if you do not have one set up set this to `true` to use the default.\n - `onSubmit={this.props.handleInsert}` REQUIRED | `Function` | This will run when the user attempts to submit the forum, this will need to be your Action. See [onSubmit](#onSubmit) for more formation.\n - `schema={HelpDeskSchema}` REQUIRED | `Object` | You must provide the collection you wish to use for building your form.\n - `type="insert"` OPTIONAL | `OneOf[\'update\', \'insert\']` | You must set the `type` prop which must equal either `"insert"` or `"update"`.\n - `useFields={[\'name\', \'text\']}` OPTIONAL | `Array` | Only produce the fields `name` and `description` from the Collection in the form.\n\n## Usage\n### React Component Example\n`/client/modules/contact/components/contact_page.js`\n```\n    import React from \'react\';\n    import ReactAutoForm from \'meteor-react-autoform\';\n    import HelpDeskSchema from \'/lib/schema/help_desk\';\n    \n    const HelpDesk = () => (\n        <div>\n        <h1>Contact Us</h1>\n        <ReactAutoForm\n            errors={this.props.errors}\n            muiTheme={true}\n            onSubmit={this.props.handleInsert}\n            schema={HelpDeskSchema}\n            type="insert"\n        />\n        </div>\n    );\n    \n    HelpDesk.propTypes = {\n        errors: React.PropTypes.array,\n        handleInsert: React.PropTypes.func.isRequired\n    };\n    \n    export default HelpDesk;\n```\n \n## onSubmit <a name="onSubmit"></a>\nYou will need to provide your [Action](https://kadirahq.github.io/mantra/#sec-Actions) (Meteor/Tracker, Redux, Rx.js, etc) as a prop to the React component. When Autoform is submitted it will call your `onSubmit` Action function. For an `type={\'insert\'}` form the Action will be called with just the `forumFields` parameter, for example `yourInsertAction(forumFields)`, whereas a form with `type={\'update\'}` the Action will be called with `docId, formFields` parameters, for example `yourUpdateAction(_id, forumFields)`.\n#### Redux Action Example\n`/client/modules/contact/actions/contact_page.js`\n```\nimport {HelpDeskSchema} from \'./../../../../lib/collections/help_desk\';\nimport * as actions from \'./../action_types\';\n\nexport default {\n  insertTicket(forumFields) // This is the function that is passed to our `handleInsert` prop in the component via our container\n  {\n    const _id = Meteor.uuid(); // Generates a random _id to be used in MongoDB\n    const context = HelpDeskSchema.newContext(); // Gets the schema context\n    context.resetValidation(); // Reset any previous data\n\n    const isValid = context.validate(forumFields); // Check is the form from Autoform is valid against our Schema\n\n    if(isValid) // If everything went well\n    {\n      // Call the Meteor Method to handle inserting into MongoDB\n      Meteor.call(\'helpDesk.insert\', _id, forumFields, (err) =>\n      {\n        if(err)\n        {\n          return {type: actions.INSERT_TICKET_ERROR, errors: \'Something went wrong\'};\n        }\n      });\n\n      // We\'ve used a Method stub to insert into the clients mini Mongo already so we can go to the new ticket url path before the server handles the request itself \n      FlowRouter.go(`${FlowRouter.path(\'helpDesk.update\')}/${_id}`);\n\n      return {type: actions.INSERT_TICKET_SUCCESS, value: true};\n    }\n\n    // There was an error in the form against our schema\n    const invalidKeys = context.invalidKeys(); // Get the errors\n\n    Object.keys(invalidKeys).map((field) => // Loop through the errors\n    {\n      invalidKeys[field].message = context.keyErrorMessage(invalidKeys[field].name); // Translate each error into a readable format\n    });\n\n    return {type: actions.INSERT_TICKET_ERROR, errors: invalidKeys}; // Update Redux error array\n  }\n};\n```\n\nMy examples follow the Meteor [Mantra specification](https://github.com/kadirahq/mantra) which I recommend following.\n\n## SimpleSchema object\n#### Example <a name="example-schema"></a>\n`/lib/schema/helpDesk.js`\n```\n  const schema = {\n    name: {\n     type: String,\n     materialForm: {\n       floatingLabelText: \'Your name\',\n       hintText: \'Sarah Smith...\'\n     }\n    },\n    description: {\n     type: String,\n     min: 10,\n     max: 200,\n     materialForm: {\n       floatingLabelText: \'Describe your problem\',\n       rows: 1,\n       rowsMax: 10,\n       multiLine: true,\n       hintText: \'I require a password reset...\'\n     }\n    },\n    reoccurringProblem: {\n      type: Boolean,\n      defaultValue: true,\n      label: \'Have you had the problem before?\',\n      materialForm: {\n        switcher: \'Checkbox\'\n      }\n    }\n  };\n\n  export default HelpDesk;\n```\n\n`/lib/collections/helpDesk.js`\n```\n  import {Mongo} from \'meteor/mongo\';\n  import Schema from \'./../schema/help_desk\';\n  const HelpDesk = new Mongo.Collection(\'helpDesk\');\n\n  SimpleSchema.extendOptions({\n    materialForm: Match.Optional(Object)\n  });\n\n  const HelpDeskSchema = new SimpleSchema(Schema);\n\n  HelpDesk.attachSchema(HelpDeskSchema);\n\n  export {HelpDesk, HelpDeskSchema};\n```\n\n#### Style Example <a name="styleExample"></a>\nYou may provide styling to the form and error components by following the example:\n```\n    const HelpDesk = () => (\n           <div>\n           <h1>Contact Us</h1>\n           <ReactAutoForm\n               errors={this.props.errors}\n               errorsStyle={{\n                  container: {\n                      background: \'green\'\n                  },\n                  h3: {\n                      background: \'red\'\n                  },\n                  ul: {\n                      background: \'purple\'\n                  },\n                  li: {\n                      background: \'yellow\'\n                  }\n               }}\n               muiTheme={true}\n               onSubmit={this.props.handleInsert}\n               schema={HelpDeskSchema}\n               type="insert"\n               formStyle={{\n                   background: \'blue\'\n               }}\n           />\n           </div>\n       );\n```\n\n![Image Preview](formPreview.png)\n### Element Examples <a name="element-examples-list"></a>\n- [Text](#element-text)\n- [Textarea](#element-textarea)\n- [Number](#element-number)\n- [Date](#element-date)\n- [Tickbox](#element-tickbox)\n- [Select Dropdown](#element-selectdropdown)\n- [Radio Button](#element-radiobuton)\n\n#### Global parameters\n - `label` String | Input label\n - `max` Number | Set the max length of an input\n```\n  description: {\n    type: String,\n    label: \'Description\',\n    max: 10\n  }\n```\n\n#### Text <a name="element-text"></a>\nA normal text input will only need a type of `String` to display. See [Material-UI text field](http://www.material-ui.com/#/components/text-field) to find what properties are available for passing into our `materialForm` object.\n```\n  description: {\n    type: String,\n    materialForm: {\n      hintText: \'Please enter the description...\'\n    }\n }\n```\n```\n  password: {\n    type: String,\n    label: \'Password\',\n    materialForm: {\n      type: \'password\'\n    }\n  }\n```\n\n#### Textarea <a name="element-textarea"></a>\nInside the `materialForm` object, using either `materialForm.rows` `materialForm.rowsMax` or `materialForm.multiLine` will cause the input to turn into a textarea. See [Material-UI text field](http://www.material-ui.com/#/components/text-field) to find what properties are available for passing into our `materialForm` object.\n```\n  description: {\n    type: String,\n    materialForm: {\n      rows: 1,\n      rowsMax: 3,\n      multiLine: true\n    }\n  }\n```\n\n#### Number <a name="element-number"></a>\nType `Number` will change the element to a number input. `min` and `max` values are taken into consideration if available. See [Material-UI text field](http://www.material-ui.com/#/components/text-field) to find what properties are available for passing into our `materialForm` object.\n```\n  favoritePositiveInteger: {\n    type: Number,\n    max: 10,\n    min: 5,\n    materialForm: {\n      step: 0.2\n    }\n  }\n```\n\n\n#### Date <a name="element-date"></a>\nType `Date` will provide a date select. `min` and `max` values are taken into consideration if available. See [Material-UI date picker](http://www.material-ui.com/#/components/date-picker) to find what properties are available for passing into our `materialForm` object.\n```\n  birthday: {\n    type: Date,\n    label: \'Your birthday\',\n    defaultValue: new Date(\'2014-10-18T00:00:00.000Z\'),\n    materialForm: {\n      dateMode: \'landscape\',\n      autoOk: true\n    }\n  }\n```\n\n#### Tick box <a name="element-tickbox"></a>\nType `Boolean` will use `materialForm.switcher` to determine to display either a checkbox or a toggle component. By default will use the [checkbox Material-UI component](http://www.material-ui.com/#/components/checkbox) `materialForm.switcher = \'Checkbox\'`, or if you can change it to use the [toggle component](http://www.material-ui.com/#/components/toggle) `materialForm.switcher = \'Toggle\'`. Check out the respective Material-UI documentation on each component to find out what other properties are available for passing into our `materialForm` object.\n```\n  agree: {\n    type: Boolean,\n    label: \'Do you agree?\',\n    defaultValue: false,\n    materialForm: {\n      switcher: \'Checkbox\'\n      // OR\n      //switcher: \'Toggle\'\n    }\n  }\n```\n\n#### Select dropdown menu <a name="element-selectdropdown"></a>\nUse `allowedValues = []` to create a select dropdown menu. You can provide `materialForm.options = []` to pass through an object`[label: \'Example\', value: \'durp\']` for each option. You can pass through any [select-field properties](http://www.material-ui.com/#/components/select-field) by using `materialForm.selectOptions = []`.\n```\n  choose3: {\n    type: Number,\n    allowedValues: [\n      1,\n      2,\n      3\n    ],\n    optional: true,\n    label: \'Choose a number\',\n    materialForm: {\n      selectOptions: {\n        className: \'selectExample\'\n      },\n      options: [\n        {\n          label: \'One\',\n          value: 1\n        },\n        {\n          label: \'Two\',\n          value: 2\n        },\n        {\n          label: \'Three\',\n          value: 3\n        }\n      ]\n    }\n  }\n```\n\n#### Radio button <a name="element-radiobuton"></a>\nWhen you use `allowedValues = []` with `materialForm.switcher = \'Radio\'` this will display radio box options. You can provide `materialForm.options = []` and pass through any [RadioButton properties](http://www.material-ui.com/#/components/radio-button) into each option, you can also pass through [RadioButtonGroup properties](http://www.material-ui.com/#/components/radio-button) by using `materialForm.groupOptions = []`.\n```\n  agree: {\n    type: String,\n    allowedValues: [\n      \'red\',\n      \'green\'\n    ],\n    label: \'What colour is the sky?\',\n    materialForm: {\n      switcher: \'Radio\',\n      groupOptions: {\n        className: \'radioExample\'\n      },\n      options: [\n        {\n          label: \'Red\',\n          value: \'red\'\n        },\n        {\n          label: \'Green\',\n          value: \'green\'\n        }\n      ]\n    }\n  }\n```\n\n# Credits\nDeveloped and maintained by [Aluminati](http://www.aluminati.net/)\n',
+25 silly publish   readmeFilename: 'README.md',
+25 silly publish   gitHead: 'e7fe589bfe0c55942d4b41c9f35fc3f386cfe1c4',
+25 silly publish   bugs: { url: 'https://github.com/MechJosh0/meteor-react-autoform/issues' },
+25 silly publish   homepage: 'https://github.com/MechJosh0/meteor-react-autoform#readme',
+25 silly publish   _id: 'meteor-react-autoform@0.2.2',
+25 silly publish   _shasum: '86917d149162f37279de6d8f343f835c0bb055da',
+25 silly publish   _from: '.' }
+26 verbose getPublishConfig undefined
+27 silly mapToRegistry name meteor-react-autoform
+28 silly mapToRegistry using default registry
+29 silly mapToRegistry registry https://registry.npmjs.org/
+30 silly mapToRegistry data Result {
+30 silly mapToRegistry   raw: 'meteor-react-autoform',
+30 silly mapToRegistry   scope: null,
+30 silly mapToRegistry   name: 'meteor-react-autoform',
+30 silly mapToRegistry   rawSpec: '',
+30 silly mapToRegistry   spec: 'latest',
+30 silly mapToRegistry   type: 'tag' }
+31 silly mapToRegistry uri https://registry.npmjs.org/meteor-react-autoform
+32 verbose publish registryBase https://registry.npmjs.org/
+33 silly publish uploading /home/josh.welham/.npm/meteor-react-autoform/0.2.2/package.tgz
+34 verbose request uri https://registry.npmjs.org/meteor-react-autoform
+35 verbose request sending authorization for write operation
+36 info attempt registry request try #1 at 12:02:26
+37 verbose request using bearer token for auth
+38 verbose request id 6c0f15c2de7344ad
+39 http request PUT https://registry.npmjs.org/meteor-react-autoform
+40 http 403 https://registry.npmjs.org/meteor-react-autoform
+41 verbose headers { 'content-type': 'application/json',
+41 verbose headers   'cache-control': 'max-age=300',
+41 verbose headers   'content-length': '95',
+41 verbose headers   'accept-ranges': 'bytes',
+41 verbose headers   date: 'Tue, 21 Jun 2016 11:02:28 GMT',
+41 verbose headers   via: '1.1 varnish',
+41 verbose headers   connection: 'keep-alive',
+41 verbose headers   'x-served-by': 'cache-lcy1120-LCY',
+41 verbose headers   'x-cache': 'MISS',
+41 verbose headers   'x-cache-hits': '0',
+41 verbose headers   'x-timer': 'S1466506947.053732,VS0,VE1582',
+41 verbose headers   vary: 'Accept-Encoding' }
+42 verbose request invalidating /home/josh.welham/.npm/registry.npmjs.org/meteor-react-autoform on PUT
+43 error publish Failed PUT 403
+44 verbose stack Error: "You cannot publish over the previously published version 0.2.2." : meteor-react-autoform
+44 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+44 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+44 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+44 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:199:22)
+44 verbose stack     at emitTwo (events.js:87:13)
+44 verbose stack     at Request.emit (events.js:172:7)
+44 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1036:10)
+44 verbose stack     at emitOne (events.js:82:20)
+44 verbose stack     at Request.emit (events.js:169:7)
+44 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:963:12)
+45 verbose statusCode 403
+46 verbose pkgid meteor-react-autoform
+47 verbose cwd /home/josh.welham/localhost/nodeServers/aluminate3/node_modules_local/meteor-react-autoform
+48 error Linux 4.4.0-24-generic
+49 error argv "/usr/bin/nodejs" "/usr/local/bin/npm" "publish"
+50 error node v4.2.6
+51 error npm  v3.8.5
+52 error code E403
+53 error "You cannot publish over the previously published version 0.2.2." : meteor-react-autoform
+54 error If you need help, you may report this error at:
+54 error     <https://github.com/npm/npm/issues>
+55 verbose exit [ 1, true ]
