@@ -25,6 +25,11 @@
  - Array of object fields
 
 ### ReactAutoForm props
+ - `buttonComponent={<button>Submit button</button>}` OPTIONAL | `Node` | Write and use your own custom button component. Using this will ignore all other `button*` props.
+ - `buttonIcon="check"` OPTIONAL | `String` | Material-UI Icon name, view [available icons](https://design.google.com/icons/).
+ - `buttonLabel="Submit form"` OPTIONAL | `String` | Custom button label.
+ - `buttonProps={{secondary: true}}` OPTIONAL | `Object` | Write your own props for the [Material-UI button](http://www.material-ui.com/#/components/raised-button). This will overwrite existing props that Autoform creates.
+ - `buttonType="RaisedButton"` OPTIONAL | `OneOf['FlatButton', 'RaisedButton']` | You can use either the Material-UI [FlatButton](http://www.material-ui.com/#/components/flat-button) or [RaisedButton](http://www.material-ui.com/#/components/raised-button), default is RaisedButton, or you may write your own button using the prop `buttonComponent`.
  - `debug={false}` OPTIONAL | `Bool` | This will output the form data into the console when the user attempts to submit.
  - `doc={$document}` OPTIONAL | `Object` | To update a document you must set the `type="update"` and provide the document you wish to update in the `doc` prop.
  - `errors={errors}` OPTIONAL | `Array` | When your submit Action is ran and there is an error, it should update the prop here which will in turn update the form to display errors.
@@ -33,9 +38,9 @@
  - `formClass="contactForm"` | OPTIONAL | `String` | By default the form className is `autoform` however you can choose your own.
  - `formStyle={style.form}` | OPTIONAL | `Object` | Provide your own form style, [see example](#styleExample). 
  - `muiTheme={false}` OPTIONAL | `Bool` | Default set to false to allow you to choose your own Material-UI theme, however if you do not have one set up set this to `true` to use the default.
- - `onSubmit` REQUIRED | `Function` | This will run when the user attempts to submit the forum, this will need to be your Action. See [onSubmit](#onSubmit) for more formation.
+ - `onSubmit={this.props.handleInsert}` REQUIRED | `Function` | This will run when the user attempts to submit the forum, this will need to be your Action. See [onSubmit](#onSubmit) for more formation.
  - `schema={HelpDeskSchema}` REQUIRED | `Object` | You must provide the collection you wish to use for building your form.
- - `type=["insert", "update"]` REQUIRED | `OneOf['update', 'insert']` | You must set the `type` prop which must equal either `"insert"` or `"update"`.
+ - `type="insert"` OPTIONAL | `OneOf['update', 'insert']` | You must set the `type` prop which must equal either `"insert"` or `"update"`.
  - `useFields={['name', 'text']}` OPTIONAL | `Array` | Only produce the fields `name` and `description` from the Collection in the form.
 
 ## Usage

@@ -792,6 +792,95 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.state().name_fieldValue).to.equal('');
     expect(TextField.props().value).to.equal('');
   });
+
+  it('Should have a custom button', () =>
+  {
+    const el = mount(
+      <ReactAutoForm
+        buttonComponent={<button id="customButton">Submit button</button>}
+        doc={doc}
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={HelpDeskSchema}
+      />
+    );
+
+    expect(el.find('#customButton').length).to.equal(1);
+    expect(el.find('#customButton').text()).to.equal('Submit button');
+  });
+
+  it('Should have button props passed through', () =>
+  {
+    const el = mount(
+      <ReactAutoForm
+        buttonIcon="check"
+        buttonLabel="Submit form"
+        doc={doc}
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={HelpDeskSchema}
+      />
+    );
+
+    expect(el.find('RaisedButton').length).to.equal(1);
+    expect(el.find('FontIcon').length).to.equal(1);
+    expect(el.find('FontIcon').props().children).to.equal('check');
+    expect(el.find('RaisedButton').props().label).to.equal('Submit form');
+    expect(el.find('RaisedButton').props().primary).to.equal(true);
+    expect(el.find('RaisedButton').props().secondary).to.equal(false);
+
+    el.setProps({buttonProps: {secondary: true}});
+    expect(el.find('RaisedButton').props().primary).to.equal(false);
+    expect(el.find('RaisedButton').props().secondary).to.equal(true);
+
+    el.setProps({buttonProps: {label: 'New Label'}});
+    expect(el.find('RaisedButton').props().label).to.equal('New Label');
+    expect(el.find('RaisedButton').props().primary).to.equal(true);
+    expect(el.find('RaisedButton').props().secondary).to.equal(false);
+  });
+
+  it('Should have be a FlatButton', () =>
+  {
+    const el = mount(
+      <ReactAutoForm
+        buttonIcon="check"
+        buttonLabel="Submit form"
+        buttonType="FlatButton"
+        doc={doc}
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={HelpDeskSchema}
+      />
+    );
+
+    expect(el.find('FlatButton').length).to.equal(1);
+    expect(el.find('FontIcon').length).to.equal(1);
+    expect(el.find('FontIcon').props().children).to.equal('check');
+    expect(el.find('FlatButton').props().label).to.equal('Submit form');
+    expect(el.find('FlatButton').props().primary).to.equal(true);
+    expect(el.find('FlatButton').props().secondary).to.equal(false);
+
+    el.setProps({buttonType: 'RaisedButton'});
+    expect(el.find('RaisedButton').length).to.equal(1);
+  });
+
+  it('Should have default button setting', () =>
+  {
+    const el = mount(
+      <ReactAutoForm
+        doc={doc}
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={HelpDeskSchema}
+      />
+    );
+
+    expect(el.find('RaisedButton').length).to.equal(1);
+    expect(el.find('FontIcon').length).to.equal(0);
+    expect(el.find('RaisedButton').props().label).to.equal('Submit');
+    expect(el.find('RaisedButton').props().primary).to.equal(true);
+    expect(el.find('RaisedButton').props().secondary).to.equal(false);
+  });
 });
 
 const onSubmit = sinon.spy();

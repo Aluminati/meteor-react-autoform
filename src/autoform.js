@@ -3,19 +3,17 @@
  */
 
 import React from 'react';
-import Errors from './errors';
 import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
 import Toggle from 'material-ui/Toggle';
 import Checkbox from 'material-ui/Checkbox';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import RaisedButton from 'material-ui/RaisedButton';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-
-
 import baseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import Errors from './errors';
+import Button from './button';
 
 /**
  * Class to translate SimpleSchema to Material-UI fields
@@ -563,7 +561,15 @@ class ReactAutoForm extends React.Component {
               return this.processField(this.props.schema[fieldName], fieldName); // Return the form element
             })
           }
-          <RaisedButton className="button-submit" label="Submit" primary={true} type="submit" />
+          {this.props.buttonComponent ?
+            this.props.buttonComponent :
+            <Button
+              extraProps={this.props.buttonProps}
+              icon={this.props.buttonIcon}
+              label={this.props.buttonLabel}
+              type={this.props.buttonType}
+            />
+          }
         </form>
       </div>
     );
@@ -571,6 +577,11 @@ class ReactAutoForm extends React.Component {
 }
 
 ReactAutoForm.propTypes = {
+  buttonComponent: React.PropTypes.node,
+  buttonIcon: React.PropTypes.string,
+  buttonLabel: React.PropTypes.string,
+  buttonProps: React.PropTypes.object,
+  buttonType: React.PropTypes.oneOf(['FlatButton', 'RaisedButton']),
   debug: React.PropTypes.bool,
   doc: React.PropTypes.object,
   errors: React.PropTypes.oneOfType([React.PropTypes.bool, React.PropTypes.array]),
@@ -590,6 +601,7 @@ ReactAutoForm.defaultProps = {
   errors: false,
   formClass: 'autoform',
   formStyle: {},
+  type: 'insert',
   muiTheme: false
 };
 
