@@ -19,7 +19,6 @@
 4. See the [element examples](#element-examples-list) list to see how to write the `materialForm` object in your schema.
 
 ## TODO <a name="todo-list"></a>
- - Automated testing on updating a document
  - Array of elements
  - Object fields
  - Array of object fields
