@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.2.21
+- `buttonType` can now be passed the `IconButton` value for an icon only button.
+- `buttonParentStyle` is a new prop that can be used to style the parent `div` element of a Material-UI field.
+
 ### 0.2.2
 - Customization ability for the Material-UI button. [FR5](https://github.com/Aluminati/meteor-react-autoform/issues/5)
 - Allow the use of a custom button instead of our default Material-UI. [FR5](https://github.com/Aluminati/meteor-react-autoform/issues/5)
