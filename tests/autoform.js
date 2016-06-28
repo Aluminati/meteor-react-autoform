@@ -881,6 +881,44 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('RaisedButton').props().primary).to.equal(true);
     expect(el.find('RaisedButton').props().secondary).to.equal(false);
   });
+
+  it('Should have be a IconButton', () =>
+  {
+    const el = mount(
+      <ReactAutoForm
+        buttonIcon="search"
+        buttonType="IconButton"
+        doc={doc}
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={HelpDeskSchema}
+      />
+    );
+
+    expect(el.find('IconButton').length).to.equal(1);
+    expect(el.find('FontIcon').length).to.equal(1);
+    expect(el.find('FontIcon').props().children).to.equal('search');
+    expect(el.find('RaisedButton').length).to.equal(0);
+  });
+
+  it('Should have a styled parent for the textField', () =>
+  {
+    HelpDeskSchema.name.materialForm.parentStyle = {
+      background: 'green'
+    };
+
+    const el = mount(
+      <ReactAutoForm
+        doc={doc}
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={HelpDeskSchema}
+      />
+    );
+
+    expect(el.find('TextField').filterWhere(n => n.props().name === 'name')).length(1);
+    expect(el.find('div').filterWhere(n => n.key() === 'name').props().style).to.deep.equal({background: 'green'});
+  });
 });
 
 const onSubmit = sinon.spy();

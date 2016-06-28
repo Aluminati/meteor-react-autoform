@@ -27,8 +27,9 @@
  - `buttonComponent={<button>Submit button</button>}` OPTIONAL | `Node` | Write and use your own custom button component. Using this will ignore all other `button*` props.
  - `buttonIcon="check"` OPTIONAL | `String` | Material-UI Icon name, view [available icons](https://design.google.com/icons/).
  - `buttonLabel="Submit form"` OPTIONAL | `String` | Custom button label.
+ - `buttonParentStyle={style.buttonParent}` OPTIONAL | `Object` | Write the parent div element for the Material-UI button. 
  - `buttonProps={{secondary: true}}` OPTIONAL | `Object` | Write your own props for the [Material-UI button](http://www.material-ui.com/#/components/raised-button). This will overwrite existing props that Autoform creates.
- - `buttonType="RaisedButton"` OPTIONAL | `OneOf['FlatButton', 'RaisedButton']` | You can use either the Material-UI [FlatButton](http://www.material-ui.com/#/components/flat-button) or [RaisedButton](http://www.material-ui.com/#/components/raised-button), default is RaisedButton, or you may write your own button using the prop `buttonComponent`.
+ - `buttonType="RaisedButton"` OPTIONAL | `OneOf['FlatButton', 'RaisedButton', 'IconButton']` | You can use either the Material-UI [FlatButton](http://www.material-ui.com/#/components/flat-button) or [RaisedButton](http://www.material-ui.com/#/components/raised-button), default is RaisedButton, or you may write your own button using the prop `buttonComponent`.
  - `debug={false}` OPTIONAL | `Bool` | This will output the form data into the console when the user attempts to submit.
  - `doc={$document}` OPTIONAL | `Object` | To update a document you must set the `type="update"` and provide the document you wish to update in the `doc` prop.
  - `errors={errors}` OPTIONAL | `Array` | When your submit Action is ran and there is an error, it should update the prop here which will in turn update the form to display errors.

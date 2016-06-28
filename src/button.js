@@ -6,6 +6,7 @@ import React from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
+import IconButton from 'material-ui/IconButton';
 import Helmet from 'react-helmet';
 
 class Button extends React.Component {
@@ -56,6 +57,8 @@ class Button extends React.Component {
     {
       case 'FlatButton':
         return this.flatButton();
+      case 'IconButton':
+        return this.iconButton();
       case 'RaisedButton':
       default:
         return this.raisedButton();
@@ -69,6 +72,15 @@ class Button extends React.Component {
     );
   }
 
+  iconButton()
+  {
+    return (
+      <IconButton {...this.buttonProps()} type="submit">
+        {this.icon()}
+      </IconButton>
+    );
+  }
+
   raisedButton()
   {
     return (
@@ -79,7 +91,7 @@ class Button extends React.Component {
   render()
   {
     return (
-      <div>
+      <div style={this.props.buttonParentStyle}>
         <Helmet
           link={[
              {rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons'}
@@ -92,11 +104,11 @@ class Button extends React.Component {
 }
 
 Button.propTypes = {
-  buttonComponent: React.PropTypes.node,
+  buttonParentStyle: React.PropTypes.object,
   extraProps: React.PropTypes.object,
   icon: React.PropTypes.string,
   label: React.PropTypes.string,
-  type: React.PropTypes.oneOf(['FlatButton', 'RaisedButton'])
+  type: React.PropTypes.oneOf(['FlatButton', 'RaisedButton', 'IconButton'])
 };
 
 Button.defaultProps = {

@@ -122,12 +122,27 @@ class ReactAutoForm extends React.Component {
   createDefaultAttr(fieldName)
   {
     this.fields[fieldName].materialForm = this.fields[fieldName].materialForm ? this.fields[fieldName].materialForm : {};
+    this.getFieldParentStyle(fieldName);
     this.fields[fieldName].attributes = {}; // These will be overwritten if it's repeated in the materialForm object (ie `materialForm.floatingLabelText`)
     this.fields[fieldName].attributes.name = fieldName;
     this.getSchemaValue(fieldName, 'label', 'floatingLabelText');
     this.getSchemaValue(fieldName, 'max', 'maxLength');
     this.getSchemaMaterialForm(fieldName);
+  }
 
+  getFieldParentStyle(fieldName)
+  {
+    if(this.fields[fieldName].materialForm && this.fields[fieldName].materialForm.parentStyle) // If there is a parentStyle
+    {
+      this.fields[fieldName].parentStyle = {};
+
+      Object.keys(this.fields[fieldName].materialForm.parentStyle).map((key) => // For each `materialForm.parentStyle` field
+      {
+        this.fields[fieldName].parentStyle[key] = this.fields[fieldName].materialForm.parentStyle[key]; // Store it in our parent component style
+      });
+
+      delete this.fields[fieldName].materialForm.parentStyle; // We've stored it in the correct place so delete it so it's not used later
+    }
   }
 
   /**
@@ -218,7 +233,7 @@ class ReactAutoForm extends React.Component {
     };
 
     return (
-      <div key={this.fields[fieldName].key}>
+      <div key={this.fields[fieldName].key} style={this.fields[fieldName].parentStyle}>
         <DatePicker {...this.fields[fieldName].attributes} />
       </div>
     );
@@ -329,9 +344,8 @@ class ReactAutoForm extends React.Component {
     };
 
     return (
-      <div key={this.fields[fieldName].key}>
+      <div key={this.fields[fieldName].key} style={this.fields[fieldName].parentStyle}>
         <TextField {...this.fields[fieldName].attributes} />
-        <br />
       </div>
     );
   }
@@ -354,7 +368,7 @@ class ReactAutoForm extends React.Component {
     };
 
     return (
-      <div key={this.fields[fieldName].key}>
+      <div key={this.fields[fieldName].key} style={this.fields[fieldName].parentStyle}>
         <Toggle {...this.fields[fieldName].attributes} />
       </div>
     );
@@ -378,7 +392,7 @@ class ReactAutoForm extends React.Component {
     };
 
     return (
-      <div key={this.fields[fieldName].key}>
+      <div key={this.fields[fieldName].key} style={this.fields[fieldName].parentStyle}>
         <Checkbox {...this.fields[fieldName].attributes} />
       </div>
     );
@@ -406,7 +420,7 @@ class ReactAutoForm extends React.Component {
     };
 
     return (
-      <div key={this.fields[fieldName].key}>
+      <div key={this.fields[fieldName].key} style={this.fields[fieldName].parentStyle}>
         <label>{this.fields[fieldName].attributes.floatingLabelText}</label>
         <RadioButtonGroup {...groupOptions}>
           {
@@ -561,14 +575,16 @@ class ReactAutoForm extends React.Component {
               return this.processField(this.props.schema[fieldName], fieldName); // Return the form element
             })
           }
-          {this.props.buttonComponent ?
-            this.props.buttonComponent :
-            <Button
-              extraProps={this.props.buttonProps}
-              icon={this.props.buttonIcon}
-              label={this.props.buttonLabel}
-              type={this.props.buttonType}
-            />
+          {
+            this.props.buttonComponent ?
+              this.props.buttonComponent :
+              <Button
+                buttonParentStyle={this.props.buttonParentStyle}
+                extraProps={this.props.buttonProps}
+                icon={this.props.buttonIcon}
+                label={this.props.buttonLabel}
+                type={this.props.buttonType}
+              />
           }
         </form>
       </div>
@@ -580,8 +596,9 @@ ReactAutoForm.propTypes = {
   buttonComponent: React.PropTypes.node,
   buttonIcon: React.PropTypes.string,
   buttonLabel: React.PropTypes.string,
+  buttonParentStyle: React.PropTypes.object,
   buttonProps: React.PropTypes.object,
-  buttonType: React.PropTypes.oneOf(['FlatButton', 'RaisedButton']),
+  buttonType: React.PropTypes.oneOf(['FlatButton', 'RaisedButton', 'IconButton']),
   debug: React.PropTypes.bool,
   doc: React.PropTypes.object,
   errors: React.PropTypes.oneOfType([React.PropTypes.bool, React.PropTypes.array]),
