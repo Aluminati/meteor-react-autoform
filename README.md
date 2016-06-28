@@ -23,25 +23,27 @@
  - Object fields
  - Array of object fields
 
-### ReactAutoForm props
- - `buttonComponent={<button>Submit button</button>}` OPTIONAL | `Node` | Write and use your own custom button component. Using this will ignore all other `button*` props.
- - `buttonIcon="check"` OPTIONAL | `String` | Material-UI Icon name, view [available icons](https://design.google.com/icons/).
- - `buttonLabel="Submit form"` OPTIONAL | `String` | Custom button label.
- - `buttonParentStyle={style.buttonParent}` OPTIONAL | `Object` | Write the parent div element for the Material-UI button. 
- - `buttonProps={{secondary: true}}` OPTIONAL | `Object` | Write your own props for the [Material-UI button](http://www.material-ui.com/#/components/raised-button). This will overwrite existing props that Autoform creates.
- - `buttonType="RaisedButton"` OPTIONAL | `OneOf['FlatButton', 'RaisedButton', 'IconButton']` | You can use either the Material-UI [FlatButton](http://www.material-ui.com/#/components/flat-button) or [RaisedButton](http://www.material-ui.com/#/components/raised-button), default is RaisedButton, or you may write your own button using the prop `buttonComponent`.
- - `debug={false}` OPTIONAL | `Bool` | This will output the form data into the console when the user attempts to submit.
- - `doc={$document}` OPTIONAL | `Object` | To update a document you must set the `type="update"` and provide the document you wish to update in the `doc` prop.
- - `errors={errors}` OPTIONAL | `Array` | When your submit Action is ran and there is an error, it should update the prop here which will in turn update the form to display errors.
- - `errorsStyle={style.errors}` | OPTIONAL | `Object` | You may provide the style for the errors above the form. [See example](#styleExample).
- - `errorsTitle="There was an error:"` | OPTIONAL | `String` | The error header above the form.
- - `formClass="contactForm"` | OPTIONAL | `String` | By default the form className is `autoform` however you can choose your own.
- - `formStyle={style.form}` | OPTIONAL | `Object` | Provide your own form style, [see example](#styleExample). 
- - `muiTheme={false}` OPTIONAL | `Bool` | Default set to false to allow you to choose your own Material-UI theme, however if you do not have one set up set this to `true` to use the default.
- - `onSubmit={this.props.handleInsert}` REQUIRED | `Function` | This will run when the user attempts to submit the forum, this will need to be your Action. See [onSubmit](#onSubmit) for more formation.
- - `schema={HelpDeskSchema}` REQUIRED | `Object` | You must provide the collection you wish to use for building your form.
- - `type="insert"` OPTIONAL | `OneOf['update', 'insert']` | You must set the `type` prop which must equal either `"insert"` or `"update"`.
- - `useFields={['name', 'text']}` OPTIONAL | `Array` | Only produce the fields `name` and `description` from the Collection in the form.
+## ReactAutoForm props
+|Prop|Type|Required|Description|Example|
+|---|---|---|---|
+|`buttonComponent`|`Node`|No|Write and use your own custom button component. Using this will ignore all other `button*` props.|`buttonComponent={<button>Submit button</button>}`|
+|`buttonIcon`|`String`|No|Material-UI Icon name, view [available icons](https://design.google.com/icons/).|`buttonIcon="check"`|
+|`buttonLabel`|`String`|No|Custom button label.|`buttonLabel="Submit form"`|
+|`buttonParentStyle`|`Object`|No|Write the parent div element for the Material-UI button.|`buttonParentStyle={style.buttonParent}`| 
+|`buttonProps`|`Object`|No|Write your own props for the [Material-UI button](http://www.material-ui.com/#/components/raised-button). This will overwrite existing props that Autoform creates.|`buttonProps={{secondary: true}}`|
+|`buttonType`|`OneOf['FlatButton', 'RaisedButton', 'IconButton']`|No|You can use either the Material-UI [FlatButton](http://www.material-ui.com/#/components/flat-button) or [RaisedButton](http://www.material-ui.com/#/components/raised-button), default is RaisedButton, or you may write your own button using the prop `buttonComponent`.|`buttonType="RaisedButton"`|
+|`debug`|`Bool`|No|This will output the form data into the console when the user attempts to submit.|`debug={false}`|
+|`doc`|`Object`|No|To update a document you must set the `type="update"` and provide the document you wish to update in the `doc` prop.|`doc={document}`|
+|`errors`|`Array`|No|When your submit Action is ran and there is an error, it should update the prop here which will in turn update the form to display errors.|`errors={errors}`|
+|`errorsStyle`|`Object`|No|You may provide the style for the errors above the form. [See example](#styleExample).|`errorsStyle={style.errors}`|
+|`errorsTitle`|`String`|No|The error header above the form.|`errorsTitle="There was an error:"`|
+|`formClass"`|`String`|No|By default the form className is `autoform` however you can choose your own.|`formClass="contactForm"`|
+|`formStyle`|`Object`|No|Provide your own form style, [see example](#styleExample).|`formStyle={style.form}`| 
+|`muiTheme`|`Bool`|No|Default set to false to allow you to choose your own Material-UI theme, however if you do not have one set up set this to `true` to use the default.|`muiTheme={false}`|
+|`onSubmit`|`Function`|Yes|This will run when the user attempts to submit the forum, this will need to be your Action. See [onSubmit](#onSubmit) for more formation.|`onSubmit={this.props.handleInsert}`|
+|`schema`|`Object`|Yes|You must provide the collection you wish to use for building your form.|`schema={HelpDeskSchema}`|
+|`type`|`OneOf['update', 'insert']`|No|You must set the `type` prop which must equal either `"insert"` or `"update"`.|`type="insert"`|
+|`useFields`|`Array`|No|Only produce the fields `name` and `description` from the Collection in the form.|`useFields={['name', 'text']}`|
 
 ## Usage
 ### React Component Example
