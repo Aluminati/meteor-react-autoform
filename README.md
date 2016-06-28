@@ -25,7 +25,7 @@
 
 ## ReactAutoForm props
 |Prop|Type|Required|Description|Example|
-|---|---|---|---|
+|---|---|---|---|---|
 |`buttonComponent`|`Node`|No|Write and use your own custom button component. Using this will ignore all other `button*` props.|`buttonComponent={<button>Submit button</button>}`|
 |`buttonIcon`|`String`|No|Material-UI Icon name, view [available icons](https://design.google.com/icons/).|`buttonIcon="check"`|
 |`buttonLabel`|`String`|No|Custom button label.|`buttonLabel="Submit form"`|
