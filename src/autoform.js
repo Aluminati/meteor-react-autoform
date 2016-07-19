@@ -471,7 +471,9 @@ class ReactAutoForm extends React.Component {
     // Loop through each schema object to build the $formFields which is then used to submit the form
     Object.keys(this.props.schema).map((fieldName) =>
     {
-      if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined')
+      if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined' &&
+        (this.props.type === 'insert' && this.state[`${fieldName}_fieldValue`] !== '') &&
+        this.getDocumentValue(fieldName) !== this.getStateOrDefaultSchemaValue(fieldName))
       {
         formFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName); // Gets the state value
       }
@@ -538,7 +540,19 @@ class ReactAutoForm extends React.Component {
       return this.state[`${fieldName}_fieldValue`];
     }
     // Else if we're updating an existing document and the value exists here
-    else if(this.props.type === 'update' && typeof this.props.doc[fieldName] !== 'undefined' && this.props.doc[fieldName] !== null && !ignoreState)
+    else if(this.getDocumentValue(fieldName) && !ignoreState)
+    {
+      return this.getDocumentValue(fieldName);
+    }
+
+    // Else just return the Schema default value OR my hard-coded default value
+    return typeof this.fields[fieldName].defaultValue !== 'undefined' ? this.fields[fieldName].defaultValue : ourDefaultValue;
+  }
+
+  getDocumentValue(fieldName)
+  {
+    // If we're updating an existing document and the value exists here
+    if(this.props.type === 'update' && typeof this.props.doc[fieldName] !== 'undefined' && this.props.doc[fieldName] !== null)
     {
       // If it's a number
       if(!isNaN(parseFloat(this.props.doc[fieldName])) && isFinite(this.props.doc[fieldName]))
@@ -550,8 +564,7 @@ class ReactAutoForm extends React.Component {
       return this.props.doc[fieldName];
     }
 
-    // Else just return the Schema default value OR my hard-coded default value
-    return typeof this.fields[fieldName].defaultValue !== 'undefined' ? this.fields[fieldName].defaultValue : ourDefaultValue;
+    return false;
   }
 
   getSchemaDefaultValue(fieldName, ourDefaultValue)
