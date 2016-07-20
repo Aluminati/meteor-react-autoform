@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.2.3
+- Errors for text inputs are now also displayed above the input (using Material-UI)
+- Disable the submit button if there is nothing to submit
+- Do not submit fields which have not changed
+
 ### 0.2.21
 - `buttonType` can now be passed the `IconButton` value for an icon only button.
 - `buttonParentStyle` is a new prop that can be used to style the parent `div` element of a Material-UI field.

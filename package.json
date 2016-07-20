@@ -1,6 +1,6 @@
 {
   "name": "meteor-react-autoform",
-  "version": "0.2.21",
+  "version": "0.2.3",
   "description": "Meteor autoform for React using aldeed/meteor-simple-schema",
   "keywords": [
     "meteor",
