@@ -1,6 +1,9 @@
 ## Meteor-React-Autoform
 `meteor-react-autoform` will translate your Meteor [aldeed:SimpleSchema](https://github.com/aldeed/meteor-simple-schema) into a [React](https://github.com/facebook/react) form using [Material-UI](https://github.com/callemall/material-ui) components. You can wrap tests around your component and/or the Autoform component, this will also work with [Storybook](https://github.com/kadirahq/react-storybook). This is still in active development but is very possible to use today. Basic form elements are already available, see below for [todo list](#todo-list) and see [Changelog](CHANGELOG.md).
 
+## Example
+You can [fork an example application](https://github.com/MechJosh0/mantra-sample-autoform-blog-app) to test Meteor-React-Autoform. This application uses Mantra Sample Blog app as it's base.
+
 ## Requirements
 1. `React v15` and `Material-UI v0.15`
 2. `Meteor v1.3`
