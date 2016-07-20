@@ -37,6 +37,11 @@ class ReactAutoForm extends React.Component {
     }
   }
 
+  componentWillUpdate(props, state)
+  {
+    this.stateUpdated(state);
+  }
+
   processErrors()
   {
     this.mappedErrors = {};
@@ -466,18 +471,7 @@ class ReactAutoForm extends React.Component {
   {
     event.preventDefault();
 
-    const formFields = {};
-
-    // Loop through each schema object to build the $formFields which is then used to submit the form
-    Object.keys(this.props.schema).map((fieldName) =>
-    {
-      if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined' &&
-        (this.props.type === 'insert' && this.state[`${fieldName}_fieldValue`] !== '') &&
-        this.getDocumentValue(fieldName) !== this.getStateOrDefaultSchemaValue(fieldName))
-      {
-        formFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName); // Gets the state value
-      }
-    });
+    const formFields = this.getForumFields();
 
     if(this.props.doc)
     {
@@ -489,6 +483,24 @@ class ReactAutoForm extends React.Component {
       this.log(false, `Form submitted:`, formFields);
       this.props.onSubmit(formFields);
     }
+  }
+
+  getForumFields(state = this.state)
+  {
+    const formFields = {};
+
+    // Loop through each schema object to build the $formFields which is then used to submit the form
+    Object.keys(this.props.schema).map((fieldName) =>
+    {
+      if(typeof state[`${fieldName}_fieldValue`] !== 'undefined' &&
+        !(this.props.type === 'insert' && state[`${fieldName}_fieldValue`] === '') &&
+        this.getDocumentValue(fieldName) !== this.getStateOrDefaultSchemaValue(fieldName, null, null, state))
+      {
+        formFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName, null, null, state); // Gets the state value
+      }
+    });
+
+    return formFields;
   }
 
 	/**
@@ -517,6 +529,7 @@ class ReactAutoForm extends React.Component {
     });
 
     this.setState(changeStates);
+    this.stateUpdated();
   }
 
 	/**
@@ -529,15 +542,16 @@ class ReactAutoForm extends React.Component {
    * @param fieldName
    * @param ourDefaultValue
    * @param ignoreState
+   * @param state
    * @returns {*}
    */
-  getStateOrDefaultSchemaValue(fieldName, ourDefaultValue = null, ignoreState = false)
+  getStateOrDefaultSchemaValue(fieldName, ourDefaultValue = null, ignoreState = false, state = this.state)
   {
     // If the state value exists
-    if(typeof this.state[`${fieldName}_fieldValue`] !== 'undefined' && this.state[`${fieldName}_fieldValue`] !== null && !ignoreState)
+    if(typeof state[`${fieldName}_fieldValue`] !== 'undefined' && state[`${fieldName}_fieldValue`] !== null && !ignoreState)
     {
       // Return the state value
-      return this.state[`${fieldName}_fieldValue`];
+      return state[`${fieldName}_fieldValue`];
     }
     // Else if we're updating an existing document and the value exists here
     else if(this.getDocumentValue(fieldName) && !ignoreState)
@@ -565,6 +579,11 @@ class ReactAutoForm extends React.Component {
     }
 
     return false;
+  }
+
+  stateUpdated(state)
+  {
+    this.props.buttonProps.disabled = Object.keys(this.getForumFields(state)).length === 0;
   }
 
   getSchemaDefaultValue(fieldName, ourDefaultValue)
@@ -627,6 +646,7 @@ ReactAutoForm.propTypes = {
 };
 
 ReactAutoForm.defaultProps = {
+  buttonProps: {},
   debug: false,
   errors: false,
   formClass: 'autoform',

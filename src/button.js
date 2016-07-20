@@ -18,6 +18,7 @@ class Button extends React.Component {
   buttonProps()
   {
     return {
+      disabled: true,
       icon: this.icon(),
       label: this.props.label,
       labelPosition: 'before',
