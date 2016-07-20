@@ -45,6 +45,14 @@ class ReactAutoForm extends React.Component {
   processErrors()
   {
     this.mappedErrors = {};
+
+    if(this.props.errors)
+    {
+      this.props.errors.map((error) =>
+      {
+        this.mappedErrors[error.name] = error.message;
+      });
+    }
   }
 
 	/**
