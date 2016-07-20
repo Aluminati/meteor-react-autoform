@@ -554,7 +554,7 @@ class ReactAutoForm extends React.Component {
       return state[`${fieldName}_fieldValue`];
     }
     // Else if we're updating an existing document and the value exists here
-    else if(this.getDocumentValue(fieldName) && !ignoreState)
+    else if(this.doesDocumentValueExist(fieldName) && !ignoreState)
     {
       return this.getDocumentValue(fieldName);
     }
@@ -563,10 +563,15 @@ class ReactAutoForm extends React.Component {
     return typeof this.fields[fieldName].defaultValue !== 'undefined' ? this.fields[fieldName].defaultValue : ourDefaultValue;
   }
 
-  getDocumentValue(fieldName)
+  doesDocumentValueExist(fieldName)
   {
     // If we're updating an existing document and the value exists here
-    if(this.props.type === 'update' && typeof this.props.doc[fieldName] !== 'undefined' && this.props.doc[fieldName] !== null)
+    return this.props.type === 'update' && typeof this.props.doc[fieldName] !== 'undefined' && this.props.doc[fieldName] !== null;
+  }
+
+  getDocumentValue(fieldName)
+  {
+    if(this.doesDocumentValueExist(fieldName))
     {
       // If it's a number
       if(!isNaN(parseFloat(this.props.doc[fieldName])) && isFinite(this.props.doc[fieldName]))
@@ -641,7 +646,7 @@ ReactAutoForm.propTypes = {
   muiTheme: React.PropTypes.bool,
   onSubmit: React.PropTypes.func.isRequired,
   schema: React.PropTypes.object.isRequired,
-  type: React.PropTypes.oneOf(['update', 'insert']).isRequired,
+  type: React.PropTypes.oneOf(['update', 'insert']),
   useFields: React.PropTypes.array
 };
 

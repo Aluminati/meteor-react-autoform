@@ -774,6 +774,25 @@ describe('meteor-react-autoform.autoform', () =>
     expect(el.find('RadioButtonGroup').props().valueSelected).to.equal('red');
   });
 
+  it('Should have true reoccurringProblem', () =>
+  {
+    doc.reoccurringProblem = true;
+    doc.agree = false;
+
+    const el = mount(
+      <ReactAutoForm
+        doc={doc}
+        muiTheme={true}
+        onSubmit={onSubmit}
+        schema={HelpDeskSchema}
+        type="update"
+      />
+    );
+
+    expect(el.find('input[name="reoccurringProblem"]').props().checked).to.equal(true);
+    expect(el.find('Toggle').props().toggled).to.equal(false);
+  });
+
   it('Should be able to clear the text input in an update form: name', () =>
   {
     const el = mount(
