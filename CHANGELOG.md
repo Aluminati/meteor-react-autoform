@@ -1,6 +1,6 @@
 # Changelog
 
-### 0.2.3
+### 0.2.30
 - Errors for text inputs are now also displayed above the input (using Material-UI)
 - Disable the submit button if there is nothing to submit
 - Do not submit fields which have not changed
