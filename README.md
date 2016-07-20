@@ -41,6 +41,7 @@
 |`formStyle`|`Object`|No|Provide your own form style, [see example](#styleExample).|`formStyle={style.form}`| 
 |`muiTheme`|`Bool`|No|Default set to false to allow you to choose your own Material-UI theme, however if you do not have one set up set this to `true` to use the default.|`muiTheme={false}`|
 |`onSubmit`|`Function`|Yes|This will run when the user attempts to submit the forum, this will need to be your Action. See [onSubmit](#onSubmit) for more formation.|`onSubmit={this.props.handleInsert}`|
+|`onSubmitExtra`|`Object`|Pass an object which is then returned as an extra parameter on the onSubmit function
 |`schema`|`Object`|Yes|You must provide the collection you wish to use for building your form.|`schema={{name: {type: String, materialForm: {floatingLabelText: 'Name', hintText: 'Your name...'}}}}`|
 |`type`|`OneOf['update', 'insert']`|No|You must set the `type` prop which must equal either `"insert"` or `"update"`.|`type="insert"`|
 |`useFields`|`Array`|No|Only produce the fields `name` and `description` from the Collection in the form.|`useFields={['name', 'text']}`|

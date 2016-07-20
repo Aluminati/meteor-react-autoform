@@ -484,12 +484,12 @@ class ReactAutoForm extends React.Component {
     if(this.props.doc)
     {
       this.log(false, `Form submitted \`${this.props.doc._id}\`:`, formFields);
-      this.props.onSubmit(this.props.doc._id, formFields);
+      this.props.onSubmit(this.props.doc._id, formFields, this.props.onSubmitExtra);
     }
     else
     {
       this.log(false, `Form submitted:`, formFields);
-      this.props.onSubmit(formFields);
+      this.props.onSubmit(formFields, this.props.onSubmitExtra);
     }
   }
 
@@ -653,6 +653,7 @@ ReactAutoForm.propTypes = {
   formStyle: React.PropTypes.object,
   muiTheme: React.PropTypes.bool,
   onSubmit: React.PropTypes.func.isRequired,
+  onSubmitExtra: React.PropTypes.object,
   schema: React.PropTypes.object.isRequired,
   type: React.PropTypes.oneOf(['update', 'insert']),
   useFields: React.PropTypes.array
@@ -664,6 +665,7 @@ ReactAutoForm.defaultProps = {
   errors: false,
   formClass: 'autoform',
   formStyle: {},
+  onSubmitExtra: {},
   type: 'insert',
   muiTheme: false
 };

@@ -1,5 +1,8 @@
 # Changelog
 
+### 0.2.31
+- `onSubmitExtra` New prop which you can use to pass an object which is then returned as an extra parameter on the onSubmit function
+
 ### 0.2.30
 - Errors for text inputs are now also displayed above the input (using Material-UI)
 - Disable the submit button if there is nothing to submit
