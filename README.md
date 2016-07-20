@@ -10,7 +10,7 @@ You can [fork an example application](https://github.com/MechJosh0/mantra-sample
 
 ## Installation
 1. Installed the NPM package: `$ npm i meteor-react-autoform --save`
-2. Install the Meteor package: `$ meteor add aldeed:collection2 aldeed:simple-schema`
+2. Install the required Meteor packages: `$ meteor add aldeed:collection2 aldeed:simple-schema check`
 3. Extend your SimpleSchema to allow our `materialForm` object. Place the below code above your schema definitions ([see example](#example-schema)):
 ```
   // Documentation -> https://github.com/MechJosh0/meteor-react-autoform
