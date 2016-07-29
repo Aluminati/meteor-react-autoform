@@ -47,35 +47,20 @@ describe('meteor-react-autoform.errors', () =>
   });
 });
 
-const errors = [
-  {
-    name: 'name',
-    type: 'required',
-    value: null,
+const errors = {
+  name: {
     message: 'Name is required'
   },
-  {
-    name: 'description',
-    type: 'required',
-    value: null,
+  description: {
     message: 'Description is required'
   },
-  {
-    name: 'address',
-    type: 'unknown',
-    value: null,
+  address: {
     message: 'There seems to be an error in your address'
   },
-  {
-    name: 'colour',
-    type: 'incorrect',
-    value: null,
+  colour: {
     message: 'You must select red'
   },
-  {
-    name: 'dogOrCat',
-    type: 'required',
-    value: null,
+  dogOrCat: {
     message: 'Dogs are the best'
   }
-];
+};

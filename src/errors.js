@@ -6,16 +6,9 @@ import React from 'react';
 
 const listItems = (errors, style) =>
 {
-  const mappedErrors = [];
-
-  errors.map((error) =>
+  return Object.keys(errors).map(field =>
   {
-    mappedErrors[error.name] = error.message;
-  });
-
-  return Object.keys(mappedErrors).map((key) =>
-  {
-    return (<li key={key} style={style.li}>{mappedErrors[key]}</li>);
+    return (<li key={field} style={style.li}>{errors[field].message}</li>);
   });
 };
 
@@ -30,7 +23,10 @@ const Errors = ({errors, style, title}) =>
 );
 
 Errors.propTypes = {
-  errors: React.PropTypes.array.isRequired,
+  errors: React.PropTypes.objectOf(React.PropTypes.shape({
+    message: React.PropTypes.string.isRequired,
+    type: React.PropTypes.string
+  })).isRequired,
   style: React.PropTypes.object,
   title: React.PropTypes.string
 };

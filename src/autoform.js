@@ -48,10 +48,20 @@ class ReactAutoForm extends React.Component {
 
     if(this.props.errors)
     {
-      this.props.errors.map((error) =>
+      if(Array.isArray(this.props.errors))
       {
-        this.mappedErrors[error.name] = error.message;
-      });
+        if(this.props.errors)
+        {
+          this.props.errors.map(error =>
+          {
+            this.mappedErrors[error.name] = {message: error.message};
+          });
+        }
+      }
+      else
+      {
+        this.mappedErrors = this.props.errors;
+      }
     }
   }
 
@@ -306,7 +316,7 @@ class ReactAutoForm extends React.Component {
     selectOptions = selectOptions ? selectOptions : {};
     selectOptions.key = this.fields[fieldName].attributes.name;
     selectOptions.floatingLabelText = this.fields[fieldName].attributes.floatingLabelText;
-    selectOptions.errorText = this.mappedErrors[fieldName];
+    selectOptions.errorText = this.getErrorText(fieldName);
     selectOptions.defaultValue = this.getSchemaDefaultValue(fieldName, '');
     selectOptions.value = this.getStateOrDefaultSchemaValue(fieldName, '');
     selectOptions.onChange = (e, index, value) =>
@@ -338,7 +348,7 @@ class ReactAutoForm extends React.Component {
    */
   componentTextField(fieldName)
   {
-    this.fields[fieldName].attributes.errorText = this.mappedErrors[fieldName];
+    this.fields[fieldName].attributes.errorText = this.getErrorText(fieldName);
     this.fields[fieldName].attributes.value = this.getStateOrDefaultSchemaValue(fieldName, '');
     this.fields[fieldName].attributes.onChange = (e) =>
     {
@@ -447,6 +457,11 @@ class ReactAutoForm extends React.Component {
         </RadioButtonGroup>
       </div>
     );
+  }
+
+  getErrorText(fieldName)
+  {
+    return this.mappedErrors[fieldName] ? this.mappedErrors[fieldName].message : null;
   }
 
 	/**
@@ -646,7 +661,19 @@ ReactAutoForm.propTypes = {
   buttonType: React.PropTypes.oneOf(['FlatButton', 'RaisedButton', 'IconButton']),
   debug: React.PropTypes.bool,
   doc: React.PropTypes.object,
-  errors: React.PropTypes.oneOfType([React.PropTypes.bool, React.PropTypes.array]),
+  errors: React.PropTypes.oneOfType([
+    React.PropTypes.bool,
+    React.PropTypes.arrayOf(React.PropTypes.shape({
+      message: React.PropTypes.string.isRequired,
+      name: React.PropTypes.string.isRequired,
+      type: React.PropTypes.string,
+      value: React.PropTypes.string
+    })),
+    React.PropTypes.objectOf(React.PropTypes.shape({
+      message: React.PropTypes.string.isRequired,
+      type: React.PropTypes.string
+    }))
+  ]),
   errorsStyle: React.PropTypes.object,
   errorsTitle: React.PropTypes.string,
   formClass: React.PropTypes.string,
