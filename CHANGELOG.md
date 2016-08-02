@@ -2,6 +2,7 @@
 
 ### 0.2.32
 - Changed the `errors` prop to allow either an array or object.
+- Added `disabled` prop which controls disabling all forum elements and submit button.
 
 ### 0.2.31
 - `onSubmitExtra` New prop which you can use to pass an object which is then returned as an extra parameter on the onSubmit function

@@ -76,7 +76,7 @@ class Button extends React.Component {
   iconButton()
   {
     return (
-      <IconButton {...this.buttonProps()} type="submit">
+      <IconButton {...this.buttonProps()} {...this.props.extraProps} type="submit">
         {this.icon()}
       </IconButton>
     );

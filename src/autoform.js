@@ -39,7 +39,7 @@ class ReactAutoForm extends React.Component {
 
   componentWillUpdate(props, state)
   {
-    this.stateUpdated(state);
+    this.stateUpdated(props, state);
   }
 
   processErrors()
@@ -147,6 +147,7 @@ class ReactAutoForm extends React.Component {
     this.fields[fieldName].materialForm = this.fields[fieldName].materialForm ? this.fields[fieldName].materialForm : {};
     this.getFieldParentStyle(fieldName);
     this.fields[fieldName].attributes = {}; // These will be overwritten if it's repeated in the materialForm object (ie `materialForm.floatingLabelText`)
+    this.fields[fieldName].attributes.disabled = this.props.disabled;
     this.fields[fieldName].attributes.name = fieldName;
     this.getSchemaValue(fieldName, 'label', 'floatingLabelText');
     this.getSchemaValue(fieldName, 'max', 'maxLength');
@@ -446,14 +447,9 @@ class ReactAutoForm extends React.Component {
       <div key={this.fields[fieldName].key} style={this.fields[fieldName].parentStyle}>
         <label>{this.fields[fieldName].attributes.floatingLabelText}</label>
         <RadioButtonGroup {...groupOptions}>
-          {
-            Object.keys(options).map((i) =>
-            {
-              return (
-                <RadioButton key={options[i].value} {...options[i]} />
-              );
-            })
-          }
+          {Object.keys(options).map(i => (
+            <RadioButton key={options[i].value} {...options[i]} />
+          ))}
         </RadioButtonGroup>
       </div>
     );
@@ -474,15 +470,18 @@ class ReactAutoForm extends React.Component {
     const options = this.fields[fieldName].attributes.options;
     const allowedValues = options ? options : this.fields[fieldName].allowedValues;
 
-    return Object.keys(allowedValues).map((key) =>
+    return Object.keys(allowedValues).map(i =>
     {
-      if(typeof allowedValues[key] === 'object')
+      let disabled = this.fields[fieldName].attributes.disabled;
+
+      if(typeof allowedValues[i] === 'object')
       {
-        allowedValues[key].value = allowedValues[key].value.toString();
-        return allowedValues[key];
+        allowedValues[i].disabled = disabled;
+        allowedValues[i].value = allowedValues[i].value.toString();
+        return allowedValues[i];
       }
 
-      return {label: allowedValues[key], value: allowedValues[key].toString()};
+      return {label: allowedValues[i], value: allowedValues[i].toString(), disabled};
     });
   }
 
@@ -542,18 +541,18 @@ class ReactAutoForm extends React.Component {
 	/**
    * Reset the entire form to default
    */
-  resetForm()
-  {
-    const changeStates = {};
-
-    Object.keys(this.props.schema).map((fieldName) =>
-    {
-      changeStates[`${fieldName}_fieldValue`] = null;
-    });
-
-    this.setState(changeStates);
-    this.stateUpdated();
-  }
+  // resetForm()
+  // {
+  //   const changeStates = {};
+  //
+  //   Object.keys(this.props.schema).map((fieldName) =>
+  //   {
+  //     changeStates[`${fieldName}_fieldValue`] = null;
+  //   });
+  //
+  //   this.setState(changeStates);
+  //   this.stateUpdated();
+  // }
 
 	/**
    * Used to get an inputs value, it will attempt to return a value that exists (in order):
@@ -609,9 +608,9 @@ class ReactAutoForm extends React.Component {
     return false;
   }
 
-  stateUpdated(state)
+  stateUpdated(props, state)
   {
-    this.props.buttonProps.disabled = Object.keys(this.getForumFields(state)).length === 0;
+    this.props.buttonProps.disabled = props.disabled ? props.disabled : Object.keys(this.getForumFields(state)).length === 0;
   }
 
   getSchemaDefaultValue(fieldName, ourDefaultValue)
@@ -660,6 +659,7 @@ ReactAutoForm.propTypes = {
   buttonProps: React.PropTypes.object,
   buttonType: React.PropTypes.oneOf(['FlatButton', 'RaisedButton', 'IconButton']),
   debug: React.PropTypes.bool,
+  disabled: React.PropTypes.bool,
   doc: React.PropTypes.object,
   errors: React.PropTypes.oneOfType([
     React.PropTypes.bool,
@@ -689,6 +689,7 @@ ReactAutoForm.propTypes = {
 ReactAutoForm.defaultProps = {
   buttonProps: {},
   debug: false,
+  disabled: false,
   errors: false,
   formClass: 'autoform',
   formStyle: {},
