@@ -19,6 +19,7 @@
     "test": "npm run lint && npm run testonly"
   },
   "dependencies": {
+    "dot-object": "^1.x.x",
     "material-ui": "^0.15.1",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
