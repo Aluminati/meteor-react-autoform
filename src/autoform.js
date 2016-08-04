@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import Dot from 'dot-object';
 import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
 import Toggle from 'material-ui/Toggle';
@@ -498,7 +499,7 @@ class ReactAutoForm extends React.Component {
     if(this.props.doc)
     {
       this.log(false, `Form submitted \`${this.props.doc._id}\`:`, formFields);
-      this.props.onSubmit(this.props.doc._id, formFields, this.props.onSubmitExtra);
+      this.props.onSubmit(this.props.doc, formFields, this.props.onSubmitExtra);
     }
     else
     {
@@ -509,16 +510,26 @@ class ReactAutoForm extends React.Component {
 
   getForumFields(state = this.state)
   {
-    const formFields = {};
+    let formFields = {};
 
     // Loop through each schema object to build the $formFields which is then used to submit the form
-    Object.keys(this.props.schema).map((fieldName) =>
+    Object.keys(this.props.schema).map(fieldName =>
     {
       if(typeof state[`${fieldName}_fieldValue`] !== 'undefined' &&
         !(this.props.type === 'insert' && state[`${fieldName}_fieldValue`] === '') &&
         this.getDocumentValue(fieldName) !== this.getStateOrDefaultSchemaValue(fieldName, null, null, state))
       {
         formFields[fieldName] = this.getStateOrDefaultSchemaValue(fieldName, null, null, state); // Gets the state value
+
+        if(fieldName.indexOf('.') > 0) // If this fieldName belongs to object
+        {
+          let fieldNameObj = Dot.object(Object.assign({}, {[fieldName]: formFields[fieldName]})), // Get the entire object
+            // schemaKey = fieldName.substr(0, fieldName.lastIndexOf('.')); // Get the parent object key
+            schemaKey = fieldName.substr(0, fieldName.indexOf('.')); // Get the parent object key
+
+          Dot.copy(schemaKey, schemaKey, this.props.doc, fieldNameObj); // Copy the original object
+          formFields = {...Dot.dot(fieldNameObj), ...formFields}; // Turn the original object into dotted object and then merge it with the new fieldName value
+        }
       }
     });
 
@@ -587,22 +598,29 @@ class ReactAutoForm extends React.Component {
 
   doesDocumentValueExist(fieldName)
   {
+    const doc = {};
+    Dot.copy(fieldName, fieldName, this.props.doc, doc);
+
     // If we're updating an existing document and the value exists here
-    return this.props.type === 'update' && typeof this.props.doc[fieldName] !== 'undefined' && this.props.doc[fieldName] !== null;
+    return this.props.type === 'update' && typeof doc !== 'undefined' && doc !== null;
   }
 
   getDocumentValue(fieldName)
   {
     if(this.doesDocumentValueExist(fieldName))
     {
+      let doc = {};
+      Dot.copy(fieldName, fieldName, this.props.doc, doc);
+      doc = Dot.dot(doc);
+
       // If it's a number
-      if(!isNaN(parseFloat(this.props.doc[fieldName])) && isFinite(this.props.doc[fieldName]))
+      if(!isNaN(parseFloat(doc[fieldName])) && isFinite(doc[fieldName]))
       {
         // Return it as a String
-        return this.props.doc[fieldName].toString();
+        return doc[fieldName].toString();
       }
 
-      return this.props.doc[fieldName];
+      return doc[fieldName];
     }
 
     return false;
