@@ -1,5 +1,8 @@
 # Changelog
 
+### 0.3.1
+- Added `fullWidth` prop to automatically add full width to all text inputs without having to add it to each field manually.
+
 ### 0.3.0
 - Changed the `errors` prop to allow either an array or object.
 - Added `disabled` prop which controls disabling all forum elements and submit button.
