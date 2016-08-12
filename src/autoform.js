@@ -721,8 +721,8 @@ ReactAutoForm.defaultProps = {
   formClass: 'autoform',
   formStyle: {},
   onSubmitExtra: {},
-  type: 'insert',
-  muiTheme: false
+  muiTheme: false,
+  type: 'insert'
 };
 
 ReactAutoForm.childContextTypes = {
