@@ -15,6 +15,8 @@ import baseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Errors from './errors';
 import Button from './button';
+// import WarningIcon from 'material-ui/svg-icons/alert/warning';
+// import IconButton from 'material-ui/IconButton';
 
 /**
  * Class to translate SimpleSchema to Material-UI fields
@@ -26,6 +28,10 @@ class ReactAutoForm extends React.Component {
     this.state = {};
     this.fields = {};
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleShowToolTipInput = this.handleShowToolTipInput.bind(this);
+    this.handleShowToolTipIcon = this.handleShowToolTipIcon.bind(this);
+    this.handleHideToolTip = this.handleHideToolTip.bind(this);
+    this.handleToolTip = this.handleToolTip.bind(this);
   }
 
   getChildContext()
@@ -155,9 +161,12 @@ class ReactAutoForm extends React.Component {
     this.getSchemaValue(fieldName, 'max', 'maxLength');
     this.getSchemaMaterialForm(fieldName);
 
-    if(this.props.fullWidth && typeof this.fields[fieldName].attributes.fullWidth === 'undefined')
+    if(this.props.fullWidth &&
+      typeof this.fields[fieldName].attributes.fullWidth === 'undefined' &&
+      typeof this.fields[fieldName].attributes.style.width === 'undefined')
     {
-      this.fields[fieldName].attributes.fullWidth = this.props.fullWidth;
+      // this.fields[fieldName].attributes.fullWidth = this.props.fullWidth;
+      this.fields[fieldName].attributes.style.width = '100%';
     }
   }
 
@@ -377,9 +386,60 @@ class ReactAutoForm extends React.Component {
 
     return (
       <div key={this.fields[fieldName].key} style={this.fields[fieldName].parentStyle}>
-        <TextField {...this.fields[fieldName].attributes} />
+        <TextField onMouseOut={this.handleHideToolTip} onMouseOver={this.handleShowToolTipInput} {...this.fields[fieldName].attributes} />
       </div>
     );
+  }
+  /*
+   <IconButton
+     onClick={this.handleToolTip}
+     onMouseOut={this.handleHideToolTip}
+     onMouseOver={this.handleShowToolTipIcon}
+     style={{display: this.getActiveToolTip() === fieldName ? 'inline-block' : 'none'}}
+     tooltip="SVG Icon"
+   >
+     <WarningIcon />
+   </IconButton>
+   */
+
+  getActiveToolTip()
+  {
+    return this.state.toolTip ? this.state.toolTip.active : null;
+  }
+
+  handleShowToolTipInput(e)
+  {
+    this.setState({
+      toolTip: {
+        active: e.target.name,
+        previous: this.getActiveToolTip()
+      }
+    });
+  }
+
+  handleShowToolTipIcon()
+  {
+    this.setState({
+      toolTip: {
+        active: this.state.toolTip.previous,
+        previous: this.state.toolTip.previous
+      }
+    });
+  }
+
+  handleHideToolTip()
+  {
+    this.setState({
+      toolTip: {
+        active: null,
+        previous: this.getActiveToolTip()
+      }
+    });
+  }
+
+  handleToolTip()
+  {
+    console.log('Show help information...', this.state.toolTip.active);
   }
 
 	/**
