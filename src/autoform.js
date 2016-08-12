@@ -150,9 +150,15 @@ class ReactAutoForm extends React.Component {
     this.fields[fieldName].attributes = {}; // These will be overwritten if it's repeated in the materialForm object (ie `materialForm.floatingLabelText`)
     this.fields[fieldName].attributes.disabled = this.props.disabled;
     this.fields[fieldName].attributes.name = fieldName;
+    this.fields[fieldName].attributes.style = {};
     this.getSchemaValue(fieldName, 'label', 'floatingLabelText');
     this.getSchemaValue(fieldName, 'max', 'maxLength');
     this.getSchemaMaterialForm(fieldName);
+
+    if(this.props.fullWidth && typeof this.fields[fieldName].attributes.fullWidth === 'undefined')
+    {
+      this.fields[fieldName].attributes.fullWidth = this.props.fullWidth;
+    }
   }
 
   getFieldParentStyle(fieldName)
@@ -317,6 +323,7 @@ class ReactAutoForm extends React.Component {
 
     selectOptions = selectOptions ? selectOptions : {};
     selectOptions.key = this.fields[fieldName].attributes.name;
+    selectOptions.fullWidth = this.fields[fieldName].attributes.fullWidth;
     selectOptions.floatingLabelText = this.fields[fieldName].attributes.floatingLabelText;
     selectOptions.errorText = this.getErrorText(fieldName);
     selectOptions.defaultValue = this.getSchemaDefaultValue(fieldName, '');
@@ -696,6 +703,7 @@ ReactAutoForm.propTypes = {
   errorsTitle: React.PropTypes.string,
   formClass: React.PropTypes.string,
   formStyle: React.PropTypes.object,
+  fullWidth: React.PropTypes.bool,
   muiTheme: React.PropTypes.bool,
   onSubmit: React.PropTypes.func.isRequired,
   onSubmitExtra: React.PropTypes.object,
@@ -709,6 +717,7 @@ ReactAutoForm.defaultProps = {
   debug: false,
   disabled: false,
   errors: false,
+  fullWidth: false,
   formClass: 'autoform',
   formStyle: {},
   onSubmitExtra: {},
