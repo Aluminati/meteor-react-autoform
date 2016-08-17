@@ -8,7 +8,9 @@ module.exports = (wallaby) =>
 
   return {
     files: [
-      'src/*.js'
+      'src/*.js',
+      '.scripts/css-null-compiler.js',
+      '.scripts/mocha_boot.js'
     ],
     tests: [
       'tests/*.js'
@@ -26,6 +28,8 @@ module.exports = (wallaby) =>
     testFramework: 'mocha',
     setup()
     {
+      require('./.scripts/css-null-compiler');
+      require('./.scripts/mocha_boot');
       const jsdom = require('jsdom').jsdom;
       global.document = jsdom('<!doctype html><html><body></body></html>');
       global.window = global.document.defaultView;
