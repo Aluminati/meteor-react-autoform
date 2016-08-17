@@ -157,6 +157,7 @@ class ReactAutoForm extends React.Component {
   {
     this.createMaterialForumAttribute(fieldName);
     this.getFieldParentStyle(fieldName);
+    this.setToolTipObject(fieldName);
     this.fields[fieldName].reactAutoform.attributes = {}; // These will be overwritten if it's repeated in the materialForm object (ie `materialForm.floatingLabelText`)
     this.fields[fieldName].reactAutoform.attributes.disabled = this.props.disabled;
     this.fields[fieldName].reactAutoform.attributes.name = fieldName;
@@ -172,6 +173,26 @@ class ReactAutoForm extends React.Component {
       // this.fields[fieldName].reactAutoform.attributes.fullWidth = this.props.fullWidth;
       this.fields[fieldName].reactAutoform.attributes.style.width = '100%';
     }
+  }
+
+  setToolTipObject(fieldName)
+  {
+    if(!this.fields[fieldName].reactAutoform.toolTip)
+    {
+      this.fields[fieldName].reactAutoform.toolTip = {};
+      this.fields[fieldName].reactAutoform.toolTip.hint = false;
+      this.fields[fieldName].reactAutoform.toolTip.description = false;
+    }
+
+    // if(!this.fields[fieldName].reactAutoform.toolTip.hint)
+    // {
+    //   this.fields[fieldName].reactAutoform.toolTip.hint = null;
+    // }
+    //
+    // if(!this.fields[fieldName].reactAutoform.toolTip.description)
+    // {
+    //   this.fields[fieldName].reactAutoform.toolTip.description = null;
+    // }
   }
 
   createMaterialForumAttribute(fieldName)
@@ -435,12 +456,12 @@ class ReactAutoForm extends React.Component {
             disableFocusRipple={true}
             disableTouchRipple={true}
             innerDivStyle={style.listItem.innerDiv}
-            rightIcon={this.props.showToolTips ? this.toolTipComponent(fieldName) : null}
+            rightIcon={this.props.showToolTips !== false ? this.toolTipComponent(fieldName) : null}
             style={style.listItem.main}
           >
             <TextField
               {...this.fields[fieldName].reactAutoform.attributes}
-              errorStyle={this.props.showToolTips && this.state.toolTipOpen ? style.errorStyle : {}}
+              errorStyle={this.props.showToolTips !== false && this.state.toolTipOpen === fieldName ? style.errorStyle : {}}
             />
           </ListItem>
         </List>
@@ -450,14 +471,30 @@ class ReactAutoForm extends React.Component {
 
   toolTipComponent(fieldName)
   {
+    const toolTip = this.fields[fieldName].reactAutoform.toolTip;
+
+    if(this.props.showToolTips === false)
+    {
+      return null;
+    }
+
+    if(!toolTip.hint && !toolTip.description)
+    {
+      return null;
+    }
+
     return (
-      <IconButton
-        onClick={this.handleToolTip}
-        style={{display: this.state.toolTip === fieldName ? 'inline-block' : 'none'}}
-        tooltip="SVG Icon"
-      >
-        <HelpIcon />
-      </IconButton>
+      <Grid style={{paddingTop: 0}}>
+        <Cell col={12} hidePhone={toolTip.hint === undefined} style={{marginTop: 0}}>
+          <IconButton
+            onClick={this.handleToolTip}
+            style={{display: this.state.activeField === fieldName ? 'inline-block' : 'none'}}
+            tooltip="SVG Icon"
+          >
+            <HelpIcon />
+          </IconButton>
+        </Cell>
+      </Grid>
     );
   }
 
@@ -465,19 +502,23 @@ class ReactAutoForm extends React.Component {
   {
     if(e && e.target && Object.keys(this.props.schema).indexOf(e.target.name) > -1)
     {
-      this.setState({toolTip: e.target.name});
+      this.setState({activeField: e.target.name});
     }
   }
 
   handleHideToolTip()
   {
-    this.setState({toolTip: null});
+    this.setState({activeField: null, toolTipOpen: null});
   }
 
   handleToolTip()
   {
-    console.log('Show help information...', this.state.toolTip);
-    this.setState({toolTipOpen: true});
+    if(this.state.activeField === this.state.toolTipOpen)
+    {
+      return this.handleHideToolTip();
+    }
+
+    this.setState({toolTipOpen: this.state.activeField});
   }
 
 	/**
@@ -567,10 +608,9 @@ class ReactAutoForm extends React.Component {
     {
       return this.mappedErrors[fieldName].message;
     }
-    else if(this.state.toolTipOpen)
+    else if(this.state.toolTipOpen === fieldName)
     {
-      console.log('toolTip thingy', this.state.toolTip);
-      return 'asdfasdf';
+      return this.fields[fieldName].reactAutoform.toolTip.hint;
     }
 
     return null;
@@ -776,39 +816,62 @@ class ReactAutoForm extends React.Component {
     );
   }
 
-  render()
+  isToolTipSidebarOpen()
   {
-    this.processErrors();
+    return this.state.toolTipOpen && this.fields[this.state.toolTipOpen].reactAutoform.toolTip.description;
+  }
 
-    const style = {
+  style()
+  {
+    return {
       noPaddingNoMargin: {
         padding: 0,
         margin: 0
       },
       toolTipArea: {
         background: 'pink',
-        display: this.state.toolTipOpen ? 'block' : 'none'
+        display: this.isToolTipSidebarOpen() ? 'block' : 'none'
       }
     };
+  }
+
+  render()
+  {
+    this.processErrors();
 
     return (
       <div>
         {
           this.props.errors ? <Errors errors={this.props.errors} style={this.props.errorsStyle} title={this.props.errorsTitle} /> : null
         }
-        <Grid style={style.noPaddingNoMargin}>
-          <Cell col={this.state.toolTipOpen ? 8 : 12} hidePhone={true} style={style.noPaddingNoMargin} tablet={this.state.toolTipOpen ? 5 : 8}>
+        <Grid style={this.style().noPaddingNoMargin}>
+          <Cell
+            col={this.isToolTipSidebarOpen() ? 8 : 12}
+            hidePhone={true}
+            key="desktopForum"
+            style={this.style().noPaddingNoMargin}
+            tablet={this.isToolTipSidebarOpen() ? 5 : 8}
+          >
             {this.displayForum()}
           </Cell>
-          <Cell col={4} hidePhone={true} style={style.toolTipArea} tablet={3}>
-            Hello -> {this.state.toolTip}
+          <Cell
+            col={4}
+            hidePhone={true}
+            key="desktopToolTipArea"
+            style={this.style().toolTipArea}
+            tablet={3}
+          >
+            {this.state.toolTipOpen && this.fields[this.state.toolTipOpen].reactAutoform.toolTip.description}
           </Cell>
-          {
-            this.props.schema.showToolTips === true || this.props.schema.showToolTips === 'description' ?
-              <Cell col={4} hideDesktop={true} hideTablet={true} style={style.noPaddingNoMargin}>
-                {this.displayForum()}
-              </Cell> : null
-          }
+          <Cell
+            col={4}
+            hideDesktop={true}
+            hideTablet={true}
+            key="mobileForum"
+            style={this.style().noPaddingNoMargin}
+          >
+            {this.displayForum()}
+          </Cell>
         </Grid>
       </div>
     );
