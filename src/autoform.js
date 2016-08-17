@@ -15,8 +15,11 @@ import baseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Errors from './errors';
 import Button from './button';
-// import WarningIcon from 'material-ui/svg-icons/alert/warning';
-// import IconButton from 'material-ui/IconButton';
+import {List, ListItem} from 'material-ui/List';
+import HelpIcon from 'material-ui/svg-icons/action/help-outline';
+import IconButton from 'material-ui/IconButton';
+import {orange500} from 'material-ui/styles/colors';
+import {Grid, Cell} from 'react-mdl';
 
 /**
  * Class to translate SimpleSchema to Material-UI fields
@@ -28,8 +31,7 @@ class ReactAutoForm extends React.Component {
     this.state = {};
     this.fields = {};
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleShowToolTipInput = this.handleShowToolTipInput.bind(this);
-    this.handleShowToolTipIcon = this.handleShowToolTipIcon.bind(this);
+    this.handleShowToolTip = this.handleShowToolTip.bind(this);
     this.handleHideToolTip = this.handleHideToolTip.bind(this);
     this.handleToolTip = this.handleToolTip.bind(this);
   }
@@ -121,7 +123,9 @@ class ReactAutoForm extends React.Component {
   {
     let component;
 
-    if(this.fields[fieldName].attributes && this.fields[fieldName].attributes.options || this.fields[fieldName].allowedValues)
+    if(this.fields[fieldName].reactAutoform.attributes &&
+      this.fields[fieldName].reactAutoform.attributes.options ||
+      this.fields[fieldName].allowedValues)
     {
       switch(this.fields[fieldName].materialForm.switcher)
       {
@@ -151,37 +155,59 @@ class ReactAutoForm extends React.Component {
    */
   createDefaultAttr(fieldName)
   {
-    this.fields[fieldName].materialForm = this.fields[fieldName].materialForm ? this.fields[fieldName].materialForm : {};
+    this.createMaterialForumAttribute(fieldName);
     this.getFieldParentStyle(fieldName);
-    this.fields[fieldName].attributes = {}; // These will be overwritten if it's repeated in the materialForm object (ie `materialForm.floatingLabelText`)
-    this.fields[fieldName].attributes.disabled = this.props.disabled;
-    this.fields[fieldName].attributes.name = fieldName;
-    this.fields[fieldName].attributes.style = {};
+    this.fields[fieldName].reactAutoform.attributes = {}; // These will be overwritten if it's repeated in the materialForm object (ie `materialForm.floatingLabelText`)
+    this.fields[fieldName].reactAutoform.attributes.disabled = this.props.disabled;
+    this.fields[fieldName].reactAutoform.attributes.name = fieldName;
+    this.fields[fieldName].reactAutoform.attributes.style = {};
     this.getSchemaValue(fieldName, 'label', 'floatingLabelText');
     this.getSchemaValue(fieldName, 'max', 'maxLength');
     this.getSchemaMaterialForm(fieldName);
 
     if(this.props.fullWidth &&
-      typeof this.fields[fieldName].attributes.fullWidth === 'undefined' &&
-      typeof this.fields[fieldName].attributes.style.width === 'undefined')
+      typeof this.fields[fieldName].reactAutoform.attributes.fullWidth === 'undefined' &&
+      typeof this.fields[fieldName].reactAutoform.attributes.style.width === 'undefined')
     {
-      // this.fields[fieldName].attributes.fullWidth = this.props.fullWidth;
-      this.fields[fieldName].attributes.style.width = '100%';
+      // this.fields[fieldName].reactAutoform.attributes.fullWidth = this.props.fullWidth;
+      this.fields[fieldName].reactAutoform.attributes.style.width = '100%';
+    }
+  }
+
+  createMaterialForumAttribute(fieldName)
+  {
+    if(!this.fields[fieldName].reactAutoform && this.fields[fieldName].materialForm)
+    {
+      this.fields[fieldName].reactAutoform = {};
+      this.fields[fieldName].reactAutoform.materialForm = this.fields[fieldName].materialForm;
+      return;
+    }
+
+    if(!this.fields[fieldName].reactAutoform)
+    {
+      this.fields[fieldName].reactAutoform = {};
+      this.fields[fieldName].reactAutoform.materialForm = {};
+      return;
+    }
+
+    if(!this.fields[fieldName].reactAutoform.materialForm)
+    {
+      this.fields[fieldName].reactAutoform.materialForm = {};
     }
   }
 
   getFieldParentStyle(fieldName)
   {
-    if(this.fields[fieldName].materialForm && this.fields[fieldName].materialForm.parentStyle) // If there is a parentStyle
+    if(this.fields[fieldName].reactAutoform.materialForm && this.fields[fieldName].reactAutoform.materialForm.parentStyle) // If there is a parentStyle
     {
       this.fields[fieldName].parentStyle = {};
 
-      Object.keys(this.fields[fieldName].materialForm.parentStyle).map((key) => // For each `materialForm.parentStyle` field
+      Object.keys(this.fields[fieldName].reactAutoform.materialForm.parentStyle).map((key) => // For each `materialForm.parentStyle` field
       {
-        this.fields[fieldName].parentStyle[key] = this.fields[fieldName].materialForm.parentStyle[key]; // Store it in our parent component style
+        this.fields[fieldName].parentStyle[key] = this.fields[fieldName].reactAutoform.materialForm.parentStyle[key]; // Store it in our parent component style
       });
 
-      delete this.fields[fieldName].materialForm.parentStyle; // We've stored it in the correct place so delete it so it's not used later
+      delete this.fields[fieldName].reactAutoform.materialForm.parentStyle; // We've stored it in the correct place so delete it so it's not used later
     }
   }
 
@@ -191,9 +217,9 @@ class ReactAutoForm extends React.Component {
    */
   getSchemaMaterialForm(fieldName)
   {
-    Object.keys(this.fields[fieldName].materialForm).map((key) => // For each `materialForm` field
+    Object.keys(this.fields[fieldName].reactAutoform.materialForm).map((key) => // For each `materialForm` field
     {
-      this.fields[fieldName].attributes[key] = this.fields[fieldName].materialForm[key]; // Store it in our component attributes
+      this.fields[fieldName].reactAutoform.attributes[key] = this.fields[fieldName].reactAutoform.materialForm[key]; // Store it in our component attributes
     });
   }
 
@@ -208,11 +234,11 @@ class ReactAutoForm extends React.Component {
     // If the `fieldColumn` exists, store it in our `materialField` attributes otherwise null
     if(typeof this.fields[fieldName][fieldColumn] !== 'undefined')
     {
-      this.fields[fieldName].attributes[materialField] = this.fields[fieldName][fieldColumn];
+      this.fields[fieldName].reactAutoform.attributes[materialField] = this.fields[fieldName][fieldColumn];
       return;
     }
 
-    this.fields[fieldName].attributes[materialField] = null;
+    this.fields[fieldName].reactAutoform.attributes[materialField] = null;
   }
 
 	/**
@@ -222,7 +248,7 @@ class ReactAutoForm extends React.Component {
    */
   removeMaterialSchemaValue(fieldName, field)
   {
-    this.fields[fieldName].attributes[field] = null;
+    this.fields[fieldName].reactAutoform.attributes[field] = null;
   }
 
 	/**
@@ -233,8 +259,8 @@ class ReactAutoForm extends React.Component {
    */
   moveMaterialSchemaValue(fieldName, newField, oldField)
   {
-    this.fields[fieldName].attributes[newField] = this.fields[fieldName].attributes[oldField]; // Copy the oldField value to the newField value
-    this.fields[fieldName].attributes[oldField] = null; // And now remove the oldField by Nulling
+    this.fields[fieldName].reactAutoform.attributes[newField] = this.fields[fieldName].reactAutoform.attributes[oldField]; // Copy the oldField value to the newField value
+    this.fields[fieldName].reactAutoform.attributes[oldField] = null; // And now remove the oldField by Nulling
   }
 
 	/**
@@ -244,7 +270,7 @@ class ReactAutoForm extends React.Component {
    */
   typeString(fieldName)
   {
-    if(this.fields[fieldName].materialForm.switcher)
+    if(this.fields[fieldName].reactAutoform.materialForm.switcher)
     {
       return this.switchComponent(fieldName);
     }
@@ -263,9 +289,9 @@ class ReactAutoForm extends React.Component {
   {
     this.moveMaterialSchemaValue(fieldName, 'hintText', 'floatingLabelText');
 
-    this.fields[fieldName].attributes.defaultDate = this.fields[fieldName].defaultValue;
-    this.fields[fieldName].attributes.value = this.getStateOrDefaultSchemaValue(fieldName, '');
-    this.fields[fieldName].attributes.onChange = (e, date) =>
+    this.fields[fieldName].reactAutoform.attributes.defaultDate = this.fields[fieldName].defaultValue;
+    this.fields[fieldName].reactAutoform.attributes.value = this.getStateOrDefaultSchemaValue(fieldName, '');
+    this.fields[fieldName].reactAutoform.attributes.onChange = (e, date) =>
     {
       this.setState({
         [`${fieldName}_fieldValue`]: date
@@ -274,7 +300,7 @@ class ReactAutoForm extends React.Component {
 
     return (
       <div key={this.fields[fieldName].key} style={this.fields[fieldName].parentStyle}>
-        <DatePicker {...this.fields[fieldName].attributes} />
+        <DatePicker {...this.fields[fieldName].reactAutoform.attributes} />
       </div>
     );
   }
@@ -286,7 +312,7 @@ class ReactAutoForm extends React.Component {
    */
   typeNumber(fieldName)
   {
-    this.fields[fieldName].attributes.type = 'number'; // Change the input type to number
+    this.fields[fieldName].reactAutoform.attributes.type = 'number'; // Change the input type to number
     this.getSchemaValue(fieldName, 'max'); // Set the max [and min] of the number input
     this.getSchemaValue(fieldName, 'min');
 
@@ -303,7 +329,7 @@ class ReactAutoForm extends React.Component {
     this.moveMaterialSchemaValue(fieldName, 'label', 'floatingLabelText');
     let component;
 
-    switch(this.fields[fieldName].materialForm.switcher)
+    switch(this.fields[fieldName].reactAutoform.materialForm.switcher)
     {
       case 'Toggle':
         this.removeMaterialSchemaValue(fieldName, 'switcher');
@@ -328,12 +354,12 @@ class ReactAutoForm extends React.Component {
   typeDropdown(fieldName)
   {
     const options = this.getSchemaAllowValues(fieldName);
-    let selectOptions = this.fields[fieldName].attributes.selectOptions;
+    let selectOptions = this.fields[fieldName].reactAutoform.attributes.selectOptions;
 
     selectOptions = selectOptions ? selectOptions : {};
-    selectOptions.key = this.fields[fieldName].attributes.name;
-    selectOptions.fullWidth = this.fields[fieldName].attributes.fullWidth;
-    selectOptions.floatingLabelText = this.fields[fieldName].attributes.floatingLabelText;
+    selectOptions.key = this.fields[fieldName].reactAutoform.attributes.name;
+    selectOptions.fullWidth = this.fields[fieldName].reactAutoform.attributes.fullWidth;
+    selectOptions.floatingLabelText = this.fields[fieldName].reactAutoform.attributes.floatingLabelText;
     selectOptions.errorText = this.getErrorText(fieldName);
     selectOptions.defaultValue = this.getSchemaDefaultValue(fieldName, '');
     selectOptions.value = this.getStateOrDefaultSchemaValue(fieldName, '');
@@ -366,14 +392,14 @@ class ReactAutoForm extends React.Component {
    */
   componentTextField(fieldName)
   {
-    this.fields[fieldName].attributes.errorText = this.getErrorText(fieldName);
-    this.fields[fieldName].attributes.value = this.getStateOrDefaultSchemaValue(fieldName, '');
-    this.fields[fieldName].attributes.onChange = (e) =>
+    this.fields[fieldName].reactAutoform.attributes.errorText = this.getErrorText(fieldName);
+    this.fields[fieldName].reactAutoform.attributes.value = this.getStateOrDefaultSchemaValue(fieldName, '');
+    this.fields[fieldName].reactAutoform.attributes.onChange = (e) =>
     {
       if(e.target.value !== '')
       {
         this.setState({
-          [`${fieldName}_fieldValue`]: this.fields[fieldName].attributes.type === 'number' ? Number(e.target.value) : e.target.value
+          [`${fieldName}_fieldValue`]: this.fields[fieldName].reactAutoform.attributes.type === 'number' ? Number(e.target.value) : e.target.value
         });
       }
       else
@@ -384,62 +410,74 @@ class ReactAutoForm extends React.Component {
       }
     };
 
+    const style = {
+      list: {
+        padding: 0
+      },
+      listItem: {
+        main: {
+          backgroundColor: 'none',
+          cursor: 'default'
+        },
+        innerDiv: {
+          padding: 0
+        }
+      },
+      errorStyle: {
+        color: orange500,
+      }
+    };
+
     return (
       <div key={this.fields[fieldName].key} style={this.fields[fieldName].parentStyle}>
-        <TextField onMouseOut={this.handleHideToolTip} onMouseOver={this.handleShowToolTipInput} {...this.fields[fieldName].attributes} />
+        <List onFocus={this.handleShowToolTip} style={style.list}>
+          <ListItem
+            disableFocusRipple={true}
+            disableTouchRipple={true}
+            innerDivStyle={style.listItem.innerDiv}
+            rightIcon={this.props.showToolTips ? this.toolTipComponent(fieldName) : null}
+            style={style.listItem.main}
+          >
+            <TextField
+              {...this.fields[fieldName].reactAutoform.attributes}
+              errorStyle={this.props.showToolTips && this.state.toolTipOpen ? style.errorStyle : {}}
+            />
+          </ListItem>
+        </List>
       </div>
     );
   }
-  /*
-   <IconButton
-     onClick={this.handleToolTip}
-     onMouseOut={this.handleHideToolTip}
-     onMouseOver={this.handleShowToolTipIcon}
-     style={{display: this.getActiveToolTip() === fieldName ? 'inline-block' : 'none'}}
-     tooltip="SVG Icon"
-   >
-     <WarningIcon />
-   </IconButton>
-   */
 
-  getActiveToolTip()
+  toolTipComponent(fieldName)
   {
-    return this.state.toolTip ? this.state.toolTip.active : null;
+    return (
+      <IconButton
+        onClick={this.handleToolTip}
+        style={{display: this.state.toolTip === fieldName ? 'inline-block' : 'none'}}
+        tooltip="SVG Icon"
+      >
+        <HelpIcon />
+      </IconButton>
+    );
   }
 
-  handleShowToolTipInput(e)
+  handleShowToolTip(e)
   {
-    this.setState({
-      toolTip: {
-        active: e.target.name,
-        previous: this.getActiveToolTip()
-      }
-    });
-  }
-
-  handleShowToolTipIcon()
-  {
-    this.setState({
-      toolTip: {
-        active: this.state.toolTip.previous,
-        previous: this.state.toolTip.previous
-      }
-    });
+    if(e && e.target && Object.keys(this.props.schema).indexOf(e.target.name) > -1)
+    {
+      this.setState({toolTip: e.target.name});
+    }
   }
 
   handleHideToolTip()
   {
-    this.setState({
-      toolTip: {
-        active: null,
-        previous: this.getActiveToolTip()
-      }
-    });
+    this.setState({toolTip: null});
   }
 
   handleToolTip()
   {
-    console.log('Show help information...', this.state.toolTip.active);
+    console.log('Show help information...', this.state.toolTip);
+    this.setState({toolTipOpen: true});
   }
 
 	/**
@@ -450,9 +488,9 @@ class ReactAutoForm extends React.Component {
    */
   componentToggle(fieldName)
   {
-    this.fields[fieldName].attributes.defaultToggled = this.fields[fieldName].defaultValue;
-    this.fields[fieldName].attributes.toggled = this.getStateOrDefaultSchemaValue(fieldName, false);
-    this.fields[fieldName].attributes.onToggle = (e) =>
+    this.fields[fieldName].reactAutoform.attributes.defaultToggled = this.fields[fieldName].defaultValue;
+    this.fields[fieldName].reactAutoform.attributes.toggled = this.getStateOrDefaultSchemaValue(fieldName, false);
+    this.fields[fieldName].reactAutoform.attributes.onToggle = (e) =>
     {
       this.setState({
         [`${fieldName}_fieldValue`]: e.target.checked
@@ -461,7 +499,7 @@ class ReactAutoForm extends React.Component {
 
     return (
       <div key={this.fields[fieldName].key} style={this.fields[fieldName].parentStyle}>
-        <Toggle {...this.fields[fieldName].attributes} />
+        <Toggle {...this.fields[fieldName].reactAutoform.attributes} />
       </div>
     );
   }
@@ -475,8 +513,8 @@ class ReactAutoForm extends React.Component {
    */
   componentCheckbox(fieldName)
   {
-    this.fields[fieldName].attributes.checked = this.getStateOrDefaultSchemaValue(fieldName, false);
-    this.fields[fieldName].attributes.onCheck = (e) =>
+    this.fields[fieldName].reactAutoform.attributes.checked = this.getStateOrDefaultSchemaValue(fieldName, false);
+    this.fields[fieldName].reactAutoform.attributes.onCheck = (e) =>
     {
       this.setState({
         [`${fieldName}_fieldValue`]: e.target.checked
@@ -485,7 +523,7 @@ class ReactAutoForm extends React.Component {
 
     return (
       <div key={this.fields[fieldName].key} style={this.fields[fieldName].parentStyle}>
-        <Checkbox {...this.fields[fieldName].attributes} />
+        <Checkbox {...this.fields[fieldName].reactAutoform.attributes} />
       </div>
     );
   }
@@ -499,7 +537,7 @@ class ReactAutoForm extends React.Component {
   componentRadio(fieldName)
   {
     const options = this.getSchemaAllowValues(fieldName);
-    let groupOptions = this.fields[fieldName].attributes.groupOptions;
+    let groupOptions = this.fields[fieldName].reactAutoform.attributes.groupOptions;
 
     groupOptions = groupOptions ? groupOptions : {};
     groupOptions.name = this.fields[fieldName].key;
@@ -513,7 +551,7 @@ class ReactAutoForm extends React.Component {
 
     return (
       <div key={this.fields[fieldName].key} style={this.fields[fieldName].parentStyle}>
-        <label>{this.fields[fieldName].attributes.floatingLabelText}</label>
+        <label>{this.fields[fieldName].reactAutoform.attributes.floatingLabelText}</label>
         <RadioButtonGroup {...groupOptions}>
           {Object.keys(options).map(i => (
             <RadioButton key={options[i].value} {...options[i]} />
@@ -525,7 +563,17 @@ class ReactAutoForm extends React.Component {
 
   getErrorText(fieldName)
   {
-    return this.mappedErrors[fieldName] ? this.mappedErrors[fieldName].message : null;
+    if(this.mappedErrors[fieldName])
+    {
+      return this.mappedErrors[fieldName].message;
+    }
+    else if(this.state.toolTipOpen)
+    {
+      console.log('toolTip thingy', this.state.toolTip);
+      return 'asdfasdf';
+    }
+
+    return null;
   }
 
 	/**
@@ -535,12 +583,12 @@ class ReactAutoForm extends React.Component {
    */
   getSchemaAllowValues(fieldName)
   {
-    const options = this.fields[fieldName].attributes.options;
+    const options = this.fields[fieldName].reactAutoform.attributes.options;
     const allowedValues = options ? options : this.fields[fieldName].allowedValues;
 
     return Object.keys(allowedValues).map(i =>
     {
-      let disabled = this.fields[fieldName].attributes.disabled;
+      let disabled = this.fields[fieldName].reactAutoform.attributes.disabled;
 
       if(typeof allowedValues[i] === 'object')
       {
@@ -703,34 +751,65 @@ class ReactAutoForm extends React.Component {
     return typeof this.fields[fieldName].defaultValue !== 'undefined' ? this.fields[fieldName].defaultValue : ourDefaultValue;
   }
 
+  displayForum()
+  {
+    return (
+      <form className={this.props.formClass} onSubmit={this.handleSubmit} style={this.props.formStyle}>
+        {
+          Object.keys(this.props.schema).map((fieldName) =>
+          { // Loop through each schema object
+            return this.processField(this.props.schema[fieldName], fieldName); // Return the form element
+          })
+        }
+        {
+          this.props.buttonComponent ?
+            this.props.buttonComponent :
+            <Button
+              buttonParentStyle={this.props.buttonParentStyle}
+              extraProps={this.props.buttonProps}
+              icon={this.props.buttonIcon}
+              label={this.props.buttonLabel}
+              type={this.props.buttonType}
+            />
+        }
+      </form>
+    );
+  }
+
   render()
   {
     this.processErrors();
+
+    const style = {
+      noPaddingNoMargin: {
+        padding: 0,
+        margin: 0
+      },
+      toolTipArea: {
+        background: 'pink',
+        display: this.state.toolTipOpen ? 'block' : 'none'
+      }
+    };
 
     return (
       <div>
         {
           this.props.errors ? <Errors errors={this.props.errors} style={this.props.errorsStyle} title={this.props.errorsTitle} /> : null
         }
-        <form className={this.props.formClass} onSubmit={this.handleSubmit} style={this.props.formStyle}>
+        <Grid style={style.noPaddingNoMargin}>
+          <Cell col={this.state.toolTipOpen ? 8 : 12} hidePhone={true} style={style.noPaddingNoMargin} tablet={this.state.toolTipOpen ? 5 : 8}>
+            {this.displayForum()}
+          </Cell>
+          <Cell col={4} hidePhone={true} style={style.toolTipArea} tablet={3}>
+            Hello -> {this.state.toolTip}
+          </Cell>
           {
-            Object.keys(this.props.schema).map((fieldName) =>
-            { // Loop through each schema object
-              return this.processField(this.props.schema[fieldName], fieldName); // Return the form element
-            })
+            this.props.schema.showToolTips === true || this.props.schema.showToolTips === 'description' ?
+              <Cell col={4} hideDesktop={true} hideTablet={true} style={style.noPaddingNoMargin}>
+                {this.displayForum()}
+              </Cell> : null
           }
-          {
-            this.props.buttonComponent ?
-              this.props.buttonComponent :
-              <Button
-                buttonParentStyle={this.props.buttonParentStyle}
-                extraProps={this.props.buttonProps}
-                icon={this.props.buttonIcon}
-                label={this.props.buttonLabel}
-                type={this.props.buttonType}
-              />
-          }
-        </form>
+        </Grid>
       </div>
     );
   }
@@ -768,6 +847,7 @@ ReactAutoForm.propTypes = {
   onSubmit: React.PropTypes.func.isRequired,
   onSubmitExtra: React.PropTypes.object,
   schema: React.PropTypes.object.isRequired,
+  showToolTips: React.PropTypes.oneOf([true, false, 'hint', 'description']),
   type: React.PropTypes.oneOf(['update', 'insert']),
   useFields: React.PropTypes.array
 };
@@ -782,6 +862,7 @@ ReactAutoForm.defaultProps = {
   formStyle: {},
   onSubmitExtra: {},
   muiTheme: false,
+  showToolTips: false,
   type: 'insert'
 };
 
