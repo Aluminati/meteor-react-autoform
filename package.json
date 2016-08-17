@@ -24,6 +24,7 @@
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "react-helmet": "^3.1.0",
+    "react-mdl": "^1.6.1",
     "react-tap-event-plugin": "^1.0.0"
   },
   "repository": {
