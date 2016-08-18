@@ -45,7 +45,7 @@ You can [fork an example application](https://github.com/MechJosh0/mantra-sample
 |`formStyle`|`Object`||Provide your own form style, [see example](#styleExample).|`formStyle={style.form}`| 
 |`fullWidth`|`Bool`|`false`|Only produce the fields `name` and `description` from the Collection in the form.|`useFields={['name', 'text']}`|
 |`muiTheme`|`Bool`|`false`|Default set to false to allow you to choose your own Material-UI theme, however if you do not have one set up set this to `true` to use the default.|`muiTheme={false}`|
-|`onSubmit`|`Function`||[REQUIRED] This will run when the user attempts to submit the forum, this will need to be your Action. See [onSubmit](#onSubmit) for more formation.|`onSubmit={this.props.handleInsert}`|
+|`onSubmit`|`Function`||[REQUIRED] This will run when the user attempts to submit the form, this will need to be your Action. See [onSubmit](#onSubmit) for more formation.|`onSubmit={this.props.handleInsert}`|
 |`onSubmitExtra`|`Object`|Pass an object which is then returned as an extra parameter on the onSubmit function
 |`schema`|`Object`||[REQUIRED] You must provide the collection you wish to use for building your form.|`schema={{name: {type: String, materialForm: {floatingLabelText: 'Name', hintText: 'Your name...'}}}}`|
 |`type`|`OneOf['update', 'insert']`|`insert`|You must set the `type` prop which must equal either `"insert"` or `"update"`.|`type="insert"`|
@@ -81,7 +81,7 @@ You can [fork an example application](https://github.com/MechJosh0/mantra-sample
 ```
  
 ## onSubmit <a name="onSubmit"></a>
-You will need to provide your [Action](https://kadirahq.github.io/mantra/#sec-Actions) (Meteor/Tracker, Redux, Rx.js, etc) as a prop to the React component. When Autoform is submitted it will call your `onSubmit` Action function. For an `type={'insert'}` form the Action will be called with just the `forumFields` parameter, for example `yourInsertAction(forumFields)`, whereas a form with `type={'update'}` the Action will be called with `docId, formFields` parameters, for example `yourUpdateAction(_id, forumFields)`.
+You will need to provide your [Action](https://kadirahq.github.io/mantra/#sec-Actions) (Meteor/Tracker, Redux, Rx.js, etc) as a prop to the React component. When Autoform is submitted it will call your `onSubmit` Action function. For an `type={'insert'}` form the Action will be called with just the `formFields` parameter, for example `yourInsertAction(formFields)`, whereas a form with `type={'update'}` the Action will be called with `docId, formFields` parameters, for example `yourUpdateAction(_id, formFields)`.
 #### Redux Action Example
 `/client/modules/contact/actions/contact_page.js`
 ```
@@ -89,18 +89,18 @@ import {HelpDeskSchema} from './../../../../lib/collections/help_desk';
 import * as actions from './../action_types';
 
 export default {
-  insertTicket(forumFields) // This is the function that is passed to our `handleInsert` prop in the component via our container
+  insertTicket(formFields) // This is the function that is passed to our `handleInsert` prop in the component via our container
   {
     const _id = Meteor.uuid(); // Generates a random _id to be used in MongoDB
     const context = HelpDeskSchema.newContext(); // Gets the schema context
     context.resetValidation(); // Reset any previous data
 
-    const isValid = context.validate(forumFields); // Check is the form from Autoform is valid against our Schema
+    const isValid = context.validate(formFields); // Check is the form from Autoform is valid against our Schema
 
     if(isValid) // If everything went well
     {
       // Call the Meteor Method to handle inserting into MongoDB
-      Meteor.call('helpDesk.insert', _id, forumFields, (err) =>
+      Meteor.call('helpDesk.insert', _id, formFields, (err) =>
       {
         if(err)
         {

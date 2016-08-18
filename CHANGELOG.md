@@ -5,7 +5,7 @@
 
 ### 0.3.0
 - Changed the `errors` prop to allow either an array or object.
-- Added `disabled` prop which controls disabling all forum elements and submit button.
+- Added `disabled` prop which controls disabling all form elements and submit button.
 - Added dot-object package to handle translating dotted objects from the schema
 - Objects in schemas are now possible
 - Enabled Babel spread operator plugin
