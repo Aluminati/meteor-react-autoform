@@ -16,11 +16,14 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Button from './button';
 import {List, ListItem} from 'material-ui/List';
 import HelpIcon from 'material-ui/svg-icons/action/help-outline';
+import CloseIcon from 'material-ui/svg-icons/navigation/close';
+import LightbulbIcon from 'material-ui/svg-icons/action/lightbulb-outline';
 import IconButton from 'material-ui/IconButton';
 import {orange500} from 'material-ui/styles/colors';
 import {Grid, Cell} from 'react-mdl';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+
 
 /**
  * Class to translate SimpleSchema to Material-UI fields
@@ -825,6 +828,26 @@ class Form extends React.Component {
     return this.isToolTipSidebarOpen() ? 8 : 12;
   }
 
+  getActiveToolTipTitle()
+  {
+    if(this.state.toolTipOpen)
+    {
+      return this.fields[this.state.activeField].reactAutoform.attributes.floatingLabelText;
+    }
+
+    return null;
+  }
+
+  getActiveToolTipDescription()
+  {
+    if(this.state.toolTipOpen)
+    {
+      return this.fields[this.state.activeField].reactAutoform.toolTip.description;
+    }
+
+    return null;
+  }
+
   render()
   {
     this.processErrors();
@@ -841,9 +864,9 @@ class Form extends React.Component {
           }
           onRequestClose={this.handleHideToolTip}
           open={this.state.toolTipOpenMobile}
-          title={this.state.activeField}
+          title={this.getActiveToolTipTitle()}
         >
-          {this.state.toolTipOpen && this.fields[this.state.toolTipOpen].reactAutoform.toolTip.description}
+          {this.getActiveToolTipDescription()}
         </Dialog>
         <Grid style={this.style().noPaddingNoMargin}>
           <Cell
@@ -875,7 +898,12 @@ class Form extends React.Component {
             style={this.style().toolTipArea}
             tablet={3}
           >
-            {this.state.toolTipOpen && this.fields[this.state.toolTipOpen].reactAutoform.toolTip.description}
+            <CloseIcon onClick={this.handleHideToolTip} />
+            <h3><LightbulbIcon />Help</h3>
+            <h4>{this.getActiveToolTipTitle()}</h4>
+            <div>
+              {this.getActiveToolTipDescription()}
+            </div>
           </Cell>
         </Grid>
       </div>
