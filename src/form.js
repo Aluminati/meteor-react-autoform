@@ -524,11 +524,6 @@ class Form extends React.Component {
     }
   }
 
-  handleCloseToolTipMobile()
-  {
-    this.setState({toolTipOpenMobile: false});
-  }
-
   /**
    * Toggle component
    * http://www.material-ui.com/#/components/toggle
@@ -840,11 +835,11 @@ class Form extends React.Component {
           actions={
             <FlatButton
               label="Close"
-              onTouchTap={this.handleCloseToolTipMobile}
+              onTouchTap={this.handleHideToolTip}
               primary={true}
             />
           }
-          onRequestClose={this.handleCloseToolTipMobile}
+          onRequestClose={this.handleHideToolTip}
           open={this.state.toolTipOpenMobile}
           title={this.state.activeField}
         >
