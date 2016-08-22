@@ -24,7 +24,6 @@ import {Grid, Cell} from 'react-mdl';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
-
 /**
  * Class to translate SimpleSchema to Material-UI fields
  */
@@ -504,6 +503,11 @@ class Form extends React.Component {
     {
       this.setState({activeField: e.target.name});
     }
+
+    if(this.state.toolTipOpen)
+    {
+      this.handleToolTip(e.target.name);
+    }
   }
 
   handleHideToolTip()
@@ -512,16 +516,18 @@ class Form extends React.Component {
     this.setState({toolTipOpenMobile: false});
   }
 
-  handleToolTip()
+  handleToolTip(activeField)
   {
-    if(this.state.activeField === this.state.toolTipOpen)
+    const newActiveField = typeof activeField !== 'string' ? this.state.activeField : activeField;
+
+    if(newActiveField === this.state.toolTipOpen)
     {
       return this.handleHideToolTip();
     }
 
-    this.setState({toolTipOpen: this.state.activeField});
+    this.setState({toolTipOpen: newActiveField});
 
-    if(this.props.viewType === 'mobile' && this.fields[this.state.activeField].reactAutoform.toolTip.description)
+    if(this.props.viewType === 'mobile' && this.fields[newActiveField].reactAutoform.toolTip.description)
     {
       this.setState({toolTipOpenMobile: true});
     }
