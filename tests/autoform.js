@@ -51,7 +51,7 @@ describe('meteor-react-autoform.autoform', () =>
     );
 
     expect(el.find('Errors')).length('1');
-    expect(el.find('h3').text()).to.equal('There was an error submitting the form:');
+    expect(el.find('Errors').find('h3').text()).to.equal('There was an error submitting the form:');
   });
 });
 
