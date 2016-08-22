@@ -37,6 +37,7 @@ class Form extends React.Component {
     this.handleShowToolTip = this.handleShowToolTip.bind(this);
     this.handleHideToolTip = this.handleHideToolTip.bind(this);
     this.handleToolTip = this.handleToolTip.bind(this);
+    this.handleHideToolTipMobile = this.handleHideToolTipMobile.bind(this);
   }
 
   getChildContext()
@@ -514,20 +515,35 @@ class Form extends React.Component {
   {
     this.setState({activeField: null, toolTipOpen: null});
     this.setState({toolTipOpenMobile: false});
+    this.setState({toolTipDescriptionOpen: false});
+    this.setState({toolTipHintOpen: false});
+  }
+
+  handleHideToolTipMobile()
+  {
+    // this.setState({activeField: null, toolTipOpen: null});
+    this.setState({toolTipOpenMobile: false});
+    this.setState({toolTipDescriptionOpen: false});
   }
 
   handleToolTip(activeField)
   {
     const newActiveField = typeof activeField !== 'string' ? this.state.activeField : activeField;
 
-    if(newActiveField === this.state.toolTipOpen)
+    if(this.props.viewType === 'mobile' && this.state.toolTipOpen && typeof activeField !== 'string' && this.state.toolTipHintOpen !== true)
+    {
+      return this.handleHideToolTip();
+    }
+    else if(this.props.viewType !== 'mobile' && this.state.toolTipHintOpen && typeof activeField !== 'string')
     {
       return this.handleHideToolTip();
     }
 
     this.setState({toolTipOpen: newActiveField});
+    this.setState({toolTipDescriptionOpen: true});
+    this.setState({toolTipHintOpen: true});
 
-    if(this.props.viewType === 'mobile' && this.fields[newActiveField].reactAutoform.toolTip.description)
+    if(this.props.viewType === 'mobile' && typeof activeField !== 'string' && this.fields[newActiveField].reactAutoform.toolTip.description)
     {
       this.setState({toolTipOpenMobile: true});
     }
@@ -620,7 +636,7 @@ class Form extends React.Component {
     {
       return this.mappedErrors[fieldName].message;
     }
-    else if(this.state.toolTipOpen === fieldName)
+    else if(this.state.activeField === fieldName && this.state.toolTipHintOpen)
     {
       return this.fields[fieldName].reactAutoform.toolTip.hint;
     }
@@ -805,7 +821,7 @@ class Form extends React.Component {
 
   isToolTipSidebarOpen()
   {
-    return this.state.toolTipOpen && this.fields[this.state.toolTipOpen].reactAutoform.toolTip.description;
+    return this.state.toolTipHintOpen && this.fields[this.state.activeField].reactAutoform.toolTip.description;
   }
 
   style()
@@ -836,7 +852,7 @@ class Form extends React.Component {
 
   getActiveToolTipTitle()
   {
-    if(this.state.toolTipOpen)
+    if(this.state.toolTipHintOpen)
     {
       return this.fields[this.state.activeField].reactAutoform.attributes.floatingLabelText;
     }
@@ -846,7 +862,7 @@ class Form extends React.Component {
 
   getActiveToolTipDescription()
   {
-    if(this.state.toolTipOpen)
+    if(this.state.toolTipHintOpen)
     {
       return this.fields[this.state.activeField].reactAutoform.toolTip.description;
     }
@@ -864,11 +880,11 @@ class Form extends React.Component {
           actions={
             <FlatButton
               label="Close"
-              onTouchTap={this.handleHideToolTip}
+              onTouchTap={this.handleHideToolTipMobile}
               primary={true}
             />
           }
-          onRequestClose={this.handleHideToolTip}
+          onRequestClose={this.handleHideToolTipMobile}
           open={this.state.toolTipOpenMobile}
           title={this.getActiveToolTipTitle()}
         >
