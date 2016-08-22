@@ -19,6 +19,8 @@ import HelpIcon from 'material-ui/svg-icons/action/help-outline';
 import IconButton from 'material-ui/IconButton';
 import {orange500} from 'material-ui/styles/colors';
 import {Grid, Cell} from 'react-mdl';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 
 /**
  * Class to translate SimpleSchema to Material-UI fields
@@ -482,19 +484,6 @@ class Form extends React.Component {
       return null;
     }
 
-    // return (
-    //   <Grid style={{paddingTop: 0}}>
-    //     <Cell col={12} hidePhone={toolTip.hint === undefined} style={{marginTop: 0}}>
-    //       <IconButton
-    //         onClick={this.handleToolTip}
-    //         style={{display: this.state.activeField === fieldName ? 'inline-block' : 'none'}}
-    //         tooltip="SVG Icon"
-    //       >
-    //         <HelpIcon />
-    //       </IconButton>
-    //     </Cell>
-    //   </Grid>
-    // );
     return (
       <IconButton
         onClick={this.handleToolTip}
@@ -517,6 +506,7 @@ class Form extends React.Component {
   handleHideToolTip()
   {
     this.setState({activeField: null, toolTipOpen: null});
+    this.setState({toolTipOpenMobile: false});
   }
 
   handleToolTip()
@@ -527,6 +517,16 @@ class Form extends React.Component {
     }
 
     this.setState({toolTipOpen: this.state.activeField});
+
+    if(this.props.viewType === 'mobile' && this.fields[this.state.activeField].reactAutoform.toolTip.description)
+    {
+      this.setState({toolTipOpenMobile: true});
+    }
+  }
+
+  handleCloseToolTipMobile()
+  {
+    this.setState({toolTipOpenMobile: false});
   }
 
   /**
@@ -835,39 +835,55 @@ class Form extends React.Component {
     this.processErrors();
 
     return (
-      <Grid style={this.style().noPaddingNoMargin}>
-        <Cell
-          col={this.getGridCellSpace()}
-          style={this.style().noPaddingNoMargin}
-          tablet={this.isToolTipSidebarOpen() ? 5 : 8}
-        >
-          <form className={this.props.formClass} onSubmit={this.handleSubmit} style={this.props.formStyle}>
-            {Object.keys(this.props.schema).map((fieldName) => ( // Loop through each schema object
-              this.processField(this.props.schema[fieldName], fieldName) // Return the form element
-            ))}
-            {
-              this.props.buttonComponent ?
-                this.props.buttonComponent :
-                <Button
-                  buttonParentStyle={this.props.buttonParentStyle}
-                  extraProps={this.props.buttonProps}
-                  icon={this.props.buttonIcon}
-                  label={this.props.buttonLabel}
-                  type={this.props.buttonType}
-                />
-            }
-          </form>
-        </Cell>
-        <Cell
-          col={4}
-          hidePhone={true}
-          key="desktopToolTipArea"
-          style={this.style().toolTipArea}
-          tablet={3}
+      <div>
+        <Dialog
+          actions={
+            <FlatButton
+              label="Close"
+              onTouchTap={this.handleCloseToolTipMobile}
+              primary={true}
+            />
+          }
+          onRequestClose={this.handleCloseToolTipMobile}
+          open={this.state.toolTipOpenMobile}
+          title={this.state.activeField}
         >
           {this.state.toolTipOpen && this.fields[this.state.toolTipOpen].reactAutoform.toolTip.description}
-        </Cell>
-      </Grid>
+        </Dialog>
+        <Grid style={this.style().noPaddingNoMargin}>
+          <Cell
+            col={this.getGridCellSpace()}
+            style={this.style().noPaddingNoMargin}
+            tablet={this.isToolTipSidebarOpen() ? 5 : 8}
+          >
+            <form className={this.props.formClass} onSubmit={this.handleSubmit} style={this.props.formStyle}>
+              {Object.keys(this.props.schema).map((fieldName) => ( // Loop through each schema object
+                this.processField(this.props.schema[fieldName], fieldName) // Return the form element
+              ))}
+              {
+                this.props.buttonComponent ?
+                  this.props.buttonComponent :
+                  <Button
+                    buttonParentStyle={this.props.buttonParentStyle}
+                    extraProps={this.props.buttonProps}
+                    icon={this.props.buttonIcon}
+                    label={this.props.buttonLabel}
+                    type={this.props.buttonType}
+                  />
+              }
+            </form>
+          </Cell>
+          <Cell
+            col={4}
+            hidePhone={true}
+            key="desktopToolTipArea"
+            style={this.style().toolTipArea}
+            tablet={3}
+          >
+            {this.state.toolTipOpen && this.fields[this.state.toolTipOpen].reactAutoform.toolTip.description}
+          </Cell>
+        </Grid>
+      </div>
     );
   }
 }
