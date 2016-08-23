@@ -31,7 +31,9 @@ class Form extends React.Component {
   constructor(props)
   {
     super(props);
-    this.state = {};
+    this.state = {
+      toolTipOpenMobile: false
+    };
     this.fields = {};
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleShowToolTip = this.handleShowToolTip.bind(this);
@@ -53,29 +55,6 @@ class Form extends React.Component {
   componentWillUpdate(props, state)
   {
     this.stateUpdated(props, state);
-  }
-
-  processErrors()
-  {
-    this.mappedErrors = {};
-
-    if(this.props.errors)
-    {
-      if(Array.isArray(this.props.errors))
-      {
-        if(this.props.errors)
-        {
-          this.props.errors.map(error =>
-          {
-            this.mappedErrors[error.name] = {message: error.message};
-          });
-        }
-      }
-      else
-      {
-        this.mappedErrors = this.props.errors;
-      }
-    }
   }
 
   /**
@@ -131,7 +110,7 @@ class Form extends React.Component {
       this.fields[fieldName].reactAutoform.attributes.options ||
       this.fields[fieldName].allowedValues)
     {
-      switch(this.fields[fieldName].materialForm.switcher)
+      switch(this.fields[fieldName].reactAutoform.materialForm.switcher)
       {
         case 'Radio':
           component = this.componentRadio(fieldName);
@@ -632,9 +611,9 @@ class Form extends React.Component {
 
   getErrorText(fieldName)
   {
-    if(this.mappedErrors[fieldName])
+    if(this.props.errors && this.props.errors[fieldName])
     {
-      return this.mappedErrors[fieldName].message;
+      return this.props.errors[fieldName].message;
     }
     else if(this.state.activeField === fieldName && this.state.toolTipHintOpen)
     {
@@ -872,8 +851,6 @@ class Form extends React.Component {
 
   render()
   {
-    this.processErrors();
-
     return (
       <div>
         <Dialog
@@ -965,14 +942,15 @@ Form.propTypes = {
   onSubmit: React.PropTypes.func.isRequired,
   onSubmitExtra: React.PropTypes.object,
   schema: React.PropTypes.object.isRequired,
-  showToolTips: React.PropTypes.oneOf([true, false, 'hint', 'description']),
+  showToolTips: React.PropTypes.bool,
   type: React.PropTypes.oneOf(['update', 'insert']),
   useFields: React.PropTypes.array,
-  viewType: React.PropTypes.oneOf('desktop', 'mobile')
+  viewType: React.PropTypes.oneOf(['desktop', 'mobile'])
 };
 
 Form.defaultProps = {
   buttonProps: {},
+  buttonType: 'RaisedButton',
   debug: false,
   disabled: false,
   errors: false,
