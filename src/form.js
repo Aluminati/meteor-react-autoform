@@ -67,6 +67,19 @@ class Form extends React.Component {
   {
     if(this.props.useFields && this.props.useFields.indexOf(fieldName) === -1)
     {
+      const isBlackListed = this.props.useFields.map(blacklist =>
+      {
+        return fieldName.startsWith(blacklist);
+      }).indexOf(true) === -1;
+
+      if(isBlackListed)
+      {
+        return null;
+      }
+    }
+
+    if(field.type.name === 'Object')
+    {
       return null;
     }
 
