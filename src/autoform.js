@@ -58,6 +58,7 @@ class ReactAutoForm extends React.Component {
         debug={this.props.debug}
         disabled={this.props.disabled}
         doc={this.props.doc}
+        errors={this.mappedErrors}
         formClass={this.props.formClass}
         formStyle={this.props.formStyle}
         fullWidth={this.props.fullWidth}
